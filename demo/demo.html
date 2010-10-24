@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>jQuery UI CoverFlow II | Addy Osmani</title>
+	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7/themes/ui-darkness/ui.all.css" rel="Stylesheet" />	
+	<script type="text/javascript" src="../external/jquery-1.4.3.min.js"></script>
+	<script type="text/javascript" src="../external/ui.core.js"></script>
+	<script type="text/javascript" src="../external/ui.slider.js"></script>
+	<script type="text/javascript" src="../ui.coverflow.js"></script>
+	<script type="text/javascript" src="../reflection.js"></script>
+	<link type="text/css" href="demos.css" rel="stylesheet" />
+	
+	<!-- Transformie is a plugin that makes webkit's CSS transforms work in Internet Explorer (download at http://paulbakaus.com/projects) -->
+	<script src="../external/sylvester.js" type="text/javascript"></script>
+	<script src="../external/transformie.js" type="text/javascript"></script>
+
+	<style type="text/css">
+	
+	   body { background-color:#000;}
+
+		#coverflow {
+			height: 300px; width: 2600px; padding: 42px;
+			position: absolute; top: 0px; left: 0px;
+			margin-top:50px;
+		}
+		
+		#coverflow img {
+			width: 260px; height: 260px; 
+			float: left; position: relative; margin: -35px;
+			
+			
+		}
+		
+		div.wrapper {
+			height: 390px; width: 600px; padding: 10px;
+			overflow: hidden; position: relative; margin:0 auto;
+			background-color:#000;
+		}
+		
+		#demo-frame {
+			overflow: hidden;
+		}
+		
+		#slider {
+			margin-top: 380px;
+		}
+		
+       #sortable { 
+       list-style-type:none;margin:0 auto;padding:0;width:100%;
+
+       }
+	   #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
+	   #sortable li span { position: absolute; margin-left: -1.3em; }
+	   .ui-selected { background: #F39814; color: white; }
+	  .pageWrapper { margin:0 auto; width:960px}
+
+
+
+
+
+/* css for scrollbar below here*/
+#scroll-pane { float:left;overflow: auto; width: 620px; height:300px;position:relative;margin-left:50px;margin-bottom:25px;display:inline}
+#sortable {position:absolute;top:0;left:0}
+.scroll-content-item {background-color:#fcfcfc;color:#003366;width:100px;height:100px;float:left;margin:10px;font-size:3em;line-height:96px;text-align:center;border:1px solid gray;display:inline;}
+#slider-wrap{float:left;background-color:lightgrey;height:300px;width:20px;border:1px solid gray;border-left:none;}
+#slider-vertical{margin-left:5px;position:relative;height:100%}
+.ui-slider-handle{width:20px;height:10px;margin-left:5px;background-color:darkgray;display:block;position:absolute}
+
+.listholder { width:750px; margin:0 auto;}
+
+	</style>
+	
+		<script src="jquery.mousewheel.min.js" type="text/javascript"></script>
+
+	    <script src="app.js" type="text/javascript"></script>
+	
+
+</head>
+<body>
+
+
+<div class="pageWrapper">
+<div class="demo">
+
+	<div class="wrapper">
+		<div id="coverflow">
+			<img src="images/gorillaz-plasticbeach.jpg" data-artist="Gorillaz" data-album="Plastic Beach"/>
+			<img src="images/weezer-hurley.jpg" data-artist="Weezer" data-album="Hurley"/>
+			<img src="images/kingsofleon-comearoundsunshine.jpg" data-artist="Kings Of Leon" data-album="Come Around Sunshine"/>
+			<img src="images/kidrock-bornfree.jpg" data-artist="Kid Rock" data-album="Born Free"/>
+			<img src="images/lilwayne-iamnotahumanbeing.jpg" data-artist="Lil Wayne" data-album="I Am Not A Human Being"/>
+			<img src="images/taylorswift-speaknow.jpg" data-artist="Taylor Swift" data-album="Speak Now"/>
+			<img src="images/thebandperry-thebandperry.jpg" data-artist="The Band Perry" data-album="The Band Perry"/>
+			<img src="images/recovery-recovery.jpg" data-artist="Eminem" data-album="Recovery"/>
+			<img src="images/maroon5-handsallover.jpg" data-artist="Maroon 5" data-album="Hands All Over"/>
+			<img src="images/mychemicalromance-dangerdays.jpg" data-artist="My Chemical Romance" data-album="Danger Days"/>
+			<img src="images/order of the black - black label society.jpg" data-artist="Order Of The Black" data-album="Black Label Society"/>		
+			<img src="images/ironmaiden-thefinalfrontier.jpg" data-artist="Iron Maiden" data-album="The Final Frontier"/>
+			<img src="images/usher-raymondvraymond.jpg" data-artist="Usher" data-album="Raymond V Raymond"/>
+		</div>
+		<div id='slider'></div>
+	</div>
+
+</div>
+
+<div class="demo-description">
+</div>
+
+<div class="listholder">
+
+<div id="scroll-pane">
+    <ul id="sortable"> 
+    </ul>
+</div>
+
+<div id="slider-wrap"><div id="slider-vertical"></div></div>
+
+</div>
+
+
+
+</div>
+
+
+
+</body>
+</html>
