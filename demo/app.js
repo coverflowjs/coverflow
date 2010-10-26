@@ -64,9 +64,7 @@
               $('.coverflowItem').removeClass('ui-selected');
 	          $('.coverflowItem:eq(' + ($itemNumber) +')').addClass('ui-selected');
 	          
-	          //
-	          
-	          
+	       
 	         
            }
 
@@ -210,20 +208,12 @@
 		skipTo(coverflowItem);
 	
 	
-	//
+	
 	var sliderVal2 = $("#slider-vertical").slider("value");
 	sliderVal2 += (delta*50);
-	
 	$("#slider-vertical").slider("value", (sliderVal2));
-	var topValue = -((100-sliderVal2)*difference/100);//calculate the content top from the slider position
-		
-	if (topValue>0) topValue = 0;//stop the content scrolling down too much
-	if (Math.abs(topValue)>difference) topValue = (-1)*difference;//stop the content scrolling up too much
-		
-		
-		
-	$("#sortable").css({top: (coverflowItem * -25 ) });//move the content to the new position
-
+				
+	$("#sortable").css({top: (coverflowItem * -25 ) });
 
 	
 	    event.preventDefault();//stop any default behaviour
