@@ -13,9 +13,13 @@
 		var html = $('#demo-frame div.wrapper').html();
 		$('#demo-frame div.wrapper').parent().append(html).end().remove();
 		
+		
+		
 		   
 		   
 		setDefault(6);
+		
+		
 
            //Set the default item to display on load.
            //Correct indexing
@@ -59,6 +63,11 @@
               $('#coverflow').coverflow('select', $itemNumber, true);
               $('.coverflowItem').removeClass('ui-selected');
 	          $('.coverflowItem:eq(' + ($itemNumber) +')').addClass('ui-selected');
+	          
+	          //
+	          
+	          
+	         
            }
 
 
@@ -91,7 +100,7 @@
 		
 		
 		//Handle keyboard events
-		$(document).keypress(function(e) 
+		$(document).keydown(function(e) 
 		{
 		  $current = $('#slider').slider('value');
 	
@@ -133,7 +142,7 @@
 		range: "max",
 		min: 0,
 		max: 100,
-		value: 100,
+		value: 0 ,
 		slide: function(event, ui) {
 			var topValue = -((100-ui.value)*difference/100);
 			$("#sortable").css({top:topValue});//move the top up (negative value) by the percentage the slider has been moved times the difference in height
@@ -144,6 +153,24 @@
 	var origSliderHeight = $("#slider-vertical").height();//read the original slider height
 	var sliderHeight = origSliderHeight - handleHeight ;//the height through which the handle can move needs to be the original height minus the handle height
 	var sliderMargin =  (origSliderHeight - sliderHeight)*0.5;//so the slider needs to have both top and bottom margins equal to half the difference
+	
+	
+	
+	function setScrollPositions(item)
+	{
+	
+	var q =  item * 5;
+	var qx = -40;
+
+	$('#slider-vertical').slider('value', q);
+	$('#sortable').css('top', -q + qx);
+	
+
+	}
+	
+	
+	setScrollPositions(defaultItem);
+
 	
 	
 //mousewheel support
@@ -164,12 +191,14 @@
          
        }else{
           
-          if(delta < 0)
+          if(delta < 0 && sliderVal < cflowlength)
           {
            sliderVal +=1;
            }
           
        }
+       
+       
        
        
 		var leftValue = -((100-sliderVal)*difference/100);//calculate the content top from the slider position
@@ -180,20 +209,30 @@
 		coverflowItem = Math.floor(sliderVal);
 		skipTo(coverflowItem);
 	
-	 
+	
+	//
+	var sliderVal2 = $("#slider-vertical").slider("value");
+	sliderVal2 += (delta*50);
+	
+	$("#slider-vertical").slider("value", (sliderVal2));
+	var topValue = -((100-sliderVal2)*difference/100);//calculate the content top from the slider position
+		
+	if (topValue>0) topValue = 0;//stop the content scrolling down too much
+	if (Math.abs(topValue)>difference) topValue = (-1)*difference;//stop the content scrolling up too much
+		
+		
+		
+	$("#sortable").css({top: (coverflowItem * -25 ) });//move the content to the new position
+
+
 	
 	    event.preventDefault();//stop any default behaviour
  	});
 	
-	//mousewheel	
+
+		
+	
+
 		
 });
 
-$(function(){
-
-//custom-scrollpanes from ui.
-
-
-
-	
-});
