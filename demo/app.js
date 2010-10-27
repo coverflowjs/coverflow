@@ -57,7 +57,9 @@
 				slide: function(event, ui) {
 					$('#coverflow').coverflow('select', ui.value, true);
 					$('.coverflowItem').removeClass('ui-selected');
-	                $('.coverflowItem:eq(' + (ui.value-1) +')').addClass('ui-selected');
+					
+	                $('.coverflowItem:eq(' + (ui.value) +')').addClass('ui-selected');
+	                setCaption($('.coverflowItem:eq(' + (ui.value) +')').html());
 
 				}
 			});
@@ -168,7 +170,7 @@
 	{
 	
 	var q =  item * 5;
-	var qx = -40;
+	var qx = -35;
 
 	$('#slider-vertical').slider('value', q);
 	$('#sortable').css('top', -q + qx);

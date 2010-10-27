@@ -332,3 +332,161 @@ div.demo-description {
 #widget-docs .ui-widget-content a:hover,
 #widget-docs .ui-widget-content a:active { color:#0b559b; }
 
+
+
+/* UI Overrides*/
+
+
+
+
+body {
+	background-color: #000;
+}
+
+#coverflow {
+	height: 300px;
+	width: 2600px;
+	padding: 42px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	margin-top: 50px;
+}
+
+#coverflow img {
+	width: 260px;
+	height: 260px;
+	float: left;
+	position: relative;
+	margin: -35px;
+}
+
+div.wrapper {
+	height: 390px;
+	width: 600px;
+	padding: 10px;
+	overflow: hidden;
+	position: relative;
+	margin: 0 auto;
+	background-color: #000;
+}
+
+#demo-frame {
+	overflow: hidden;
+}
+
+#slider {
+	margin-top: 10px;
+}
+
+#sortable {
+	list-style-type: none;
+	margin: 0 auto;
+	padding: 0;
+	width: 100%;
+}
+
+#sortable li {
+	margin: 0 3px 3px 3px;
+	padding: 0.4em;
+	padding-left: 1.5em;
+	font-size: 1.4em;
+	height: 18px;
+}
+
+#sortable li span {
+	position: absolute;
+	margin-left: -1.3em;
+}
+
+.ui-selected {
+	background: #F39814;
+	color: white;
+}
+
+.pageWrapper {
+	margin: 0 auto;
+	width: 960px
+}
+
+#imageCaption {
+	margin: 0 auto;
+	width: 400px;
+	color: white;
+	font-family: Arial;
+	display: block;
+	font-size: 12px;
+	text-align: center;
+	margin-top: 360px;
+}
+
+/* css for scrollbar below here*/
+
+#scroll-pane {
+	float: left;
+	overflow: auto;
+	width: 620px;
+	height: 176px;
+	position: relative;
+	margin-left: 50px;
+	margin-bottom: 25px;
+	display: inline
+}
+
+#sortable {
+	position: absolute;
+	top: 0;
+	left: 0
+}
+
+.scroll-content-item {
+	background-color: #fcfcfc;
+	color: #003366;
+	width: 100px;
+	height: 100px;
+	float: left;
+	margin: 10px;
+	font-size: 3em;
+	line-height: 96px;
+	text-align: center;
+	border: 1px solid gray;
+	display: inline;
+}
+
+#slider-wrap {
+	float: left;
+	background-color: lightgrey;
+	height: 172px;
+	width: 20px;
+	border: 1px solid gray;
+	border-left: none;
+}
+
+#slider-vertical {
+	margin-left: 5px;
+	position: relative;
+	height: 100%
+}
+
+.ui-slider-handle {
+	width: 20px;
+	height: 10px;
+	margin-left: 5px;
+	background-color: darkgray;
+	display: block;
+	position: absolute
+}
+
+.listholder {
+	width: 750px;
+	margin: 0 auto;
+}
+
+.pageInfo{
+  margin:0 auto;
+  width:700px;
+  clear:both;
+  color:white;
+  font-size:12px;
+  text-align:center;
+}
