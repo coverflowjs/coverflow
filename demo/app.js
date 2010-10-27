@@ -11,12 +11,13 @@
         var defaultItem  = 0;
 		var listContent = "";
 		var html = $('#demo-frame div.wrapper').html();
+		var imageCaption = $('#imageCaption');
 		$('#demo-frame div.wrapper').parent().append(html).end().remove();
 		
 		
 		
 		   
-		   
+	    //Set the default image index.   
 		setDefault(6);
 		
 		
@@ -25,7 +26,13 @@
            //Correct indexing
 		   function setDefault($n)
 		   {
-		      defaultItem = $n-1;
+		      defaultItem = $n-1;  
+		   }
+		   
+		   //set the image caption
+		   function setCaption($t)
+		   {
+		     imageCaption.html($t);
 		   }
 
 			
@@ -63,7 +70,7 @@
               $('#coverflow').coverflow('select', $itemNumber, true);
               $('.coverflowItem').removeClass('ui-selected');
 	          $('.coverflowItem:eq(' + ($itemNumber) +')').addClass('ui-selected');
-	          
+	          setCaption($('.coverflowItem:eq(' + ($itemNumber) +')').html());
 	       
 	         
            }
@@ -87,7 +94,7 @@
 		});
 		
 		$('#sortable').html(listContent);
-		$('.coverflowItem:eq(' + (defaultItem) +')').addClass('ui-selected');
+		skipTo(defaultItem);
 		
 		//Assign click event for coverflow images 
 		$('body').delegate('.coverflowItem','click', function()
@@ -126,7 +133,7 @@
 		
 		
 
-	   //change the main div to overflow-hidden as we can use the slider now
+	//change the main div to overflow-hidden as we can use the slider now
 	$("#scroll-pane").css('overflow','hidden');
 	
 	//calculate the height that the scrollbar handle should be
@@ -141,7 +148,9 @@
 		min: 0,
 		max: 100,
 		value: 0 ,
-		slide: function(event, ui) {
+		slide: function(event, ui) 
+		{
+			
 			var topValue = -((100-ui.value)*difference/100);
 			$("#sortable").css({top:topValue});//move the top up (negative value) by the percentage the slider has been moved times the difference in height
 		}
@@ -153,7 +162,8 @@
 	var sliderMargin =  (origSliderHeight - sliderHeight)*0.5;//so the slider needs to have both top and bottom margins equal to half the difference
 	
 	
-	
+	/*Force the scrollers to bring the current item into view.*/
+	/*This can all be commented out if not needed*/
 	function setScrollPositions(item)
 	{
 	
@@ -166,7 +176,7 @@
 
 	}
 	
-	
+
 	setScrollPositions(defaultItem);
 
 	
@@ -206,15 +216,6 @@
 		
 		coverflowItem = Math.floor(sliderVal);
 		skipTo(coverflowItem);
-	
-	
-	
-	var sliderVal2 = $("#slider-vertical").slider("value");
-	sliderVal2 += (delta*50);
-	$("#slider-vertical").slider("value", (sliderVal2));
-				
-	$("#sortable").css({top: (coverflowItem * -25 ) });
-
 	
 	    event.preventDefault();//stop any default behaviour
  	});
