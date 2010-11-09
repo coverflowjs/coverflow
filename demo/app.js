@@ -40,11 +40,10 @@
 			$("#coverflow").coverflow({
 			    item: defaultItem,
 			    duration:1200,
-				select: function(event, sky) {
-					$('#slider').slider('value', sky.value);
-					$('.coverflowItem').removeClass('ui-selected');
-	                $('.coverflowItem:eq(' + (sky.value) +')').addClass('ui-selected');
-					
+				select: function(event, sky) 
+				{
+				skipTo(sky.value);
+
 				}
 			});
 			
