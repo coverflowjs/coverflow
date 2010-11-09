@@ -6,6 +6,14 @@ table {
 	font-size: 1em;
 }
 
+h1 {
+  color:white;
+  font-size:30px;
+  letter-spacing:-1px;
+  font-family:Arial;
+  text-align:center;
+}
+
 /* Site
    -------------------------------- */
 
