@@ -6,6 +6,8 @@
  */
 (function($){
 
+
+
 	var browserVersion = $.browser.version.replace(/^(\d+\.)(.*)$/, function() { return arguments[1] + arguments[2].replace(/\./g, ''); });
 	var supportsTransforms = !($.browser.mozilla && (parseFloat(browserVersion) <= 1.9)) && !$.browser.opera;
 	
@@ -13,9 +15,20 @@
 		return c*((t=t/d-1)*t*t*t*t + 1) + b;
 	};
 
-	$.widget('ui.coverflow', {
+	$.widget("ui.coverflow", {
+	
+	   options: {
+	   
+	   items: "> *",
+			orientation: 'horizontal',
+			item: 0,
+			trigger: 'click',
+			center: true, //If set to false, the actual element's base position isn't touched in any way
+			recenter: true //If set to false, the parent element's position doesn't get animated while items change
+			
+	  },
 		
-		_init: function() {
+		_create: function() {
 			
 			var self = this, o = this.options;
 			this.items = $(o.items, this.element);
@@ -25,6 +38,8 @@
 			this.itemHeight = this.items.height();
 			this.duration = o.duration;
 			this.current = o.item; //Start item
+			
+			
 			
 			
 			//Bind click events on individual items
@@ -83,7 +98,7 @@
 		
 		_refresh: function(state,from,to) {
 		
-			
+	
 			var self = this, offset = null;
 	
 			
@@ -133,16 +148,6 @@
 		}
 		
 	});
-	
-	$.extend($.ui.coverflow, {
-		defaults: {
-			items: "> *",
-			orientation: 'horizontal',
-			item: 0,
-			trigger: 'click',
-			center: true, //If set to false, the actual element's base position isn't touched in any way
-			recenter: true //If set to false, the parent element's position doesn't get animated while items change
-		}
-	});
+
 	
 })(jQuery); 

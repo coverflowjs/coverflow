@@ -6,20 +6,17 @@
 */
 
 	$(function() {
-		
-		
+	
+
         var defaultItem  = 0;
 		var listContent = "";
 		var html = $('#demo-frame div.wrapper').html();
 		var imageCaption = $('#imageCaption');
 		$('#demo-frame div.wrapper').parent().append(html).end().remove();
 		
-		
-		
-		   
+			   
 	    //Set the default image index.   
 		setDefault(6);
-		
 		
 
            //Set the default item to display on load.
@@ -94,6 +91,8 @@
 		   }
 		});
 		
+		
+		//Skip all controls to the current default item
 		$('#sortable').html(listContent);
 		skipTo(defaultItem);
 		
@@ -142,6 +141,8 @@
 	var proportion = difference / $("#sortable").height();//eg 200px/500px
 	var handleHeight = Math.round((1-proportion)*$("#scroll-pane").height());//set the proportional height
 
+
+
 	//set up the slider	
 	$("#slider-vertical").slider({
 		orientation: "vertical",
@@ -156,7 +157,7 @@
 			$("#sortable").css({top:topValue});//move the top up (negative value) by the percentage the slider has been moved times the difference in height
 		}
 	});
-	
+
 	
 	var origSliderHeight = $("#slider-vertical").height();//read the original slider height
 	var sliderHeight = origSliderHeight - handleHeight ;//the height through which the handle can move needs to be the original height minus the handle height
@@ -207,9 +208,7 @@
           
        }
        
-       
-       
-       
+         
 		var leftValue = -((100-sliderVal)*difference/100);//calculate the content top from the slider position
 		
 		if (leftValue>0) leftValue = 0;//stop the content scrolling down too much
