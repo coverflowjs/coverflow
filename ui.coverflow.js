@@ -33,11 +33,20 @@
 			var self = this, o = this.options;
 			this.items = $(o.items, this.element);
 			this.props = o.orientation == 'vertical' ? ['height', 'Height', 'top', 'Top'] : ['width', 'Width', 'left', 'Left'];
-			this.itemSize = this.items['outer'+this.props[1]](1);
+			//this.itemSize = this.items.innerWidth(); //190, //1.8.6: this.items['outer'+this.props[1]](1);
+			
+	
+			this.itemSize = 0.73 * this.items.innerWidth();
+		
+		    console.log(this.items.innerHeight());
+		    console.log(this.items.outerHeight());
+		    
 			this.itemWidth = this.items.width();
 			this.itemHeight = this.items.height();
 			this.duration = o.duration;
 			this.current = o.item; //Start item
+			
+			
 			
 			
 			
@@ -51,7 +60,8 @@
 
 			//Center the actual parent's left side within it's parent
 			
-			
+		
+				
 			
 			this.element.css(this.props[2],
 				(o.recenter ? -this.current * this.itemSize/2 : 0)
@@ -70,6 +80,8 @@
 			this.previous = this.current;
 			this.current = !isNaN(parseInt(item,10)) ? parseInt(item,10) : this.items.index(item);
 			
+		
+			
 			
 			//Don't animate when clicking on the same item
 			if(this.previous == this.current) return false; 
@@ -81,18 +93,24 @@
 			// 1. Stop the previous animation
 			// 2. Animate the parent's left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
+			
+			
+			
+		
 			var animation = { coverflow: 1 };
+		
+		
 			animation[this.props[2]] = (
 				(this.options.recenter ? -this.current * this.itemSize/2 : 0)
 				+ (this.options.center ? this.element.parent()[0]['offset'+this.props[1]]/2 - this.itemSize/2 : 0) //Center the items container
 				- (this.options.center ? parseInt(this.element.css('padding'+this.props[3]),10) || 0 : 0) //Subtract the padding of the items container
 			);
-			
-			
-			//
-			
-			//
-			
+		
+		
+		
+		
+
+
 			
 			//Trigger the 'select' event/callback
 			if(!noPropagation) this._trigger('select', null, this._uiHash());
@@ -120,28 +138,12 @@
 					css = { zIndex: self.items.length + (side == "left" ? to-i : i-to) };
 					
 					
-					///
-				     /*
-				       notes: cache this. fix animation for 1.8.6
-				     */
-				     
-				     var thisCover = $(this);
-				     
-					thisCover.css('z-index', self.items.length + (side == "left" ? to-i : i-to));
-					thisCover.css('-moz-transform', 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')');
-			        thisCover.css('width','260px');
-			        thisCover.css('height','260px');
-			        thisCover.css('left', ( (-i * (300/2)) + (side == 'right'? -300/2 : 300/2) * mod ) + 'px');
-					
-					//
 					
 				
-		//css[($.browser.safari ? 'webkit' : 'Moz')+'Transform'] = 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')';
+		css[($.browser.safari ? 'webkit' : 'Moz')+'Transform'] = 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')';
 				
-	         
-	
-				
-				css[self.props[2]] = ( (-i * (self.itemSize/2)) + (side == 'right'? -self.itemSize/2 : self.itemSize/2) * mod );
+	        
+		css[self.props[2]] = ( (-i * (self.itemSize/2)) + (side == 'right'? -self.itemSize/2 : self.itemSize/2) * mod );
 				
 			
 
@@ -156,11 +158,9 @@
 	
 	
 				
-				//$(this).css(css);
-				
+				$(this).css(css);
 				
 
-					
 
 			});
 			
