@@ -1,8 +1,7 @@
 /*
 
-  jQuery UI CoverFlow 2010.
-  This version by Addy Osmani
-  Base code for original pre-updated plugin: Paul Baukaus
+  jQuery UI CoverFlow II for jQueryUI 1.8.6 / core 1.4.4
+  Copyright Addy Osmani 2010.
 */
 
 	$(function() {
