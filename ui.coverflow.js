@@ -1,8 +1,7 @@
 /*
  * jQuery UI CoverFlow
-   Original Component: Paul Bakaus
-   Minor changes to appear more 'coverflow-like' in cooperation
-   with front-end UI extension in app.js - Addy Osmani.
+   Re-written for jQueryUI 1.8.6 by Addy Osmani with adjustments
+   Original Component: Paul Bakaus for jQueryUI 1.7 series
  */
 (function($){
 
@@ -23,8 +22,8 @@
 			orientation: 'horizontal',
 			item: 0,
 			trigger: 'click',
-			center: true, //If set to false, the actual element's base position isn't touched in any way
-			recenter: true //If set to false, the parent element's position doesn't get animated while items change
+			center: true, //If false, element's base position isn't touched in any way
+			recenter: true //If false, the parent element's position doesn't get animated while items change
 			
 	  },
 		
@@ -33,23 +32,16 @@
 			var self = this, o = this.options;
 			this.items = $(o.items, this.element);
 			this.props = o.orientation == 'vertical' ? ['height', 'Height', 'top', 'Top'] : ['width', 'Width', 'left', 'Left'];
-			//this.itemSize = this.items.innerWidth(); //190, //1.8.6: this.items['outer'+this.props[1]](1);
+			//For < 1.8.2: this.items['outer'+this.props[1]](1);
 			
-	
 			this.itemSize = 0.73 * this.items.innerWidth();
-		
-		    console.log(this.items.innerHeight());
-		    console.log(this.items.outerHeight());
 		    
 			this.itemWidth = this.items.width();
 			this.itemHeight = this.items.height();
 			this.duration = o.duration;
-			this.current = o.item; //Start item
+			this.current = o.item; //initial item
 			
-			
-			
-			
-			
+		
 		
 			//Bind click events on individual items
 			this.items.bind(o.trigger, function() {
@@ -59,10 +51,7 @@
 
 
 			//Center the actual parent's left side within it's parent
-			
-		
-				
-			
+
 			this.element.css(this.props[2],
 				(o.recenter ? -this.current * this.itemSize/2 : 0)
 				+ (o.center ? this.element.parent()[0]['offset'+this.props[1]]/2 - this.itemSize/2 : 0) //Center the items container
@@ -94,8 +83,7 @@
 			// 2. Animate the parent's left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
 			
-			
-			
+				
 		
 			var animation = { coverflow: 1 };
 		
@@ -107,10 +95,6 @@
 			);
 		
 		
-		
-		
-
-
 			
 			//Trigger the 'select' event/callback
 			if(!noPropagation) this._trigger('select', null, this._uiHash());
@@ -153,7 +137,6 @@
 					css.height = css.width * (self.itemHeight / self.itemWidth);
 					css.top = -((css.height - self.itemHeight) / 2);
 				}
-	
 	
 	
 	
