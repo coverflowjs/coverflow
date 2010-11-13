@@ -15,7 +15,7 @@
 		
 			   
 	    //Set the default image index.   
-		setDefault(6);
+		setDefault(7);
 		
 
            //Set the default item to display on load.
