@@ -122,9 +122,9 @@
 					css = { zIndex: self.items.length + (side == "left" ? to-i : i-to) };
 					
 				
-		css[($.browser.safari ? 'webkit' : 'Moz')+'Transform'] = 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')';
+		            css[($.browser.safari ? 'webkit' : 'Moz')+'Transform'] = 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')';
 				
-		css[self.props[2]] = ( (-i * (self.itemSize/2)) + (side == 'right'? -self.itemSize/2 : self.itemSize/2) * mod );
+		            css[self.props[2]] = ( (-i * (self.itemSize/2)) + (side == 'right'? -self.itemSize/2 : self.itemSize/2) * mod );
 				
 			
 				if(!supportsTransforms) {
