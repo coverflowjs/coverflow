@@ -352,6 +352,17 @@ body {
 	background: url('images/tile.gif');
 }
 
+
+div.wrapper {
+	height: 390px;
+	width: 800px; /*600*/
+	padding: 10px;
+	overflow: hidden;
+	position: relative;
+	margin: 0 auto;
+	
+}
+
 #coverflow {
 	height: 300px;
 	width: 2600px;
@@ -368,23 +379,7 @@ body {
 	float: left;
 	position: relative;
 	margin: -35px;
-	
-/*
--webkit-box-shadow:  1px 1px 6px #292929;
--moz-box-shadow: 1px 1px 6px #292929;
-box-shadow: 1px 1px 6px #292929; 
-*/
 
-}
-
-div.wrapper {
-	height: 390px;
-	width: 800px; /*600*/
-	padding: 10px;
-	overflow: hidden;
-	position: relative;
-	margin: 0 auto;
-	
 }
 
 #demo-frame {
@@ -515,3 +510,26 @@ border:none;
   font-size:12px;
   text-align:center;
 }
+
+
+
+
+
+
+/*experimental*/
+.reflection
+{
+opacity: 0.5;
+-moz-transform: scale(1.3,-1) rotate(0deg) translate(-50px,-140px);
+-o-transform: scale(1.3,-1) rotate(0deg) translate(-50px,-140px);
+-webkit-transform: scale(1.3,-1) rotate(0deg) translate(-50px,-140px);
+
+	width: 260px;
+	height: 260px;
+	float: left;
+	position: relative;
+	margin: -35px;
+	margin-top:60px;
+}
+
+
