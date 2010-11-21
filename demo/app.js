@@ -13,6 +13,12 @@
 		var imageCaption = $('#imageCaption');
 		$('#demo-frame div.wrapper').parent().append(html).end().remove();
 		
+		
+		$sliderCtrl = $('#slider');
+		$coverflowCtrl = $('#coverflow');
+		$coverflowImages = $('#coverflow img');
+		$sliderVertical  = $("#slider-vertical");
+		
 			   
 	    //Set the default image index.   
 		setDefault(7);
@@ -20,8 +26,7 @@
 
            //Set the default item to display on load.
            //Correct indexing
-		   function setDefault($n)
-		   {
+		   function setDefault($n){
 		      defaultItem = $n-1;  
 		   }
 		   
@@ -33,7 +38,7 @@
 
 			
 			//Initialize CoverFlow
-			$("#coverflow").coverflow({
+			$coverflowCtrl.coverflow({
 			    item: defaultItem,
 			    duration:1200,
 				select: function(event, sky) 
@@ -45,14 +50,13 @@
 			
 
            //Initialize Slider
-			$("#slider").slider({
+			$sliderCtrl.slider({
 				min: 0,
 				max: $('#coverflow > *').length-1,
 				value: defaultItem,
 				slide: function(event, ui) {
-					$('#coverflow').coverflow('select', ui.value, true);
+					$coverflowCtrl.coverflow('select', ui.value, true);
 					$('.coverflowItem').removeClass('ui-selected');
-					
 	                $('.coverflowItem:eq(' + (ui.value) +')').addClass('ui-selected');
 	                setCaption($('.coverflowItem:eq(' + (ui.value) +')').html());
 
@@ -62,31 +66,27 @@
 				
 		   //Skip to an item in the CoverFlow	
 		   function skipTo($itemNumber)
-           {
-              $("#slider").slider( "option", "value", $itemNumber);
-              $('#coverflow').coverflow('select', $itemNumber, true);
+           {  
+              $sliderCtrl.slider( "option", "value", $itemNumber);
+              $coverflowCtrl.coverflow('select', $itemNumber, true);
               $('.coverflowItem').removeClass('ui-selected');
 	          $('.coverflowItem:eq(' + ($itemNumber) +')').addClass('ui-selected');
 	          setCaption($('.coverflowItem:eq(' + ($itemNumber) +')').html());
-	       
-	         
+
            }
 
 
 
 		//Generate the text-list of items below the coverflow images.
-		$('#coverflow img').each(function(index, value)
+		$coverflowImages.each(function(index, value)
 		{
 		   $artist = $(this).data('artist');
 		   $album = $(this).data('album');
 		   
-		   try
-		   {
+		   try{
 		      listContent += "<li class='ui-state-default coverflowItem' data-itemlink='" 
 		                   + (index) +"'>" + $artist + " - " + $album +"</li>";
-		   }
-		   catch(e)
-		   { 
+		   }catch(e){ 
 		   }
 		});
 		
@@ -104,15 +104,13 @@
 		
 		
 		//Handle keyboard events
-		$(document).keydown(function(e) 
-		{
-		  $current = $('#slider').slider('value');
+		$(document).keydown(function(e){
+		  $current = $sliderCtrl.slider('value');
 	
 		   switch(e.keyCode)
 		   {   
 		     case 38:
-		     if($current > 0)
-		     { 
+		     if($current > 0){ 
 		       $current= $current-1;
 		       skipTo($current);
 		     }
@@ -120,8 +118,7 @@
 		     
 		     case 40:
 		     
-		     if($current < $('#coverflow > *').length-1)
-		     { 
+		     if($current < $('#coverflow > *').length-1){ 
 		       $current = $current+1;
 		       skipTo($current);
 		      }	     
@@ -143,7 +140,7 @@
 
 
 	//set up the slider	
-	$("#slider-vertical").slider({
+	$sliderVertical.slider({
 		orientation: "vertical",
 		range: "max",
 		min: 0,
@@ -158,20 +155,19 @@
 	});
 
 	
-	var origSliderHeight = $("#slider-vertical").height();//read the original slider height
+	var origSliderHeight = $sliderVertical.height();//read the original slider height
 	var sliderHeight = origSliderHeight - handleHeight ;//the height through which the handle can move needs to be the original height minus the handle height
 	var sliderMargin =  (origSliderHeight - sliderHeight)*0.5;//so the slider needs to have both top and bottom margins equal to half the difference
 	
 	
 	/*Force the scrollers to bring the current item into view.*/
 	/*This can all be commented out if not needed*/
-	function setScrollPositions(item)
-	{
+	function setScrollPositions(item){
 	
 	var q =  item * 5;
 	var qx = -35;
 
-	$('#slider-vertical').slider('value', q);
+	$sliderVertical.slider('value', q);
 	$('#sortable').css('top', -q + qx);
 	
 
@@ -187,14 +183,13 @@
 	$(document).mousewheel(function(event, delta){
 	
   		var speed = 1;
-	    var sliderVal = $("#slider").slider("value");//read current value of the slider
+	    var sliderVal = $sliderCtrl.slider("value");//read current value of the slider
 		var coverflowItem = 0;
 		var cflowlength = $('#coverflow > *').length-1;
 
   
        
-       if(delta > 0 && sliderVal > 0)
-       {
+       if(delta > 0 && sliderVal > 0){
          
            sliderVal -=1;
          
@@ -203,7 +198,7 @@
           if(delta < 0 && sliderVal < cflowlength)
           {
            sliderVal +=1;
-           }
+          }
           
        }
        

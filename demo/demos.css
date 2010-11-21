@@ -349,6 +349,7 @@ div.demo-description {
 
 body {
 	background-color: #000;
+	background: url('images/tile.gif');
 }
 
 #coverflow {
@@ -367,6 +368,13 @@ body {
 	float: left;
 	position: relative;
 	margin: -35px;
+	
+/*
+-webkit-box-shadow:  1px 1px 6px #292929;
+-moz-box-shadow: 1px 1px 6px #292929;
+box-shadow: 1px 1px 6px #292929; 
+*/
+
 }
 
 div.wrapper {
@@ -376,7 +384,7 @@ div.wrapper {
 	overflow: hidden;
 	position: relative;
 	margin: 0 auto;
-	background-color: #000;
+	
 }
 
 #demo-frame {
@@ -400,6 +408,7 @@ div.wrapper {
 	padding-left: 1.5em;
 	font-size: 1.4em;
 	height: 18px;
+	border:none;
 }
 
 #sortable li span {
@@ -408,8 +417,16 @@ div.wrapper {
 }
 
 .ui-selected {
-	background: #F39814;
+
 	color: white;
+
+background: #EDA32D; /* old browsers */
+background: -moz-linear-gradient(top, #EDA32D 0%, #F9731E 99%); /* firefox */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#EDA32D), color-stop(99%,#F9731E)); /* webkit */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#EDA32D', endColorstr='#F9731E',GradientType=0 ); /* ie */
+border:none;
+
+
 }
 
 .pageWrapper {
