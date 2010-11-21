@@ -190,9 +190,7 @@
   
        
        if(delta > 0 && sliderVal > 0){
-         
            sliderVal -=1;
-         
        }else{
           
           if(delta < 0 && sliderVal < cflowlength)
