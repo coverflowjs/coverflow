@@ -1,6 +1,7 @@
 /*
  * jQuery UI CoverFlow
-   Re-written for jQueryUI 1.8.6 by Addy Osmani with adjustments
+   Re-written for jQueryUI 1.8.6/jQuery core 1.4.4 by Addy Osmani with adjustments
+   for perspective change.
    Original Component: Paul Bakaus for jQueryUI 1.7 series
  */
 (function($){
@@ -18,7 +19,7 @@
 	
 	   options: {
 	   
-	   items: "> *", //> *
+	        items: "> *",
 			orientation: 'horizontal',
 			item: 0,
 			trigger: 'click',
@@ -35,14 +36,12 @@
 			//For < 1.8.2: this.items['outer'+this.props[1]](1);
 			
 			this.itemSize = 0.73 * this.items.innerWidth();
-		    
 			this.itemWidth = this.items.width();
 			this.itemHeight = this.items.height();
 			this.duration = o.duration;
 			this.current = o.item; //initial item
 			
-		
-		
+
 			//Bind click events on individual items
 			this.items.bind(o.trigger, function() {
 				self.select(this);
