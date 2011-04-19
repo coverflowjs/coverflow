@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>jQuery UI CoverFlow 2.1 | Addy Osmani</title>
+	<title>jQuery UI CoverFlow 2.1.1 | Addy Osmani</title>
 	
 	<!-- Include theme -->
 	
@@ -12,7 +12,7 @@
     <script type="text/javascript" src="js/jquery-ui-1.8.9.custom.min.js"></script>
 
 		
-	<!-- Include jQuery CoverFlow II widget -->
+	<!-- Include jQuery CoverFlow widget -->
 	<script type="text/javascript" src="js/ui.coverflow.js"></script>
 
 	<link type="text/css" href="css/demos.css" rel="stylesheet" />
@@ -25,31 +25,24 @@
 	<script src="js/jquery.mousewheel.min.js" type="text/javascript"></script>
 	<script src="js/app.js" type="text/javascript"></script>
 	<script type="text/javascript">
-	$(document).ready(function() {	
+	$(function(){	
 		var demo = {
 
-			// Faire défiler verticalement des elements
 			yScroll: function(wrapper, scrollable) {
 
 				var wrapper = $(wrapper), scrollable = $(scrollable),
 					loading = $('<div class="loading">Loading...</div>').appendTo(wrapper),
 					internal = null,
 					images	= null;
-				
-				// Preload
-				scrollable.hide();
-
-				
-				interval = setInterval(function(){
-						images = scrollable.find('img'),
-						completed = 0;
+					scrollable.hide();
+					images = scrollable.find('img');
+					completed = 0;
 					
 					images.each(function(){
 						if (this.complete) completed++;	
 					});
 					
 					if (completed == images.length){
-						clearInterval(interval);
 						setTimeout(function(){							
 							loading.hide();
 							wrapper.css({overflow: 'hidden'});						
@@ -58,7 +51,7 @@
 							});					
 						}, 1000);	
 					}
-				}, 100);
+			
 				
 				function enable(){
 					var inactiveMargin = 99,
