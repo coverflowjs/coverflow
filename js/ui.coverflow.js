@@ -24,7 +24,6 @@
 	        if(prop in elem.style){  
 	            pref = (prop);  
 	        }  
-	        //return '-' + pref.toLowerCase() + '-';  
 			return pref;
 	  }
 	
@@ -136,7 +135,7 @@
 				    //css[($.browser.safari ? 'webkit' : ($.browser.opera ? 'O' : 'Moz'))+'Transform'] = 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')'; 
 	           
 	
-				if(vendorPrefix == 'ms'){
+				if(vendorPrefix == 'ms' || vendorPrefix == ""){
 		
 					css["filter"] = "progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=1, M12=0, M21=" + (mod * (side == 'right' ? -0.2 : 0.2)) + ", M22=1";
 					css[self.props[2]] = ( (-i * (self.itemSize/2)) + (side == 'right'? -self.itemSize/2 : self.itemSize/2) * mod );
