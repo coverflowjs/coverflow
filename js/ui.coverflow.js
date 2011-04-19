@@ -8,10 +8,28 @@
 (function($){
 
 
+	function getPrefix( prop ){  
+	        var prefixes = ['Moz','Webkit','Khtml','O','ms'],  
+	            elem     = document.createElement('div'),  
+	            upper      = prop.charAt(0).toUpperCase() + prop.slice(1),  
+	            pref     = "",
+				len 	 = 0;
+	
+	        for(len = prefixes.length; len--;){  
+	            if((prefixes[len] + upper) in elem.style){  
+	                pref = (prefixes[len]);  
+	            }  
+	        }  
+	
+	        if(prop in elem.style){  
+	            pref = (prop);  
+	        }  
+	        //return '-' + pref.toLowerCase() + '-';  
+			return pref;
+	  }
+	
 
-	var browserVersion = $.browser.version.replace(/^(\d+\.)(.*)$/, function() { return arguments[1] + arguments[2].replace(/\./g, ''); });
-	//var supportsTransforms = !($.browser.mozilla && (parseFloat(browserVersion) <= 1.9)) && !$.browser.opera;
-	var supportsTransforms = !($.browser.mozilla && (parseFloat(browserVersion) <= 1.9)); 
+	var vendorPrefix = getPrefix('transform');
 	
 	$.easing.easeOutQuint = function (x, t, b, c, d) {
 		return c*((t=t/d-1)*t*t*t*t + 1) + b;
@@ -20,7 +38,6 @@
 	$.widget("ui.coverflow", {
 	
 	   options: {
-	   
 	        items: "> *",
 			orientation: 'horizontal',
 			item: 0,
@@ -70,9 +87,7 @@
 			this.previous = this.current;
 			this.current = !isNaN(parseInt(item,10)) ? parseInt(item,10) : this.items.index(item);
 			
-		
-			
-			
+
 			//Don't animate when clicking on the same item
 			if(this.previous == this.current) return false; 
 			
@@ -83,9 +98,7 @@
 			// 1. Stop the previous animation
 			// 2. Animate the parent's left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
-			
-				
-		
+
 			var animation = { coverflow: 1 };
 		
 		
@@ -113,51 +126,48 @@
 			var self = this, offset = null;
 	
 			
-			this.items.each(function(i) 
-			{
+			this.items.each(function(i) {
 			
 				
 				var side = (i == to && from-to < 0 ) ||  i-to > 0 ? 'left' : 'right',
 					mod = i == to ? (1-state) : ( i == from ? state : 1 ),
 					before = (i > from && i != to),
 					css = { zIndex: self.items.length + (side == "left" ? to-i : i-to) };
-					
-					 
-//		            css[($.browser.safari ? 'webkit' : 'Moz')+'Transform'] = 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')';
-					css[($.browser.safari ? 'webkit' : ($.browser.opera ? 'O' : 'Moz'))+'Transform'] = 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')'; 
+				    //css[($.browser.safari ? 'webkit' : ($.browser.opera ? 'O' : 'Moz'))+'Transform'] = 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')'; 
 	           
-	//
-	if($.browser.msie){
-	css["filter"] = "progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=1, M12=0, M21=" + (mod * (side == 'right' ? -0.2 : 0.2)) + ", M22=1";
-	}else{
-	css[($.browser.safari ? 'webkit' : ($.browser.opera ? 'O' : 'Moz'))+'Transform'] = 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')';
-}
+	
+				if(vendorPrefix == 'ms'){
+		
+					css["filter"] = "progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=1, M12=0, M21=" + (mod * (side == 'right' ? -0.2 : 0.2)) + ", M22=1";
+					css[self.props[2]] = ( (-i * (self.itemSize/2)) + (side == 'right'? -self.itemSize/2 : self.itemSize/2) * mod );
+		
+					if(i == self.current){
+					css.width = self.itemWidth * (1+((1-mod)*0.3));
+					css.height = css.width * (self.itemHeight / self.itemWidth);
+					css.top = -((css.height - self.itemHeight) / 3);
 
-	css[self.props[2]] = ( (-i * (self.itemSize/2)) + (side == 'right'? -self.itemSize/2 : self.itemSize/2) * mod );
+					css.left -= self.itemWidth/6 -50;
+					}
+					else{
+					css.width = self.itemWidth;
+					css.height = self.itemHeight;
+					css.top = 0;
 
-	if($.browser.msie){
-
-	if(i == self.current){
-	css.width = self.itemWidth * (1+((1-mod)*0.3));
-	css.height = css.width * (self.itemHeight / self.itemWidth);
-	css.top = -((css.height - self.itemHeight) / 3);
-
-	css.left -= self.itemWidth/6 -50;
-	}
-	else{
-	css.width = self.itemWidth;
-	css.height = self.itemHeight;
-	css.top = 0;
-
-	if(side == "left")
-	css.left -= self.itemWidth/5 -50;
-	}//end if
-
-	}//end i
+					if(side == "left"){
+					css.left -= self.itemWidth/5 -50;
+					}
+		
+					}//end if
+		
+		
+				}else{
+	
+					css[vendorPrefix + 'Transform'] = 'matrix(1,'+(mod * (side == 'right' ? -0.2 : 0.2))+',0,1,0,0) scale('+(1+((1-mod)*0.3)) + ')'; 
+					css[self.props[2]] = ( (-i * (self.itemSize/2)) + (side == 'right'? -self.itemSize/2 : self.itemSize/2) * mod );
+		
+				}
 	
 
-	
-				
 				$(this).css(css);
 
 

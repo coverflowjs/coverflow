@@ -31,16 +31,18 @@
 			// Faire défiler verticalement des elements
 			yScroll: function(wrapper, scrollable) {
 
-				var wrapper = $(wrapper), scrollable = $(scrollable);
+				var wrapper = $(wrapper), scrollable = $(scrollable),
+					loading = $('<div class="loading">Loading...</div>').appendTo(wrapper),
+					internal = null,
+					images	= null;
 				
 				// Preload
 				scrollable.hide();
-				var loading = $('<div class="loading">Loading...</div>').appendTo(wrapper);
+
 				
-				// Vérifier que toutes les images sont chargés
-				var interval = setInterval(function(){
-					var images = scrollable.find('img');
-					var completed = 0;
+				interval = setInterval(function(){
+						images = scrollable.find('img'),
+						completed = 0;
 					
 					images.each(function(){
 						if (this.complete) completed++;	
@@ -48,9 +50,7 @@
 					
 					if (completed == images.length){
 						clearInterval(interval);
-						// chrome fix
-						setTimeout(function(){
-							
+						setTimeout(function(){							
 							loading.hide();
 							wrapper.css({overflow: 'hidden'});						
 							scrollable.slideDown('slow', function(){
@@ -61,22 +61,19 @@
 				}, 100);
 				
 				function enable(){
-					var inactiveMargin = 99;					
-					// Cache for performance
-					var wrapperWidth = wrapper.width();
-					var wrapperHeight = wrapper.height();
-					var scrollableHeight = scrollable.outerHeight() + 2*inactiveMargin;
+					var inactiveMargin = 99,
+						wrapperWidth = wrapper.width(),
+						wrapperHeight = wrapper.height(),
+						scrollableHeight = scrollable.outerHeight() + 2*inactiveMargin,
+						wrapperOffset = 0,
+						top = 0,
+						lastTarget = null;
 
 					
-					var lastTarget;
 					wrapper.mousemove(function(e){
-						// Save target
 						lastTarget = e.target;
-			 
-						var wrapperOffset = wrapper.offset();		
-						
-						// Scroll menu
-						var top = (e.pageY -  wrapperOffset.top) * (scrollableHeight - wrapperHeight) / wrapperHeight - inactiveMargin;
+						wrapperOffset = wrapper.offset();		
+						top = (e.pageY -  wrapperOffset.top) * (scrollableHeight - wrapperHeight) / wrapperHeight - inactiveMargin;
 						if (top < 0){
 							top = 0;
 						}			
@@ -86,7 +83,6 @@
 			}
 		}
 		
-		// Appel de la methode
 		demo.yScroll('#scroll-pane', 'ul#sortable');
 
 			
