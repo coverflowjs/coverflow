@@ -1,18 +1,17 @@
 /*
 
-  jQuery UI CoverFlow 2.1 App for jQueryUI 1.8.9 / core 1.5
-  Copyright Addy Osmani 2010.
+  jQuery UI CoverFlow 2.1.2 App for jQueryUI 1.8.9 / core 1.6.2
+  Copyright Addy Osmani 2011.
   
   With contributions from Paul Bakhaus, Nicolas Bonnicci
   
 */
 
-	$(function() {
+$(function() {
 	
-
 		//cache core component references
-		var html = $('#demo-frame div.wrapper').html();
-		var imageCaption = $('#imageCaption');
+		var html = $('#demo-frame div.wrapper').html(),
+			imageCaption = $('#imageCaption');
 		$('#demo-frame div.wrapper').parent().append(html).end().remove();
 		$sliderCtrl = $('#slider');
 		$coverflowCtrl = $('#coverflow');
@@ -22,11 +21,9 @@
 	    //app defaults
         var defaultItem  = 0;
 		var listContent = "";
-		
 			   
        //Set the default image index.   
 	   setDefault(7);
-	
 
        //Set the default item to display on load.
        //Correct indexing
@@ -68,8 +65,7 @@
 		
 			
 	   //Skip to an item in the CoverFlow	
-	   function skipTo($itemNumber)
-       {  
+	   function skipTo( $itemNumber ){  
           $sliderCtrl.slider( "option", "value", $itemNumber);
           $coverflowCtrl.coverflow('select', $itemNumber, true);
           $('.coverflowItem').removeClass('ui-selected');
@@ -78,11 +74,8 @@
 
        }
 
-
-
 		//Generate the text-list of items below the coverflow images.
-		$coverflowImages.each(function(index, value)
-		{
+		$coverflowImages.each(function( index , value ){
 		   $artist = $(this).data('artist');
 		   $album = $(this).data('album');
 		   
@@ -106,7 +99,7 @@
 		
 		
 		//Handle keyboard events
-		$(document).keydown(function(e){
+		$(document).keydown(function( e ){
 		
 		  $current = $sliderCtrl.slider('value');
 		  
@@ -130,10 +123,8 @@
 		
 		
 		
-		
-
 	//change the main div to overflow-hidden as we can use the slider now
-	$("#scroll-pane").css('overflow','hidden');
+	$("#scroll-pane").css( 'overflow' , 'hidden' );
 	
 	//calculate the height that the scrollbar handle should be
 	var difference = $("#sortable").height()-$("#scroll-pane").height();//eg it's 200px longer 
@@ -165,7 +156,7 @@
 	
 	/*Force the scrollers to bring the current item into view.*/
 	/*This can all be commented out if not needed*/
-	function setScrollPositions(item){
+	function setScrollPositions( item ){
 	
 	var q =  item * 5;
 	var qx = -35;
@@ -175,15 +166,13 @@
 	
 
 	}
-	
 
 	setScrollPositions(defaultItem);
 
 	
-	
 //mousewheel support
 	
-	$(document).mousewheel(function(event, delta){
+	$(document).mousewheel( function( event, delta){
 	
   		var speed = 1;
 	    var sliderVal = $sliderCtrl.slider("value");//read current value of the slider
@@ -213,9 +202,5 @@
  	});
 	
 
-		
-	
-
-		
 });
 

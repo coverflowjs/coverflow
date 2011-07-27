@@ -1,12 +1,11 @@
 /*
  * jQuery UI CoverFlow
-   Re-written for jQueryUI 1.8.6/jQuery core 1.4.4 by Addy Osmani with adjustments
-   Maintenance updates for 1.8.9/jQuery core 1.5 made.
+   Re-written for jQueryUI 1.8.6/jQuery core 1.4.4+ by Addy Osmani with adjustments
+   Maintenance updates for 1.8.9/jQuery core 1.5, 1.6.2 made.
 
-   Original Component: Paul Bakaus for jQueryUI 1.7 series
+   Original Component: Paul Bakaus for jQueryUI 1.7 
  */
 (function($){
-
 
 	function getPrefix( prop ){  
 	        var prefixes = ['Moz','Webkit','Khtml','O','ms'],  
