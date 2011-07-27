@@ -1,6 +1,6 @@
 The jQueryUI Coverflow project seeks to create a fully functional 'CoverFlow' effect using a combination of jQuery, jQuery UI components and CSS3 transforms. The project builds on top of earlier work by jQuery team-member Paul Bakaus's coverflow component in an effort to push it towards being a closer representation of a coverflow. 
 
-New for Feb 2011: Coverflow 2.1 includes support for Webkit CSS3 reflections courtesy of Nicolas Bonnicci as well as support for jQuery 1.5 and jQuery UI 1.8.9
+Coverflow 2.1.2 includes support for Webkit CSS3 reflections courtesy of Nicolas Bonnicci as well as support for jQuery 1.6.2 and jQuery UI 1.8.9
 
 General changes for this project:
 
@@ -9,4 +9,4 @@ Changes included in this release include improvements to the angular perspective
 I also wanted to target releasing a CoverFlow project which would offer list support (eg. for playlists) and a good level of user interaction support. This release currently allows the use of keyboard navigation (both in the coverflow component, the slider and the list components) and also supports mousewheel navigation for the covers/sliders. 
 
 
-Work copyright Addy Osmani & Paul Bakaus, 2008,2009, 2010.
+Work copyright Addy Osmani & Paul Bakaus, 2008-2011.

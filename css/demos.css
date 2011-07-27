@@ -1,5 +1,6 @@
 body {
 	font-size: 62.5%;
+	background:#000;
 }
 
 table {
@@ -7,7 +8,7 @@ table {
 }
 
 h1 {
-  color:#000;
+  color:#fff;
   font-size:30px;
   letter-spacing:-1px;
   font-family:Arial;
@@ -345,11 +346,6 @@ div.demo-description {
 
 
 /* UI Overrides*/
-
-
-body {
-	background-color: #fff;
-}
 
 
 div.wrapper {
