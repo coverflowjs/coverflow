@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>jQuery UI CoverFlow 2.1.2</title>
+	<title>jQuery UI CoverFlow 2.2</title>
 	
 	<!-- Include theme -->
-	
 	<link type="text/css" href="css/jquery-ui-1.8.5.custom.css" rel="Stylesheet" />
 	
 	<!-- Include jQuery and UI -->
@@ -26,6 +25,8 @@
 	<script src="js/app.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	$(function(){	
+
+		
 		var demo = {
 
 			yScroll: function(wrapper, scrollable) {
@@ -49,7 +50,7 @@
 							scrollable.slideDown('slow', function(){
 								enable();	
 							});					
-						}, 1000);	
+						}, 0);	
 					}
 			
 				
@@ -75,6 +76,7 @@
 				}			
 			}
 		}
+
 		
 		demo.yScroll('#scroll-pane', 'ul#sortable');
 
@@ -89,49 +91,47 @@
 
 
 <div class="pageWrapper">
-<h1>jQuery UI CSS3 CoverFlow 2.1.2</h1>
-<div class="demo">
+	<h1>jQuery UI CSS3 CoverFlow 2.2 (Preview)</h1>
+	<div class="demo">
 
-	<div class="wrapper">
-		<div id="coverflow">
-            <img src="img/gorillaz-plasticbeach.jpg" data-artist="Gorillaz" data-album="Plastic Beach"/>
-			<img src="img/kingsofleon-comearoundsunshine.jpg" data-artist="Kings Of Leon" data-album="Come Around Sunshine"/>
-			<img src="img/kidrock-bornfree.jpg" data-artist="Kid Rock" data-album="Born Free"/>		
-			<img src="img/recovery-recovery.jpg" data-artist="Eminem" data-album="Recovery"/>
-			<img src="img/lilwayne-iamnotahumanbeing.jpg" data-artist="Lil Wayne" data-album="I Am Not A Human Being"/>
-			<img src="img/taylorswift-speaknow.jpg" data-artist="Taylor Swift" data-album="Speak Now"/>
-			<img src="img/thebandperry-thebandperry.jpg" data-artist="The Band Perry" data-album="The Band Perry"/>
-			<img src="img/maroon5-handsallover.jpg" data-artist="Maroon 5" data-album="Hands All Over"/>
-			<img src="img/mychemicalromance-dangerdays.jpg" data-artist="My Chemical Romance" data-album="Danger Days"/>
-			<img src="img/ironmaiden-thefinalfrontier.jpg" data-artist="Iron Maiden" data-album="The Final Frontier"/>
-			<img src="img/order of the black - black label society.jpg" data-artist="Order Of The Black" data-album="Black Label Society"/>	
-			<img src="img/usher-raymondvraymond.jpg" data-artist="Usher" data-album="Raymond V Raymond"/>
+		<div class="wrapper">
+			<div id="coverflow">
+	            <img src="img/gorillaz-plasticbeach.jpg" data-artist="Gorillaz" data-album="Plastic Beach"/>
+				<img src="img/kingsofleon-comearoundsunshine.jpg" data-artist="Kings Of Leon" data-album="Come Around Sunshine"/>
+				<img src="img/kidrock-bornfree.jpg" data-artist="Kid Rock" data-album="Born Free"/>		
+				<img src="img/recovery-recovery.jpg" data-artist="Eminem" data-album="Recovery"/>
+				<img src="img/lilwayne-iamnotahumanbeing.jpg" data-artist="Lil Wayne" data-album="I Am Not A Human Being"/>
+				<img src="img/taylorswift-speaknow.jpg" data-artist="Taylor Swift" data-album="Speak Now"/>
+				<img src="img/thebandperry-thebandperry.jpg" data-artist="The Band Perry" data-album="The Band Perry"/>
+				<img src="img/maroon5-handsallover.jpg" data-artist="Maroon 5" data-album="Hands All Over"/>
+				<img src="img/mychemicalromance-dangerdays.jpg" data-artist="My Chemical Romance" data-album="Danger Days"/>
+				<img src="img/ironmaiden-thefinalfrontier.jpg" data-artist="Iron Maiden" data-album="The Final Frontier"/>
+				<img src="img/order of the black - black label society.jpg" data-artist="Order Of The Black" data-album="Black Label Society"/>	
+				<img src="img/usher-raymondvraymond.jpg" data-artist="Usher" data-album="Raymond V Raymond"/>
+			</div>
 		</div>
 
-</div>
-
-<div id="imageCaption">
-Sample Text
-</div>
+		<div id="imageCaption">
+		Sample Text
+		</div>
 
 
-<div id='slider'></div>
-</div>
+		<div id='slider'></div>
+		</div>
 
 
-<div class="demo-description">
-</div>
+		<div class="demo-description">
+		</div>
 
-<div class="listholder">
+		<div class="listholder">
+		<div id="scroll-pane">
+		    <ul id="sortable"> 
+		    </ul>
+		</div>
 
-<div id="scroll-pane">
-    <ul id="sortable"> 
-    </ul>
-</div>
-
-<div id="slider-wrap">
-<div id="slider-vertical"></div>
-</div>
+		<div id="slider-wrap">
+		<div id="slider-vertical"></div>
+	</div>
 </div>
 
 <div class="pageInfo"> 
@@ -140,7 +140,7 @@ Sample Text
  
  <div style="margin-top: 20px; padding: 0pt 0.7em;" class="ui-state-highlight ui-corner-all"> 
 					<p><span style="float: left; margin-right: 0.3em;" class="ui-icon ui-icon-info"></span>
-					  Compatible with jQueryUI 1.8.9 and jQuery 1.5
+					  Compatible with jQueryUI 1.8.9 and jQuery 1.6.2+
 					</p>
   </div>
 				

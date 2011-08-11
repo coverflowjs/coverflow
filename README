@@ -1,8 +1,10 @@
-The jQueryUI Coverflow project seeks to create a fully functional 'CoverFlow' effect using a combination of jQuery, jQuery UI components and CSS3 transforms. The project builds on top of earlier work by jQuery team-member Paul Bakaus's coverflow component in an effort to push it towards being a closer representation of a coverflow. 
+The jQueryUI Coverflow project seeks to create a fully functional 'CoverFlow' effect using a combination of jQuery, jQuery UI components and CSS3 transforms.
 
-Coverflow 2.1.2 includes support for Webkit CSS3 reflections courtesy of Nicolas Bonnicci as well as support for jQuery 1.6.2 and jQuery UI 1.8.9
+Coverflow 2.2 (Preview) includes support for Webkit CSS3 reflections courtesy of Nicolas Bonnicci as well as support for jQuery 1.6.2 and jQuery UI 1.8.9. Cross-browser compatibility is also now in place.
 
 General changes for this project:
+
+Note: As of August, 2011 this project is being refactored. The underying coverflow component itself will largely remain unchanged, however I will be extending it to support more features and a tighter integration with features users are likely to user outside of the core coverflow itself.
 
 Changes included in this release include improvements to the angular perspective often seen in coverflow implementations, changes to improve the 'stack' effect, updated to bring the overall coverflow viewport to focus on the 'current' cover (as per the iTunes implementation of the effect).
 
