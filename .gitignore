@@ -30,3 +30,6 @@ dwsync.xml
 .svn
 publish
 .idea
+
+## nodejs dependencies
+node_modules

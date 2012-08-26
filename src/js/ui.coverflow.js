@@ -31,7 +31,7 @@
 		options: {
 			items: "> *",
 			// scale left/right images - 0>x<1
-			itemscale : .73,
+			itemscale : 0.73,
 			orientation: "horizontal",
 			active: 0,
 			duration : 200,
@@ -55,8 +55,7 @@
 			this.currentIndex = o.active;
 
 			if( $.isArray( o.trigger ) ) {
-				// TODO: jshint doesn't like the assignment
-				for( i = 0; binding = o.trigger[ i++ ]; ) {
+				for( i = 0; !! ( binding = o.trigger[ i++ ] ); ) {
 					itemBindings[ binding ] = this._select;
 				}
 
@@ -73,7 +72,7 @@
 			this.origElementDimensions = {
 				width: this.element.width(),
 				height: this.element.height()
-			}
+			};
 			this._on( this.items, itemBindings );
 
 		},
@@ -85,14 +84,14 @@
 			if( o.orientation === "vertical" ) {
 				this._topOrLeft = "top";
 				this._widthOrHeight = "height";
-				if( this._orientation != null && this._orientation == "horizontal" ) {
+				if( this._orientation != null && this._orientation === "horizontal" ) {
 					this._trigger( "orientationchange", null, this._ui() );
 				}
 				this._orientation = "vertical";
 			} else {
 				this._topOrLeft = "left";
 				this._widthOrHeight = "width";
-				if( this._orientation != null && this._orientation == "vertical" ) {
+				if( this._orientation != null && this._orientation === "vertical" ) {
 					this._trigger( "orientationchange", null, this._ui() );
 				}
 				this._orientation = "horizontal";
@@ -101,7 +100,7 @@
 			o.itemscale = parseFloat( o.itemscale );
 			o.itemscale = o.itemscale < 1 && o.itemscale > 0
 				? o.itemscale
-				: .73;
+				: 0.73;
 
 			this.itemSize = o.itemscale * this.items.innerWidth();
 
