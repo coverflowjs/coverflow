@@ -34,7 +34,7 @@
 			itemscale : 0.73,
 			orientation: "horizontal",
 			active: 0,
-			duration : 200,
+			duration : 400,
 			easing: "easeOutQuint",
 			// selection triggers
 			trigger: [
@@ -51,7 +51,6 @@
 
 			this.items = this.element.find( o.items );
 
-			this.duration = o.duration;
 			this.currentIndex = o.active;
 
 			if( $.isArray( o.trigger ) ) {
@@ -73,6 +72,7 @@
 				width: this.element.width(),
 				height: this.element.height()
 			};
+
 			this._on( this.items, itemBindings );
 
 		},
@@ -102,13 +102,19 @@
 				? o.itemscale
 				: 0.73;
 
-			this.itemSize = o.itemscale * this.items.innerWidth();
+			this.element
+				.addClass( "ui-coverflow" )
+				.parent()
+				.addClass( "ui-coverflow-wrapper" );
+
+			this.itemMargin = - Math.floor( ( 1- o.itemscale ) / 2 * this.items.innerWidth() );
 
 			// apply a negative margin so items stack
 			this.items.css({
-				margin : "" + -1 * Math.floor( ( 1- o.itemscale ) / 2 * this.items.innerWidth() ) + "px"
+				margin : "" + this.itemMargin + "px"
 			});
 
+			this.itemSize = o.itemscale * this.items.innerWidth();
 			this.itemWidth = this.items.width();
 			this.itemHeight = this.items.height();
 
@@ -116,16 +122,12 @@
 				? this.element.parent().outerWidth( false )
 				: this.element.parent().outerHeight( false );
 
-			//Center the actual parent"s left side within it's parent
+			//Center the actual parents' left side within it's parent
 			css = this._getCenterPosition();
 			// make sure there's enough space
 			css[ this._widthOrHeight ] = this.itemWidth * this.items.length;
 
-			this.element
-				.addClass( "ui-coverflow" )
-				.css( css )
-				.parent()
-				.addClass( "ui-coverflow-wrapper" );
+			this.element.css( css );
 
 			//Jump to the first item
 			this._refresh( 1, 0, this.currentIndex );
@@ -135,13 +137,12 @@
 			var animation = {},
 				o = this.options;
 
-			animation[ this._topOrLeft ] = Math.floor(
-				- this.currentIndex * this.itemSize / 2
-				//Center the items container
-				+ this.outerWidthOrHeight / 2 - this.itemSize / 2
-				//Subtract the padding of the items container
-				- parseInt( this.element.css( "padding" + _capitalize( this._topOrLeft ) ), 10 ) || 0
-			);
+			animation[ this._topOrLeft ] = - this.currentIndex * this.itemSize / 2;
+			animation[ this._topOrLeft ] += this.outerWidthOrHeight / 2 - this.itemSize / 2;
+			animation[ this._topOrLeft ] -= parseInt( this.element.css( "padding" + _capitalize( this._topOrLeft ) ), 10 ) || 0;
+			// add negativ margin of items;
+			animation[ this._topOrLeft ] += this.itemMargin;
+
 			return animation;
 		},
 		_select: function ( ev ) {
@@ -193,7 +194,6 @@
 			// 3. Use our custom coverflow animation which animates the item
 
 			$.extend( animation, this._getCenterPosition() );
-
 			this.element
 				// jump to end and release select trigger
 				.stop( true, true )
