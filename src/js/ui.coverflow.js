@@ -107,7 +107,7 @@
 				.parent()
 				.addClass( "ui-coverflow-wrapper" );
 
-			this.itemMargin = - Math.floor( ( 1- o.itemscale ) / 2 * this.items.innerWidth() );
+			this.itemMargin = - Math.floor( ( 1 - o.itemscale ) / 2 * this.items.innerWidth() );
 
 			// apply a negative margin so items stack
 			this.items.css({
@@ -139,9 +139,7 @@
 
 			animation[ this._topOrLeft ] = - this.currentIndex * this.itemSize / 2;
 			animation[ this._topOrLeft ] += this.outerWidthOrHeight / 2 - this.itemSize / 2;
-			animation[ this._topOrLeft ] -= parseInt( this.element.css( "padding" + _capitalize( this._topOrLeft ) ), 10 ) || 0;
-			// add negativ margin of items;
-			animation[ this._topOrLeft ] += this.itemMargin;
+			animation[ this._topOrLeft ] += 2 * this.itemMargin;
 
 			return animation;
 		},
@@ -200,7 +198,7 @@
 				.animate(
 					animation,
 					{
-						duration: this.options.duration,
+						duration: o.duration,
 						easing: o.easing,
 						complete : function () {
 							// fire select after animation has finished
