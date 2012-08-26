@@ -200,11 +200,11 @@
 					animation,
 					{
 						duration: this.options.duration,
-						easing: o.easing
-					},
-					function () {
-						// fire select after animation has finished
-						self._trigger( "select", null, this._ui() );
+						easing: o.easing,
+						complete : function () {
+							// fire select after animation has finished
+							self._trigger( "select", null, self._ui() );
+						}
 					}
 				);
 
