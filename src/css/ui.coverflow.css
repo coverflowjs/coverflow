@@ -1,0 +1,28 @@
+.ui-coverflow-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.ui-coverflow {
+    -webkit-perspective: 1000px;
+       -moz-perspective: 1000px;
+        -ms-perspective: 1000px;
+         -o-perspective: 1000px;
+            perspective: 1000px;
+
+    display: inline-block;
+    position: absolute;
+
+}
+
+.ui-coverflow > * {
+    -webkit-user-drag: none;
+       -moz-user-drag: none;
+        -ms-user-drag: none;
+         -o-user-drag: none;
+            user-drag: none;
+
+    -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(black), color-stop(.7, black), to(transparent));
+    position: relative;
+    cursor: pointer;
+}

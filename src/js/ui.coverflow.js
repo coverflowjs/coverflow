@@ -18,6 +18,7 @@
  * Events:
  *  beforeselect
  *  select
+ *  orientationchange
  */
 (function ( $ ) {
 
@@ -30,7 +31,7 @@
 		options: {
 			items: "> *",
 			// scale left/right images - 0>x<1
-			itemSize : .73,
+			itemscale : .73,
 			orientation: "horizontal",
 			active: 0,
 			duration : 200,
@@ -84,21 +85,29 @@
 			if( o.orientation === "vertical" ) {
 				this._topOrLeft = "top";
 				this._widthOrHeight = "height";
+				if( this._orientation != null && this._orientation == "horizontal" ) {
+					this._trigger( "orientationchange", null, this._ui() );
+				}
+				this._orientation = "vertical";
 			} else {
 				this._topOrLeft = "left";
 				this._widthOrHeight = "width";
+				if( this._orientation != null && this._orientation == "vertical" ) {
+					this._trigger( "orientationchange", null, this._ui() );
+				}
+				this._orientation = "horizontal";
 			}
 
-			o.itemSize = parseFloat( o.itemSize );
-			o.itemSize = o.itemSize < 1 && o.itemSize > 0
-				? o.itemSize
+			o.itemscale = parseFloat( o.itemscale );
+			o.itemscale = o.itemscale < 1 && o.itemscale > 0
+				? o.itemscale
 				: .73;
 
-			this.itemSize = o.itemSize * this.items.innerWidth();
+			this.itemSize = o.itemscale * this.items.innerWidth();
 
 			// apply a negative margin so items stack
 			this.items.css({
-				margin : "" + -1 * Math.floor( o.itemSize / 2 * this.items.innerWidth() ) + "px"
+				margin : "" + -1 * Math.floor( ( 1- o.itemscale ) / 2 * this.items.innerWidth() ) + "px"
 			});
 
 			this.itemWidth = this.items.width();
