@@ -352,10 +352,8 @@ div.wrapper {
 	height: 450px;
 	width: 800px; /*600*/
 	padding: 10px;
-	overflow: hidden;
-	position: relative;
 	margin: 0 auto;
-	
+
 }
 
 #coverflow {
@@ -373,11 +371,6 @@ div.wrapper {
 #coverflow img {
 	width: 260px;
 	height: 260px;
-	float: left;
-	position: relative;
-	margin: -35px;
-	 -webkit-box-reflect: below 5px -webkit-gradient(linear, left top, left bottom, from(black), color-stop(.7, black), to(transparent));
-
 }
 
 #demo-frame {
@@ -435,7 +428,7 @@ div.wrapper {
 	display: block;
 	font-size: 12px;
 	text-align: center;
-	
+
 }
 
 /* css for scrollbar*/
@@ -506,11 +499,3 @@ div.wrapper {
   font-size:12px;
   text-align:center;
 }
-
-
-
-
-
-
-
-
