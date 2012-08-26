@@ -129,6 +129,7 @@
 
 			//Jump to the first item
 			this._refresh( 1, 0, this.currentIndex );
+			this._trigger( "select", null, this._ui() );
 		},
 		_getCenterPosition : function () {
 			var animation = {},
