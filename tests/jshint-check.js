@@ -16,8 +16,6 @@ var fs = require("fs"),
 		curly : true,
 		// no trailing ws
 		trailing : true,
-		// sloppy ws
-		sloppy : true,
 		// don't tell me how to format my code buddy..
 		strict : false,
 		// crockfords whitespace settings - NOPE
@@ -32,7 +30,6 @@ var fs = require("fs"),
 		// no bitwise operators plz
 		bitwise : true,
 		indent : 4,
-		eqeq : false,
 		nomen : false,
 		laxbreak : true,
 		loopfunc : true,

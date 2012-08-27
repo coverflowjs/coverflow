@@ -22,10 +22,6 @@
  */
 (function ( $ ) {
 
-	var _capitalize = function( str ) {
-		return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
-	};
-
 	$.widget( "ui.coverflow", {
 
 		options: {
@@ -163,7 +159,7 @@
 					"beforeselect",
 					null,
 					this._ui(
-						this.items.index( index ), index
+						this.items.eq( index ), index
 					)
 				)
 			) {
@@ -258,7 +254,7 @@
 
 		_ui : function ( active, index ) {
 			return {
-				active: active || this.items.index( this.currentIndex ),
+				active: active || this.items.eq( this.currentIndex ),
 				index: index || this.currentIndex
 			};
 		},
