@@ -31,7 +31,7 @@
 	}
 
 	var el = $( "<div />" ),
-		style = el.get(0).style,
+		style = el.get( 0 ).style,
 		prefixes = 'Webkit Moz O ms'.split( ' ' );
 
 	$.support.transform = 'transform' in style;
@@ -68,53 +68,49 @@
 			stacking : 0.73,
 			orientation: "horizontal",
 			active: 0,
-			duration : 400,
+			duration : 200,
 			easing: "easeOutQuint",
 			// selection triggers
-			trigger: [
-				"focus",
-				"click"
-			]
+			trigger : {
+				itemfocus : true,
+				itemclick : true,
+				mousewheel : true,
+				swipe : true
+			}
 		},
 
 		_create: function () {
 
-			var o = this.options,
-				itemBindings = {},
-				i, binding;
+			var o = this.options;
 
 			this.items = this.element.find( o.items );
-
-			this.currentIndex = o.active;
-
-			if( $.isArray( o.trigger ) ) {
-				for( i = 0; !! ( binding = o.trigger[ i++ ] ); ) {
-					itemBindings[ binding ] = this._select;
-				}
-
-			} else if( ( typeof o.trigger === "string" ) && $.trim( o.trigger ) ) {
-
-				itemBindings[ $.trim( o.trigger ).toLowerCase() ] = this._select;
-
-			} else {
-
-				itemBindings.click = this._select;
-
-			}
 
 			this.origElementDimensions = {
 				width: this.element.width(),
 				height: this.element.height()
 			};
 
-			this._on( this.items, itemBindings );
+			if( o.trigger.itemfocus ) {
+				this._on( this.items, { focus : this._select });
+			}
 
-			this._on({
-				mousewheel: this._onMouseWheel,
-				DOMMouseScroll: this._onMouseWheel,
-				swipeleft: this.next, //this._swipeLeft,
-				swiperight: this.prev // this._swipeRight
-			});
+			if( o.trigger.itemclick ) {
+				this._on( this.items, { click : this._select });
+			}
+
+			if( o.trigger.mousewheel ) {
+				this._on({
+					mousewheel: this._onMouseWheel,
+					DOMMouseScroll: this._onMouseWheel
+				});
+			}
+
+			if( o.trigger.swipe ) {
+				this._on({
+					swipeleft: this.next, //this._swipeLeft,
+					swiperight: this.prev // this._swipeRight
+				});
+			}
 
 		},
 		_init : function () {
@@ -133,6 +129,8 @@
 				.addClass( "ui-coverflow-wrapper" );
 
 			this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * this.items.innerWidth() );
+
+			this.currentIndex = this._isValidIndex( o.active ) ? o.active : 0;
 
 			this.items
 				// apply a negative margin so items stack
@@ -155,7 +153,7 @@
 					this._trigger( "orientationchange", null, this._ui() );
 				}
 				this._orientation = "vertical";
-				this.itemSize = o.stacking * this.items.innerHeight();
+				this.itemSize = o.stacking * this.items.outerHeight( true );
 			} else {
 				this._topOrLeft = "left";
 				this._widthOrHeight = "width";
@@ -163,9 +161,10 @@
 					this._trigger( "orientationchange", null, this._ui() );
 				}
 				this._orientation = "horizontal";
-				this.itemSize = o.stacking * this.items.innerWidth();
+				this.itemSize = this.items.outerWidth(true);
 			}
 
+			this.itemSize = Math.round( this.itemSize );
 			this.outerWidthOrHeight = ( this._widthOrHeight === "width" )
 				? this.element.parent().outerWidth( false )
 				: this.element.parent().outerHeight( false );
@@ -188,19 +187,16 @@
 			pos = - this.currentIndex * this.itemSize / 2;
 			pos += this.outerWidthOrHeight / 2 - this.itemSize / 2;
 			pos -= parseInt( this.element.css('padding' + _capitalize( this._topOrLeft ) ) ,10 ) || 0;
+			pos = Math.floor( pos );
 
-			animation[ this._topOrLeft ] = Math.floor( pos );
+			animation[ this._topOrLeft ] = pos;
 
 			return animation;
 		},
 		_isValidIndex : function ( index ) {
-			if( this.currentIndex === index
-				|| index < 0
-				|| index  >= this.items.length
-			) {
-				return false;
-			}
-			return true;
+
+			index = parseInt( index, 10 );
+			return this.currentIndex !== index && !! this.items.get( index );
 		},
 		/*
 		on my android these fns would swipe towards last item in any case
@@ -248,8 +244,8 @@
 			}
 
 			this.previousIndex = this.currentIndex;
-
 			this.currentIndex = index;
+
 
 			var self = this,
 				to = Math.abs( self.previous - self.currentIndex ) <= 1
@@ -305,7 +301,7 @@
 					css = {
 						zIndex: self.items.length + ( side === "left" ? to - i : i - to )
 					},
-					scale = ( 1 + ( ( 1 - mod ) * 0.3 ) ),
+					scale = ( 1 + ( ( 1 - mod ) * .3 ) ),
 					matrixT, filters;
 
 				css[ self._topOrLeft ] = (
@@ -346,6 +342,7 @@
 			this.element
 				.parent()
 				.scrollTop( 0 );
+
 		},
 
 		_ui : function ( active, index ) {

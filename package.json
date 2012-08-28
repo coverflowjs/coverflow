@@ -1,8 +1,38 @@
 {
-    "name": "ui-coverflow-ii",
-    "version": "2.3.0",
-    "private": true,
-    "dependencies": {
-        "jshint" : ">=0.5.8"
-    }
+	"name": "ui-coverflow II",
+	"title": "jQuery UI Coverflow II",
+	"description": "A jQuery UI powered coverflow component that takes advantage of CSS3 features",
+	"version": "2.3.0pre",
+	"author": {
+		"name": "Paul Baukus, Addy Osmani, Sebastian Sauer",
+		"url": "https://github.com/basti1253/jqueryui-coverflow-ii/blob/master/AUTHORS.txt"
+	},
+	"maintainers": [
+		{
+			"name": "Sebastian Sauer",
+			"email": "info@dynpages.de",
+			"url": "http://jscouch.com"
+		}
+	],
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/basti1253/jqueryui-coverflow-ii.git"
+	},
+	"bugs": "https://github.com/addyosmani/jqueryui-coverflow-ii/issues",
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "https://github.com/basti1253/jqueryui-coverflow-ii/blob/master/MIT-LICENSE.txt"
+		}
+	],
+	"scripts": {
+		"test": "grunt qunit"
+	},
+	"dependencies": {
+		"jshint" : ">=0.5.8"
+	},
+	"devDependencies": {
+		"grunt": "~0.3.12",
+		"grunt-git-authors": "1.0.0"
+	}
 }
