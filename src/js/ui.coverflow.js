@@ -108,6 +108,11 @@
 			};
 
 			this._on( this.items, itemBindings );
+
+			this._on({
+				mousewheel : this._onMouseWheel,
+				DOMMouseScroll : this._onMouseWheel
+			});
 		},
 		_init : function () {
 
@@ -186,9 +191,13 @@
 			return animation;
 		},
 		_select: function ( ev ) {
-
 			this.select( ev.currentTarget );
-
+		},
+		next : function () {
+			return this.select( this.currentIndex + 1 );
+		},
+		prev : function () {
+			return this.select( this.currentIndex - 1 );
 		},
 		select : function( item ) {
 
@@ -197,7 +206,7 @@
 					? parseInt( item, 10 )
 					: this.items.index( item );
 
-			if( this.currentIndex === index ) {
+			if( this.currentIndex === index || index < 0 || index > this.items.length ) {
 				return false;
 			}
 
@@ -318,6 +327,17 @@
 				active: active || this.items.eq( this.currentIndex ),
 				index: index || this.currentIndex
 			};
+		},
+		_onMouseWheel : function ( ev ) {
+			var origEv = ev.originalEvent;
+
+			ev.preventDefault();
+
+			if( origEv.wheelDelta > 0 || origEv.detail < 0 ) {
+				this.next();
+				return;
+			}
+			this.prev();
 		},
 		_destroy : function () {
 
