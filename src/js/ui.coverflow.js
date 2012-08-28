@@ -110,9 +110,12 @@
 			this._on( this.items, itemBindings );
 
 			this._on({
-				mousewheel : this._onMouseWheel,
-				DOMMouseScroll : this._onMouseWheel
+				mousewheel: this._onMouseWheel,
+				DOMMouseScroll: this._onMouseWheel,
+				swipeleft: this.next,
+				swiperight: this.prev,
 			});
+
 		},
 		_init : function () {
 
