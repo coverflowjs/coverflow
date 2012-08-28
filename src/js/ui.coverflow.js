@@ -209,7 +209,10 @@
 					? parseInt( item, 10 )
 					: this.items.index( item );
 
-			if( this.currentIndex === index || index < 0 || index > this.items.length ) {
+			if( this.currentIndex === index
+				|| index < 0
+				|| index  >= this.items.length
+			) {
 				return false;
 			}
 
