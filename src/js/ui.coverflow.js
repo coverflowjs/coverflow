@@ -112,8 +112,8 @@
 			this._on({
 				mousewheel: this._onMouseWheel,
 				DOMMouseScroll: this._onMouseWheel,
-				swipeleft: this.next,
-				swiperight: this.prev,
+				swipeleft: this.next, //this._swipeLeft,
+				swiperight: this.prev // this._swipeRight
 			});
 
 		},
@@ -193,6 +193,29 @@
 
 			return animation;
 		},
+		_isValidIndex : function ( index ) {
+			if( this.currentIndex === index
+				|| index < 0
+				|| index  >= this.items.length
+			) {
+				return false;
+			}
+			return true;
+		},
+		/*
+		on my android these fns would swipe towards last item in any case
+		_swipeLeft : function( ev ) {
+			if( this._isValidIndex( this.currentIndex + 2 ) ) {
+				this.select( this.currentIndex + 2 );
+			}
+			this.select( this.items.length - 1 );
+		},
+		_swipeRight: function( ev ) {
+			if( this._isValidIndex( this.currentIndex - 2 ) ) {
+				this.select( this.currentIndex - 2 );
+			}
+			this.select( 0 );
+		},*/
 		_select: function ( ev ) {
 			this.select( ev.currentTarget );
 		},
@@ -209,10 +232,7 @@
 					? parseInt( item, 10 )
 					: this.items.index( item );
 
-			if( this.currentIndex === index
-				|| index < 0
-				|| index  >= this.items.length
-			) {
+			if( ! this._isValidIndex( index ) ) {
 				return false;
 			}
 
