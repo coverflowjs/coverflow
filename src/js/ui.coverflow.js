@@ -1,11 +1,9 @@
 /*
  * jQuery UI CoverFlow II
  *
- * Updates for jQuery 1.8 / jQueryUI 1.9 Sebastian Sauer
- *
+ * Refactored for jQuery 1.8 / jQueryUI 1.9 Sebastian Sauer
  * Re-written for jQueryUI 1.8.6/jQuery core 1.4.4+ by Addy Osmani with adjustments
  * Maintenance updates for 1.8.9/jQuery core 1.5, 1.6.2 made.
- *
  * Original Component: Paul Bakaus for jQueryUI 1.7
  *
  * Released under the MIT license.
@@ -32,23 +30,27 @@
 		return;
 	}
 
-	var el = document.createElement( "div" ),
-		prefixes = 'Webkit Moz O ms'.split( ' ' ) ;
+	var el = $( "<div />" ),
+		style = el.get(0).style,
+		prefixes = 'Webkit Moz O ms'.split( ' ' );
 
-	$.support.transform = 'transform' in el.style;
+	$.support.transform = 'transform' in style;
 
 	if( $.support.transform ) {
+		el.remove();
 		return;
 	}
 
 	$.each( prefixes, function( i, p ) {
-		if( p + 'Transform' in el.style ) {
+		if( p + 'Transform' in style ) {
 			$.support.transform = true;
 			// stop iteration
 			return false;
 		}
 		return true;
 	});
+
+	el.remove();
 
 })( jQuery );
 
@@ -62,8 +64,8 @@
 
 		options: {
 			items: "> *",
-			// scale left/right images - 0>x<1
-			itemscale : 0.73,
+			// item stacking - value 0>x<1
+			stacking : 0.73,
 			orientation: "horizontal",
 			active: 0,
 			duration : 400,
@@ -106,12 +108,37 @@
 			};
 
 			this._on( this.items, itemBindings );
-
 		},
 		_init : function () {
 
 			var o = this.options,
 				css;
+
+			o.stacking = parseFloat( o.stacking );
+			o.stacking = o.stacking < 1 && o.stacking > 0
+				? o.stacking
+				: 0.73;
+
+			this.element
+				.addClass( "ui-coverflow" )
+				.parent()
+				.addClass( "ui-coverflow-wrapper" );
+
+			this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * this.items.innerWidth() );
+
+			this.items
+				// apply a negative margin so items stack
+				.css({
+					margin : this.itemMargin
+				})
+				// set tabindex so widget items get focusable
+				// makes items accessible by keyboard
+				.addClass( 'ui-coverflow-item' )
+				.prop( "tabIndex", 0 );
+
+
+			this.itemWidth = this.items.width();
+			this.itemHeight = this.items.height();
 
 			if( o.orientation === "vertical" ) {
 				this._topOrLeft = "top";
@@ -120,6 +147,7 @@
 					this._trigger( "orientationchange", null, this._ui() );
 				}
 				this._orientation = "vertical";
+				this.itemSize = o.stacking * this.items.innerHeight();
 			} else {
 				this._topOrLeft = "left";
 				this._widthOrHeight = "width";
@@ -127,28 +155,8 @@
 					this._trigger( "orientationchange", null, this._ui() );
 				}
 				this._orientation = "horizontal";
+				this.itemSize = o.stacking * this.items.innerWidth();
 			}
-
-			o.itemscale = parseFloat( o.itemscale );
-			o.itemscale = o.itemscale < 1 && o.itemscale > 0
-				? o.itemscale
-				: 0.73;
-
-			this.element
-				.addClass( "ui-coverflow" )
-				.parent()
-				.addClass( "ui-coverflow-wrapper" );
-
-			this.itemMargin = - Math.floor( ( 1 - o.itemscale ) / 2 * this.items.innerWidth() );
-
-			// apply a negative margin so items stack
-			this.items.css({
-				margin : "" + this.itemMargin + "px"
-			});
-
-			this.itemSize = o.itemscale * this.items.innerWidth();
-			this.itemWidth = this.items.width();
-			this.itemHeight = this.items.height();
 
 			this.outerWidthOrHeight = ( this._widthOrHeight === "width" )
 				? this.element.parent().outerWidth( false )
@@ -171,10 +179,7 @@
 
 			pos = - this.currentIndex * this.itemSize / 2;
 			pos += this.outerWidthOrHeight / 2 - this.itemSize / 2;
-			pos -= parseInt(
-				this.element.css('padding' + _capitalize( this._topOrLeft ) )
-				,10
-			) || 0;
+			pos -= parseInt( this.element.css('padding' + _capitalize( this._topOrLeft ) ) ,10 ) || 0;
 
 			animation[ this._topOrLeft ] = Math.floor( pos );
 
@@ -220,11 +225,6 @@
 				},
 				delta = this.previousIndex - this.currentIndex;
 
-			animation[ this._topOrLeft ] = ( delta > 0 )
-					? '+=' + ( delta * this.itemSize / 2 )
-					: '-=' + ( Math.abs( delta * this.itemSize / 2 ) );
-			/**/
-
 			//Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
 			$.fx.step.coverflow = function( fx ) {
 				self._refresh( fx.now, to, self.currentIndex );
@@ -234,7 +234,7 @@
 			// 2. Animate the parent"s left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
 
-			//$.extend( animation, this._getCenterPosition() );
+			$.extend( animation, this._getCenterPosition() );
 			this.element
 				// jump to end and release select trigger
 				.stop( true, true )
@@ -288,8 +288,9 @@
 					0, 0
 				];
 
-				if( ! $.support.transform && $.browser.msie ){
+				if( ! $.support.transform && $.browser.msie ) {
 
+					// Adapted from Paul Baukus transformie lib
 					if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
 						this.style.filter = (this.style.filter ? '' : ' ' ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand')";
 					}
@@ -329,7 +330,7 @@
 			this.items.each( function () {
 				// TODO: needs testing
 				// remove transform
-				this.style = this.style.replace( /(-)?(webkit|moz|o|ms)?transform.*;/i, '' );
+				this.style = this.style.replace( /(webkit|moz|o|ms)?transform.*;/i, '' );
 				// remove margin
 				this.style = this.style.replace( /margin.*;/, '' );
 			});

@@ -15,12 +15,15 @@
 
 }
 
-.ui-coverflow > * {
+.ui-coverflow-item {
     -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(black), color-stop(.7, black), to(transparent));
     position: relative;
     cursor: pointer;
 }
 
+.ui-coverflow-item:focus {
+    outline: 0;
+}
 .ui-coverflow img {
     -webkit-user-drag: none;
        -moz-user-drag: none;

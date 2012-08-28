@@ -34,7 +34,8 @@ var fs = require("fs"),
 		laxbreak : true,
 		loopfunc : true,
 		predef : [
-			"jQuery"
+			"jQuery",
+			"Modernizr"
 		],
 		maxerr: 100
 	},
