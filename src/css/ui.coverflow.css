@@ -16,13 +16,17 @@
 }
 
 .ui-coverflow > * {
+    -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(black), color-stop(.7, black), to(transparent));
+    position: relative;
+    cursor: pointer;
+}
+
+.ui-coverflow img {
     -webkit-user-drag: none;
        -moz-user-drag: none;
         -ms-user-drag: none;
          -o-user-drag: none;
             user-drag: none;
 
-    -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(black), color-stop(.7, black), to(transparent));
-    position: relative;
-    cursor: pointer;
+    border: 0 none;
 }

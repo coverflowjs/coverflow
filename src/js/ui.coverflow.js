@@ -20,7 +20,43 @@
  *  select
  *  orientationchange
  */
+
+(function( $ ) {
+
+	if( $.support.transform != null ) {
+		return;
+	}
+
+	if( typeof Modernizr !== "undefined" && Modernizr.csstransforms != null ) {
+		$.support.transform = Modernizr.csstransforms;
+		return;
+	}
+
+	var el = document.createElement( "div" ),
+		prefixes = 'Webkit Moz O ms'.split( ' ' ) ;
+
+	$.support.transform = 'transform' in el.style;
+
+	if( $.support.transform ) {
+		return;
+	}
+
+	$.each( prefixes, function( i, p ) {
+		if( p + 'Transform' in el.style ) {
+			$.support.transform = true;
+			// stop iteration
+			return false;
+		}
+		return true;
+	});
+
+})( jQuery );
+
 (function ( $ ) {
+
+	var _capitalize = function( str ) {
+		return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
+	};
 
 	$.widget( "ui.coverflow", {
 
@@ -131,11 +167,16 @@
 		},
 		_getCenterPosition : function () {
 			var animation = {},
-				o = this.options;
+				pos;
 
-			animation[ this._topOrLeft ] = - this.currentIndex * this.itemSize / 2;
-			animation[ this._topOrLeft ] += this.outerWidthOrHeight / 2 - this.itemSize / 2;
-			animation[ this._topOrLeft ] += 2 * this.itemMargin;
+			pos = - this.currentIndex * this.itemSize / 2;
+			pos += this.outerWidthOrHeight / 2 - this.itemSize / 2;
+			pos -= parseInt(
+				this.element.css('padding' + _capitalize( this._topOrLeft ) )
+				,10
+			) || 0;
+
+			animation[ this._topOrLeft ] = Math.floor( pos );
 
 			return animation;
 		},
@@ -176,7 +217,13 @@
 					: self.currentIndex + ( self.previousIndex < self.currentIndex ? -1 : 1 ),
 				animation = {
 					coverflow : 1
-				};
+				},
+				delta = this.previousIndex - this.currentIndex;
+
+			animation[ this._topOrLeft ] = ( delta > 0 )
+					? '+=' + ( delta * this.itemSize / 2 )
+					: '-=' + ( Math.abs( delta * this.itemSize / 2 ) );
+			/**/
 
 			//Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
 			$.fx.step.coverflow = function( fx ) {
@@ -187,7 +234,7 @@
 			// 2. Animate the parent"s left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
 
-			$.extend( animation, this._getCenterPosition() );
+			//$.extend( animation, this._getCenterPosition() );
 			this.element
 				// jump to end and release select trigger
 				.stop( true, true )
@@ -224,7 +271,7 @@
 						zIndex: self.items.length + ( side === "left" ? to - i : i - to )
 					},
 					scale = ( 1 + ( ( 1 - mod ) * 0.3 ) ),
-					matrixT;
+					matrixT, filters;
 
 				css[ self._topOrLeft ] = (
 					( -i * ( self.itemSize / 2 ) )
@@ -241,7 +288,20 @@
 					0, 0
 				];
 
-				css.transform = "matrix(" + matrixT.join( "," ) + ")";
+				if( ! $.support.transform && $.browser.msie ){
+
+					if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
+						this.style.filter = (this.style.filter ? '' : ' ' ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand')";
+					}
+					filters = this.filters[ "DXImageTransform.Microsoft.Matrix" ];
+					filters.M11 = matrixT[ 0 ];
+					filters.M12 = matrixT[ 2 ];
+					filters.M21 = matrixT[ 1 ];
+					filters.M22 = matrixT[ 3 ];
+
+				} else {
+					css.transform = "matrix(" + matrixT.join( "," ) + ")";
+				}
 
 				$( this ).css( css );
 
