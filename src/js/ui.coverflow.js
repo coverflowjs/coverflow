@@ -116,17 +116,17 @@
 		_init : function () {
 
 			var o = this.options,
-				css;
+				css = {};
 
 			o.stacking = parseFloat( o.stacking );
-			o.stacking = o.stacking < 1 && o.stacking > 0
+			o.stacking = o.stacking > 0 && o.stacking < 1
 				? o.stacking
 				: 0.73;
 
 			this.element
 				.addClass( "ui-coverflow" )
 				.parent()
-				.addClass( "ui-coverflow-wrapper" );
+				.addClass( "ui-coverflow-wrapper ui-clearfix" );
 
 			this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * this.items.innerWidth() );
 
@@ -153,7 +153,10 @@
 					this._trigger( "orientationchange", null, this._ui() );
 				}
 				this._orientation = "vertical";
-				this.itemSize = o.stacking * this.items.outerHeight( true );
+				this.itemSize = this.items.outerHeight( true );
+
+				// make sure there's enough space
+				css[ this._widthOrHeight ] = this.itemHeight * this.items.length;
 			} else {
 				this._topOrLeft = "left";
 				this._widthOrHeight = "width";
@@ -161,19 +164,18 @@
 					this._trigger( "orientationchange", null, this._ui() );
 				}
 				this._orientation = "horizontal";
-				this.itemSize = this.items.outerWidth(true);
+				this.itemSize = this.items.outerWidth( true );
+
+				// make sure there's enough space
+				css[ this._widthOrHeight ] = this.itemWidth * this.items.length;
 			}
 
-			this.itemSize = Math.round( this.itemSize );
 			this.outerWidthOrHeight = ( this._widthOrHeight === "width" )
 				? this.element.parent().outerWidth( false )
 				: this.element.parent().outerHeight( false );
 
 			//Center the actual parents' left side within it's parent
-			css = this._getCenterPosition();
-			// make sure there's enough space
-			css[ this._widthOrHeight ] = this.itemWidth * this.items.length;
-
+			$.extend( css, this._getCenterPosition() );
 			this.element.css( css );
 
 			//Jump to the first item
@@ -187,7 +189,7 @@
 			pos = - this.currentIndex * this.itemSize / 2;
 			pos += this.outerWidthOrHeight / 2 - this.itemSize / 2;
 			pos -= parseInt( this.element.css('padding' + _capitalize( this._topOrLeft ) ) ,10 ) || 0;
-			pos = Math.floor( pos );
+			pos = Math.round( pos );
 
 			animation[ this._topOrLeft ] = pos;
 
@@ -196,7 +198,7 @@
 		_isValidIndex : function ( index ) {
 
 			index = parseInt( index, 10 );
-			return this.currentIndex !== index && !! this.items.get( index );
+			return this.currentIndex !== index && index > -1 && !! this.items.get( index );
 		},
 		/*
 		on my android these fns would swipe towards last item in any case
