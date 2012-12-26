@@ -7,7 +7,7 @@
 	<link type="text/css" href="css/jquery-ui.min.css" rel="Stylesheet" />
 
 	<!-- Include jQuery and UI -->
-	<script type="text/javascript" src="../libs/jquery-ui/jquery-1.8.0.js"></script>
+	<script type="text/javascript" src="../libs/jquery-ui/jquery-1.8.3.js"></script>
 	<script type="text/javascript" src="js/jquery-ui.min.js"></script>
 
 	<!-- Include jQuery CoverFlow widget -->
@@ -17,8 +17,11 @@
 	<link type="text/css" href="css/demos.css" rel="stylesheet" />
 
 	<!-- Transformie is a plugin that makes webkit's CSS transforms work in Internet Explorer -->
-	<script src="../src/js/sylvester.js" type="text/javascript"></script>
+	
+	<!--[if IE]>
+	<script src="../libs/sylvester/sylvester.js" type="text/javascript"></script>
 	<script src="../src/js/transformie.js" type="text/javascript"></script>
+	<![endif]-->
 
 	<!-- Include mousewheel dependancies and app files -->
 	<script src="../src/js/jquery.mousewheel.min.js" type="text/javascript"></script>
@@ -34,7 +37,7 @@
 
 
 <div class="pageWrapper">
-	<h1>jQuery UI CSS3 CoverFlow 2.2 (Preview)</h1>
+	<h1>jQuery UI CSS3 CoverFlow 2.2</h1>
 	<div class="demo">
 
 		<div class="wrapper">
@@ -83,7 +86,7 @@
 
  <div style="margin-top: 20px; padding: 0pt 0.7em;" class="ui-state-highlight ui-corner-all">
 					<p><span style="float: left; margin-right: 0.3em;" class="ui-icon ui-icon-info"></span>
-					  Compatible with jQueryUI 1.8.9 and jQuery 1.6.2+
+					  Compatible with jQueryUI 1.8.9+ and jQuery 1.6.2+
 					</p>
   </div>
 
