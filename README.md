@@ -1,4 +1,6 @@
-# Ui Coverflow
+# UI Coverflow
+
+![](https://raw.github.com/addyosmani/jqueryui-coverflow-ii/master/demo/img/screenshot.png)
 
 The jQueryUI Coverflow project seeks to create a fully functional 'CoverFlow' effect using a combination of jQuery, jQuery UI components and CSS3 transforms.
 
