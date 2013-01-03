@@ -132,7 +132,7 @@
 
 			this.currentIndex = this._isValidIndex( o.active ) ? o.active : 0;
 
-			this.items
+			this.activeItem = this.items
 				// apply a negative margin so items stack
 				.css({
 					margin : this.itemMargin
@@ -140,7 +140,10 @@
 				// set tabindex so widget items get focusable
 				// makes items accessible by keyboard
 				.addClass( 'ui-coverflow-item' )
-				.prop( "tabIndex", 0 );
+					.prop( "tabIndex", 0 )
+					.removeClass( 'ui-state-active' )
+					.eq( this.currentIndex )
+					.addClass( 'ui-state-active' );
 
 
 			this.itemWidth = this.items.width();
@@ -277,6 +280,10 @@
 						duration: o.duration,
 						easing: o.easing,
 						complete : function () {
+							self.activeItem = self.items
+								.removeClass( 'ui-state-active' )
+								.eq( self.currentIndex )
+								.addClass( 'ui-state-active' );
 							// fire select after animation has finished
 							self._trigger( "select", null, self._ui() );
 						}
@@ -349,7 +356,7 @@
 
 		_ui : function ( active, index ) {
 			return {
-				active: active || this.items.eq( this.currentIndex ),
+				active: this.activeItem,
 				index: index || this.currentIndex
 			};
 		},

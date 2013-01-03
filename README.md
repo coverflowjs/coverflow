@@ -6,15 +6,11 @@ The jQueryUI Coverflow project seeks to create a fully functional 'CoverFlow' ef
 
 ## Getting Started
 
-`#: git clone https://github.com/basti1253/jqueryui-coverflow-ii.git ui-coverflow`
-`#: cd ui-coverflow`
-`#: git pull origin jqueryui19 && git submodule update --init`
+`#: git clone git://github.com/addyosmani/jqueryui-coverflow-ii.git`
+`#: cd jqueryui-coverflow-ii`
+`#: git pull origin master && git submodule update --init`
 
-Check out demo/index.html in your browser.
-
-**please note**
-
-This is highly experimental code. IE support temporarily dropped - I'll reinclude support after more testing/refactoring.
+Check out demo/index.html or tests/visual.html in your browser.
 
 ## automatic event binding:
 

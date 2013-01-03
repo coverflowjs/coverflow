@@ -4,28 +4,21 @@
 	<title>jQuery UI CoverFlow 2.2</title>
 
 	<!-- Include theme -->
-	<link type="text/css" href="css/jquery-ui.min.css" rel="Stylesheet" />
+	<link type="text/css" href="css/jquery-ui.min.css" rel="stylesheet" />
+	<link type="text/css" href="css/demos.css" rel="stylesheet" />
+	<link type="text/css" href="../src/css/ui.coverflow.css" rel="stylesheet" />
 
 	<!-- Include jQuery and UI -->
 	<script type="text/javascript" src="../libs/jquery-ui/jquery-1.8.3.js"></script>
-	<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="../libs/jquery-ui/ui/jquery.ui.core.js"></script>
+	<script type="text/javascript" src="../libs/jquery-ui/ui/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="../libs/jquery-ui/ui/jquery.ui.effect.js"></script>
+
+	<script type="text/javascript" src="../libs/jquery-mobile/jquery.mobile.vmouse.js"></script>
+	<script type="text/javascript" src="../libs/jquery-mobile/jquery.mobile.touch.js"></script>
 
 	<!-- Include jQuery CoverFlow widget -->
 	<script type="text/javascript" src="../src/js/ui.coverflow.js"></script>
-
-	<link type="text/css" href="../src/css/ui.coverflow.css" rel="stylesheet" />
-	<link type="text/css" href="css/demos.css" rel="stylesheet" />
-
-	<!-- Transformie is a plugin that makes webkit's CSS transforms work in Internet Explorer -->
-	
-	<!--[if IE]>
-	<script src="../libs/sylvester/sylvester.js" type="text/javascript"></script>
-	<script src="../src/js/transformie.js" type="text/javascript"></script>
-	<![endif]-->
-
-	<!-- Include mousewheel dependancies and app files -->
-	<script src="../src/js/jquery.mousewheel.min.js" type="text/javascript"></script>
-	<!--script src="js/app.js" type="text/javascript"></script-->
 	<script type="text/javascript">
 	$(function(){
 		$('#coverflow').coverflow();
@@ -39,7 +32,6 @@
 <div class="pageWrapper">
 	<h1>jQuery UI CSS3 CoverFlow 2.2</h1>
 	<div class="demo">
-
 		<div class="wrapper">
 			<div id="coverflow">
 	            <img src="img/gorillaz-plasticbeach.jpg" data-artist="Gorillaz" data-album="Plastic Beach"/>
@@ -56,48 +48,32 @@
 				<img src="img/usher-raymondvraymond.jpg" data-artist="Usher" data-album="Raymond V Raymond"/>
 			</div>
 		</div>
-
 		<div id="imageCaption">
 		Sample Text
 		</div>
-
-
 		<div id='slider'></div>
-		</div>
+	</div>
+	<div class="demo-description"></div>
 
-
-		<div class="demo-description">
-		</div>
-
-		<div class="listholder">
+	<div class="listholder">
 		<div id="scroll-pane">
-		    <ul id="sortable">
-		    </ul>
+			<ul id="sortable">
+			</ul>
 		</div>
 
 		<div id="slider-wrap">
-		<div id="slider-vertical"></div>
+			<div id="slider-vertical"></div>
+		</div>
+	</div>
+
+	<div class="pageInfo">
+		Interaction supported: Cover-click, Slider, Playlist-click, Bi-Directional Keyboard Navigation, Mouse-Slide, MouseWheel, Swipe.
+		<div style="margin-top: 20px; padding: 0pt 0.7em;" class="ui-state-highlight ui-corner-all">
+			<p><span style="float: left; margin-right: 0.3em;" class="ui-icon ui-icon-info"></span>
+				Compatible with jQueryUI 1.9+ and jQuery 1.8+
+			</p>
+		</div>
 	</div>
 </div>
-
-<div class="pageInfo">
- Interaction supported: Cover-click, Slider, Playlist-click, Bi-Directional Keyboard Navigation, Mouse-Slide, MouseWheel.
-
-
- <div style="margin-top: 20px; padding: 0pt 0.7em;" class="ui-state-highlight ui-corner-all">
-					<p><span style="float: left; margin-right: 0.3em;" class="ui-icon ui-icon-info"></span>
-					  Compatible with jQueryUI 1.8.9+ and jQuery 1.6.2+
-					</p>
-  </div>
-
-
-</div>
-
-
-</div>
-
-
-
-
 </body>
 </html>
