@@ -140,10 +140,10 @@
 				// set tabindex so widget items get focusable
 				// makes items accessible by keyboard
 				.addClass( 'ui-coverflow-item' )
-					.prop( "tabIndex", 0 )
-					.removeClass( 'ui-state-active' )
-					.eq( this.currentIndex )
-					.addClass( 'ui-state-active' );
+				.prop( "tabIndex", 0 )
+				.removeClass( 'ui-state-active' )
+				.eq( this.currentIndex )
+				.addClass( 'ui-state-active' );
 
 
 			this.itemWidth = this.items.width();
@@ -271,6 +271,7 @@
 			// 3. Use our custom coverflow animation which animates the item
 
 			$.extend( animation, this._getCenterPosition() );
+
 			this.element
 				// jump to end and release select trigger
 				.stop( true, true )
@@ -278,17 +279,18 @@
 					animation,
 					{
 						duration: o.duration,
-						easing: o.easing,
-						complete : function () {
-							self.activeItem = self.items
-								.removeClass( 'ui-state-active' )
-								.eq( self.currentIndex )
-								.addClass( 'ui-state-active' );
-							// fire select after animation has finished
-							self._trigger( "select", null, self._ui() );
-						}
+						easing: o.easing
 					}
-				);
+				)
+				.promise()
+				.done(function() {
+					self.activeItem = self.items
+							.removeClass( 'ui-state-active' )
+							.eq( self.currentIndex )
+							.addClass( 'ui-state-active' );
+					// fire select after animation has finished
+					self._trigger( "select", null, self._ui() );
+				});
 
 			return true;
 		},
@@ -310,7 +312,7 @@
 					css = {
 						zIndex: self.items.length + ( side === "left" ? to - i : i - to )
 					},
-					scale = ( 1 + ( ( 1 - mod ) * .3 ) ),
+					scale = ( 1 + ( ( 1 - mod ) * 0.3 ) ),
 					matrixT, filters;
 
 				css[ self._topOrLeft ] = (

@@ -20,14 +20,14 @@
     margin: 50px auto 0;
     height: 600px;
 }
-#coverflow {
+.coverflow, #coverflow {
     width: 800px;
     height: 600px;
     margin-top: 50px;
     padding-top: 100px;
 }
 
-#coverflow img {
+.coverflow img, #coverflow img {
     width: 260px;
     height: 260px;
     -webkit-box-reflect: none !important;
