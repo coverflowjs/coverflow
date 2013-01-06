@@ -25,12 +25,12 @@
 		return;
 	}
 
-	if( typeof Modernizr !== "undefined" && Modernizr.csstransforms != null ) {
+	if( typeof Modernizr !== 'undefined' && Modernizr.csstransforms != null ) {
 		$.support.transform = Modernizr.csstransforms;
 		return;
 	}
 
-	var el = $( "<div />" ),
+	var el = $( '<div />' ),
 		style = el.get( 0 ).style,
 		prefixes = 'Webkit Moz O ms'.split( ' ' );
 
@@ -57,16 +57,16 @@
 		return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 	};
 
-	$.widget( "ui.coverflow", {
+	$.widget( 'ui.coverflow', {
 
 		options: {
-			items: "> *",
+			items: '> *',
 			// item stacking - value 0>x<1
 			stacking : 0.73,
-			orientation: "horizontal",
+			orientation: 'horizontal',
 			active: 0,
 			duration : 200,
-			easing: "easeOutQuint",
+			easing: 'easeOutQuint',
 			// selection triggers
 			trigger : {
 				itemfocus : true,
@@ -122,9 +122,9 @@
 				: 0.73;
 
 			this.element
-				.addClass( "ui-coverflow" )
+				.addClass( 'ui-coverflow' )
 				.parent()
-				.addClass( "ui-coverflow-wrapper ui-clearfix" );
+				.addClass( 'ui-coverflow-wrapper ui-clearfix' );
 
 			this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * this.items.innerWidth() );
 
@@ -138,7 +138,7 @@
 				// set tabindex so widget items get focusable
 				// makes items accessible by keyboard
 				.addClass( 'ui-coverflow-item' )
-				.prop( "tabIndex", 0 )
+				.prop( 'tabIndex', 0 )
 				.removeClass( 'ui-state-active' )
 				.eq( this.currentIndex )
 				.addClass( 'ui-state-active' );
@@ -147,31 +147,31 @@
 			this.itemWidth = this.items.width();
 			this.itemHeight = this.items.height();
 
-			if( o.orientation === "vertical" ) {
-				this._topOrLeft = "top";
-				this._widthOrHeight = "height";
-				if( this._orientation != null && this._orientation === "horizontal" ) {
-					this._trigger( "orientationchange", null, this._ui() );
+			if( o.orientation === 'vertical' ) {
+				this._topOrLeft = 'top';
+				this._widthOrHeight = 'height';
+				if( this._orientation != null && this._orientation === 'horizontal' ) {
+					this._trigger( 'orientationchange', null, this._ui() );
 				}
-				this._orientation = "vertical";
+				this._orientation = 'vertical';
 				this.itemSize = this.items.outerHeight( true );
 
 				// make sure there's enough space
 				css[ this._widthOrHeight ] = this.itemHeight * this.items.length;
 			} else {
-				this._topOrLeft = "left";
-				this._widthOrHeight = "width";
-				if( this._orientation != null && this._orientation === "vertical" ) {
-					this._trigger( "orientationchange", null, this._ui() );
+				this._topOrLeft = 'left';
+				this._widthOrHeight = 'width';
+				if( this._orientation != null && this._orientation === 'vertical' ) {
+					this._trigger( 'orientationchange', null, this._ui() );
 				}
-				this._orientation = "horizontal";
+				this._orientation = 'horizontal';
 				this.itemSize = this.items.outerWidth( true );
 
 				// make sure there's enough space
 				css[ this._widthOrHeight ] = this.itemWidth * this.items.length;
 			}
 
-			this.outerWidthOrHeight = ( this._widthOrHeight === "width" )
+			this.outerWidthOrHeight = ( this._widthOrHeight === 'width' )
 				? this.element.parent().outerWidth( false )
 				: this.element.parent().outerHeight( false );
 
@@ -181,7 +181,7 @@
 
 			//Jump to the first item
 			this._refresh( 1, this._getFrom(), this.currentIndex );
-			this._trigger( "select", null, this._ui() );
+			this._trigger( 'select', null, this._ui() );
 		},
 		_getCenterPosition : function () {
 			var animation = {},
@@ -227,7 +227,7 @@
 			}
 
 			if( false === this._trigger(
-					"beforeselect",
+					'beforeselect',
 					null,
 					this._ui(
 						this.items.eq( index ), index
@@ -272,7 +272,7 @@
 			};
 
 			// 1. Stop the previous animation
-			// 2. Animate the parent"s left/top property so the current item is in the center
+			// 2. Animate the parent's left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
 
 			this.element
@@ -333,7 +333,7 @@
 					.eq( this.currentIndex )
 					.addClass( 'ui-state-active' );
 			// fire select after animation has finished
-			this._trigger( "select", null, this._ui() );
+			this._trigger( 'select', null, this._ui() );
 		},
 		_refresh: function( state, from, to ) {
 			var self = this,
@@ -342,21 +342,21 @@
 			this.items.each( function ( i ) {
 
 				var side = ( ( i === to && from - to < 0 ) || i - to  > 0 )
-						? "left"
-						: "right",
+						? 'left'
+						: 'right',
 					mod = ( i === to )
 						? ( 1 - state )
 						: ( i === from ? state : 1 ),
 					before = ( i > from && i !== to ),
 					css = {
-						zIndex: self.items.length + ( side === "left" ? to - i : i - to )
+						zIndex: self.items.length + ( side === 'left' ? to - i : i - to )
 					},
 					scale = ( 1 + ( ( 1 - mod ) * 0.3 ) ),
 					matrixT, filters;
 
 				css[ self._topOrLeft ] = (
 					( -i * ( self.itemSize / 2 ) )
-					+ ( side === "right"
+					+ ( side === 'right'
 						? -self.itemSize / 2
 						: self.itemSize / 2
 					) * mod
@@ -364,7 +364,7 @@
 
 				// transponed matrix
 				matrixT = [
-					scale, ( mod * ( side === "right" ? -0.2 : 0.2 ) ),
+					scale, ( mod * ( side === 'right' ? -0.2 : 0.2 ) ),
 					0, scale,
 					0, 0
 				];
@@ -372,17 +372,17 @@
 				if( ! $.support.transform && $.browser.msie ) {
 
 					// Adapted from Paul Baukus transformie lib
-					if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
-						this.style.filter = (this.style.filter ? '' : ' ' ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand')";
+					if( ! this.filters[ 'DXImageTransform.Microsoft.Matrix' ] ) {
+						this.style.filter = (this.style.filter ? '' : ' ' ) + 'progid:DXImageTransform.Microsoft.Matrix(sizingMethod="auto expand")';
 					}
-					filters = this.filters[ "DXImageTransform.Microsoft.Matrix" ];
+					filters = this.filters[ 'DXImageTransform.Microsoft.Matrix' ];
 					filters.M11 = matrixT[ 0 ];
 					filters.M12 = matrixT[ 2 ];
 					filters.M21 = matrixT[ 1 ];
 					filters.M22 = matrixT[ 3 ];
 
 				} else {
-					css.transform = "matrix(" + matrixT.join( "," ) + ")";
+					css.transform = 'matrix(' + matrixT.join( ',' ) + ')';
 				}
 
 				$( this ).css( css );
@@ -428,7 +428,7 @@
 				this.style = this.style.replace( /margin.*;/, '' );
 			});
 
-			this._superApply( "destroy", arguments );
+			this._superApply( 'destroy', arguments );
 		}
 
 	});
