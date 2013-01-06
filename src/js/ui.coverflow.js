@@ -19,6 +19,37 @@
  *  orientationchange
  */
 
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+// requestAnimationFrame polyfill by Erik Möller
+// fixes from Paul Irish and Tino Zijdel
+
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+}());
+
 (function( $ ) {
 
 	if( $.support.transform != null ) {
@@ -36,19 +67,16 @@
 
 	$.support.transform = 'transform' in style;
 
-	if( $.support.transform ) {
-		el.remove();
-		return;
+	if( ! $.support.transform ) {
+		$.each( prefixes, function( i, p ) {
+			if( p + 'Transform' in style ) {
+				$.support.transform = true;
+				// stop iteration
+				return false;
+			}
+			return true;
+		});
 	}
-
-	$.each( prefixes, function( i, p ) {
-		if( p + 'Transform' in style ) {
-			$.support.transform = true;
-			// stop iteration
-			return false;
-		}
-		return true;
-	});
 
 	el.remove();
 
@@ -78,6 +106,7 @@
 				swipe : true
 			}
 		},
+		isTicking : false,
 
 		_create: function () {
 
@@ -182,7 +211,7 @@
 			this.element.css( css );
 
 			//Jump to the first item
-			this._refresh( 1, 0, this.currentIndex );
+			this._refresh( 1, this._getFrom(), this.currentIndex );
 			this._trigger( "select", null, this._ui() );
 		},
 		_getCenterPosition : function () {
@@ -200,23 +229,9 @@
 		},
 		_isValidIndex : function ( index ) {
 
-			index = parseInt( index, 10 );
+			index = ~~index;
 			return this.currentIndex !== index && index > -1 && !! this.items.get( index );
 		},
-		/*
-		on my android these fns would swipe towards last item in any case
-		_swipeLeft : function( ev ) {
-			if( this._isValidIndex( this.currentIndex + 2 ) ) {
-				this.select( this.currentIndex + 2 );
-			}
-			this.select( this.items.length - 1 );
-		},
-		_swipeRight: function( ev ) {
-			if( this._isValidIndex( this.currentIndex - 2 ) ) {
-				this.select( this.currentIndex - 2 );
-			}
-			this.select( 0 );
-		},*/
 		_select: function ( ev ) {
 			this.select( ev.currentTarget );
 		},
@@ -226,6 +241,11 @@
 		prev : function () {
 			return this.select( this.currentIndex - 1 );
 		},
+		_getFrom : function () {
+			return Math.abs( this.previous - this.currentIndex ) <= 1
+				? this.previousIndex
+				: this.currentIndex + ( this.previousIndex < this.currentIndex ? -1 : 1 );
+		},
 		select : function( item ) {
 
 			var o = this.options,
@@ -233,7 +253,7 @@
 					? parseInt( item, 10 )
 					: this.items.index( item );
 
-			if( ! this._isValidIndex( index ) ) {
+			if( ! this._isValidIndex( index ) || this.isTicking ) {
 				return false;
 			}
 
@@ -251,26 +271,40 @@
 			this.previousIndex = this.currentIndex;
 			this.currentIndex = index;
 
-
 			var self = this,
-				to = Math.abs( self.previous - self.currentIndex ) <= 1
-					? self.previousIndex
-					: self.currentIndex + ( self.previousIndex < self.currentIndex ? -1 : 1 ),
 				animation = {
 					coverflow : 1
 				},
 				delta = this.previousIndex - this.currentIndex;
 
+			$.extend( animation, this._getCenterPosition() );
+
+			if( ! $.fn.transit || ! $.support.transition || true ) {
+				this._animation( o, animation );
+				return true;
+			}
+
+			$.extend( animation, {
+				duration: o.duration,
+				easing: o.easing
+			});
+
+			this._transition( animation );
+			return true;
+		},
+		_animation : function( o, animation ) {
+
+			var self = this,
+				from = this._getFrom();
+
 			//Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
 			$.fx.step.coverflow = function( fx ) {
-				self._refresh( fx.now, to, self.currentIndex );
+				self._refresh( fx.now, from, self.currentIndex );
 			};
 
 			// 1. Stop the previous animation
 			// 2. Animate the parent"s left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
-
-			$.extend( animation, this._getCenterPosition() );
 
 			this.element
 				// jump to end and release select trigger
@@ -284,19 +318,55 @@
 				)
 				.promise()
 				.done(function() {
-					self.activeItem = self.items
-							.removeClass( 'ui-state-active' )
-							.eq( self.currentIndex )
-							.addClass( 'ui-state-active' );
-					// fire select after animation has finished
-					self._trigger( "select", null, self._ui() );
+					self._onAnimationEnd.apply( self );
 				});
-
-			return true;
 		},
+		_transition : function( o ) {
+			var self = this,
+				d = new Date(),
+				state = 0,
+				from = this._getFrom(),
+				to = this.currentIndex,
+				loopRefresh = function() {
+					var state = ( Date.now() - d.getTime() ) / o.duration;
 
+					if( self.isTicking ) {
+						requestAnimationFrame( loopRefresh );
+					}
+					if( state > 1 ) {
+						self.isTicking = false;
+					} else {
+						self._refresh( state, from, to );
+					}
+				};
+
+			this.isTicking = true;
+
+			loopRefresh();
+
+			this.element
+				.transit({
+						x : - this.currentIndex * this.itemSize / 2
+					},
+					o.duration,
+					this.options.easing,
+					function() {
+						self._onAnimationEnd.apply( self );
+						self.isTicking = false;
+						self._refresh( 1, from, to );
+					}
+				);
+		},
+		_onAnimationEnd : function() {
+
+			this.activeItem = this.items
+					.removeClass( 'ui-state-active' )
+					.eq( this.currentIndex )
+					.addClass( 'ui-state-active' );
+			// fire select after animation has finished
+			this._trigger( "select", null, this._ui() );
+		},
 		_refresh: function( state, from, to ) {
-
 			var self = this,
 				offset = null;
 

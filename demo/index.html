@@ -13,7 +13,10 @@
 	<script type="text/javascript" src="../libs/jquery-ui/ui/jquery.ui.core.js"></script>
 	<script type="text/javascript" src="../libs/jquery-ui/ui/jquery.ui.widget.js"></script>
 	<script type="text/javascript" src="../libs/jquery-ui/ui/jquery.ui.effect.js"></script>
+	<!-- transitions support -->
+	<script type="text/javascript" src="../libs/jquery.transit.js"></script>
 
+	<!-- mobile swipe event support -->
 	<script type="text/javascript" src="../libs/jquery-mobile/jquery.mobile.vmouse.js"></script>
 	<script type="text/javascript" src="../libs/jquery-mobile/jquery.mobile.touch.js"></script>
 
@@ -21,7 +24,10 @@
 	<script type="text/javascript" src="../src/js/ui.coverflow.js"></script>
 	<script type="text/javascript">
 	$(function(){
-		$('#coverflow').coverflow();
+		$('#coverflow').coverflow({
+			active : 1,
+			duration: 1
+		});
 	});
 	</script>
 </head>
