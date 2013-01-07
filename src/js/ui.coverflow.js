@@ -121,6 +121,11 @@
 				? o.stacking
 				: 0.73;
 
+			o.duration = ~~ o.duration;
+			if( o.duration < 1 ) {
+				o.duration = 1;
+			}
+
 			this.element
 				.addClass( 'ui-coverflow' )
 				.parent()
@@ -248,7 +253,7 @@
 
 			$.extend( animation, this._getCenterPosition() );
 
-			if( ! $.fn.transit || ! $.support.transition || true ) {
+			if( ! $.fn.transit || ! $.support.transition || ! $.isFunction( window.requestAnimationFrame ) ) {
 				this._animation( o, animation );
 				return true;
 			}
@@ -291,6 +296,7 @@
 				});
 		},
 		_transition : function( o ) {
+
 			var self = this,
 				d = new Date(),
 				state = 0,
@@ -310,7 +316,6 @@
 				};
 
 			this.isTicking = true;
-
 			loopRefresh();
 
 			this.element
@@ -320,9 +325,9 @@
 					o.duration,
 					this.options.easing,
 					function() {
-						self._onAnimationEnd.apply( self );
 						self.isTicking = false;
 						self._refresh( 1, from, to );
+						self._onAnimationEnd.apply( self );
 					}
 				);
 		},
