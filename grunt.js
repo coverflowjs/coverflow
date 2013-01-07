@@ -23,6 +23,21 @@ module.exports = function (grunt) {
                 dest: 'dist/ui.coverflow.min.js'
             }
         },
+		copy: {
+			dist : {
+				options : {
+					flatten : true
+				},
+				files : {
+					'dist/': [
+						'AUTHORS.txt',
+						'MIT-LICENSE.txt',
+						'README.md',
+						'src/css/ui.coverflow.css'
+					]
+				}
+			}
+		},
 		qunit: {
 			all: ['tests/qunit/**/*.html']
 		},
@@ -52,6 +67,7 @@ module.exports = function (grunt) {
         }
     });
 
-	grunt.registerTask( 'default', 'lint qunit min' );
+	grunt.loadNpmTasks( 'grunt-contrib-copy' );
+	grunt.registerTask( 'default', 'lint qunit min copy' );
 
 };

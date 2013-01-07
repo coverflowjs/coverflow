@@ -10,7 +10,7 @@
 	"maintainers": [
 		{
 			"name": "Addy Osmani",
-			"email": "your mail address",
+			"email": "addyosmani@gmail.com",
 			"url": "http://addyosmani.com"
 		},
 		{
@@ -21,7 +21,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/basti1253/jqueryui-coverflow-ii.git"
+		"url": "git://github.com/addyosmani/jqueryui-coverflow-ii.git"
 	},
 	"bugs": "https://github.com/addyosmani/jqueryui-coverflow-ii/issues",
 	"licenses": [
@@ -37,6 +37,6 @@
 	},
 	"devDependencies": {
 		"grunt": "~0.3.17",
-		"grunt-git-authors": "1.0.0"
+		"grunt-contrib-copy" : "~0.3.2"
 	}
 }
