@@ -412,10 +412,10 @@
 			ev.preventDefault();
 
 			if( origEv.wheelDelta > 0 || origEv.detail < 0 ) {
-				this.next();
+				this.prev();
 				return;
 			}
-			this.prev();
+			this.next();
 		},
 		_destroy : function () {
 
