@@ -105,8 +105,8 @@
 
 			if( o.trigger.swipe ) {
 				this._on({
-					swipeleft: this.next, //this._swipeLeft,
-					swiperight: this.prev // this._swipeRight
+					swipeleft: this.next,
+					swiperight: this.prev
 				});
 			}
 
@@ -186,6 +186,9 @@
 
 			//Jump to the first item
 			this._refresh( 1, this._getFrom(), this.currentIndex );
+
+			this.initialOffset = parseInt( this.activeItem.css( 'left' ), 10 );
+
 			this._trigger( 'select', null, this._ui() );
 		},
 		_getCenterPosition : function () {
@@ -320,7 +323,7 @@
 
 			this.element
 				.transit({
-						x : - this.currentIndex * this.itemSize / 2
+						x : - this.currentIndex * this.itemSize / 2 - this.initialOffset
 					},
 					o.duration,
 					this.options.easing,
@@ -425,15 +428,12 @@
 				.parent()
 				.removeClass( 'ui-coverflow-wrapper' );
 
-			this.items.each( function () {
-				// TODO: needs testing
-				// remove transform
-				this.style = this.style.replace( /(webkit|moz|o|ms)?transform.*;/i, '' );
-				// remove margin
-				this.style = this.style.replace( /margin.*;/, '' );
+			this.items.css({
+				transform : '',
+				margin: 0
 			});
 
-			this._superApply( 'destroy', arguments );
+			this._super();
 		}
 
 	});
