@@ -23,7 +23,6 @@
 		},
 		_transition : function( o ) {
 
-			console.log( o )
 			ok( true, 'transition handler called' );
 			return this._super( o );
 		}
