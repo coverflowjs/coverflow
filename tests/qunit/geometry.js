@@ -127,7 +127,6 @@
 
 					testItemProperties( item, state );
 				});
-				//equal( ui.active.offset(), activePosition, "Recurring active position" );
 				start();
 			})
 			.coverflow( 'select', itemIndex );

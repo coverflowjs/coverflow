@@ -377,7 +377,7 @@
 					0, 0
 				];
 
-				if( ! $.support.transform && $.browser.msie ) {
+				if( ! $.support.transform ) {
 
 					// Adapted from Paul Baukus transformie lib
 					if( ! this.filters[ 'DXImageTransform.Microsoft.Matrix' ] ) {

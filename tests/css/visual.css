@@ -19,6 +19,8 @@
 .wrapper {
     margin: 50px auto 0;
     height: 600px;
+    position: relative;
+    overflow: hidden;
 }
 .coverflow, #coverflow {
     width: 800px;

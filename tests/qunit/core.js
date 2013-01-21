@@ -12,7 +12,7 @@
 		deepEqual( this.el.get( 0 ), this.el.coverflow( 'widget' ).get( 0 ), 'widget method' );
 	});
 
-	asyncTest( "focus tabbable", 22, function() {
+	asyncTest( 'focus tabbable', 22, function() {
 		var el = this.el,
 			items = this.items,
 			itemsLength = items.length,
@@ -25,10 +25,10 @@
 			})
 			.on( 'coverflowselect', function( ev, ui ) {
 
-				strictEqual( i++ , ui.index, "focused item " + ( ui.index + 1 ) );
+				strictEqual( i++ , ui.index, 'focused item ' + ( ui.index + 1 ) );
 
 				equal( document.activeElement, ui.active.get( 0 ),
-					"active element matches ui.active" );
+					'active element matches ui.active' );
 
 				if( ui.index < ( itemsLength - 1 ) ) {
 					items
