@@ -16,7 +16,6 @@
  * Events:
  *  beforeselect
  *  select
- *  orientationchange
  */
 
 (function( $ ) {
@@ -53,17 +52,12 @@
 
 (function ( $ ) {
 
-	var _capitalize = function( str ) {
-		return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
-	};
-
 	$.widget( 'ui.coverflow', {
 
 		options: {
 			items: '> *',
 			// item stacking - value 0>x<1
 			stacking : 0.73,
-			orientation: 'horizontal',
 			active: 0,
 			duration : 200,
 			easing: 'easeOutQuint',
@@ -150,35 +144,15 @@
 
 
 			this.itemWidth = this.items.width();
+
 			this.itemHeight = this.items.height();
 
-			if( o.orientation === 'vertical' ) {
-				this._topOrLeft = 'top';
-				this._widthOrHeight = 'height';
-				if( this._orientation != null && this._orientation === 'horizontal' ) {
-					this._trigger( 'orientationchange', null, this._ui() );
-				}
-				this._orientation = 'vertical';
-				this.itemSize = this.items.outerHeight( true );
+			this.itemSize = this.items.outerWidth( true );
 
-				// make sure there's enough space
-				css[ this._widthOrHeight ] = this.itemHeight * this.items.length;
-			} else {
-				this._topOrLeft = 'left';
-				this._widthOrHeight = 'width';
-				if( this._orientation != null && this._orientation === 'vertical' ) {
-					this._trigger( 'orientationchange', null, this._ui() );
-				}
-				this._orientation = 'horizontal';
-				this.itemSize = this.items.outerWidth( true );
+			this.outerWidth = this.element.parent().outerWidth( false );
 
-				// make sure there's enough space
-				css[ this._widthOrHeight ] = this.itemWidth * this.items.length;
-			}
-
-			this.outerWidthOrHeight = ( this._widthOrHeight === 'width' )
-				? this.element.parent().outerWidth( false )
-				: this.element.parent().outerHeight( false );
+			// make sure there's enough space
+			css.width = this.itemWidth * this.items.length;
 
 			//Center the actual parents' left side within it's parent
 			$.extend( css, this._getCenterPosition() );
@@ -192,17 +166,14 @@
 			this._trigger( 'select', null, this._ui() );
 		},
 		_getCenterPosition : function () {
-			var animation = {},
-				pos;
+			var pos;
 
 			pos = - this.currentIndex * this.itemSize / 2;
-			pos += this.outerWidthOrHeight / 2 - this.itemSize / 2;
-			pos -= parseInt( this.element.css('padding' + _capitalize( this._topOrLeft ) ) ,10 ) || 0;
+			pos += this.outerWidth / 2 - this.itemSize / 2;
+			pos -= parseInt( this.element.css('paddingLeft' ) ,10 ) || 0;
 			pos = Math.round( pos );
 
-			animation[ this._topOrLeft ] = pos;
-
-			return animation;
+			return { left : pos };
 		},
 		_isValidIndex : function ( index ) {
 
@@ -362,7 +333,7 @@
 					scale = ( 1 + ( ( 1 - mod ) * 0.3 ) ),
 					matrixT, filters;
 
-				css[ self._topOrLeft ] = (
+				css.left = (
 					( -i * ( self.itemSize / 2 ) )
 					+ ( side === 'right'
 						? -self.itemSize / 2
