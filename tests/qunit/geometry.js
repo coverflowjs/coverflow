@@ -65,7 +65,7 @@
 
 	};
 
-	module( 'ui-coverflow: geometry', {
+	module( 'CoverflowJS: geometry', {
 		setup: function() {
 			this.el = $( '#qunit-fixture' ).find( '.coverflow' );
 			this.items = this.el.children();

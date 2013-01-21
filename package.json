@@ -1,6 +1,6 @@
 {
-	"name": "ui-coverflow",
-	"title": "jQuery UI Coverflow II",
+	"name": "CoverflowJS",
+	"title": "CoverflowJS",
 	"description": "A jQuery UI powered coverflow component that takes advantage of CSS3 features",
 	"version": "2.3.0pre",
 	"author": {
@@ -21,13 +21,13 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/addyosmani/jqueryui-coverflow-ii.git"
+		"url": "git://github.com/coverflowjs/coverflow.git"
 	},
-	"bugs": "https://github.com/addyosmani/jqueryui-coverflow-ii/issues",
+	"bugs": "https://github.com/coverflowjs/coverflow/issues",
 	"licenses": [
 		{
 			"type": "MIT",
-			"url": "https://github.com/basti1253/jqueryui-coverflow-ii/blob/master/MIT-LICENSE.txt"
+			"url": "https://github.com/coverflowjs/coverflow/blob/master/MIT-LICENSE.txt"
 		}
 	],
 	"scripts": {

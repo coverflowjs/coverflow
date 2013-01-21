@@ -6,8 +6,10 @@ The jQueryUI Coverflow project seeks to create a fully functional 'CoverFlow' ef
 
 ## Getting Started
 
-`#: git clone git://github.com/addyosmani/jqueryui-coverflow-ii.git`
-`#: cd jqueryui-coverflow-ii`
+`#: git clone git://github.com/coverflowjs/coverflow.git`
+
+`#: cd coverflow`
+
 `#: git pull origin master && git submodule update --init`
 
 Check out demo/index.html or tests/visual.html in your browser.
@@ -22,44 +24,9 @@ This coverflow effect binds to the following events on initialization:
  - items.click
  - items.focus
 
-
 ## public events:
  - beforeselect
  - select
- - orientationchange
-
-
-**changelog:**
-
-refactored internals:
-
- - options related:
-    - add stacking property to options : 0 < x < 1
-    - multiple trigger support, defaults to focus and click
-    - removed center and recenter options (don't see a usecase here)
-    - add animation related options: duration + easing
-
- - jQuery 1.8 related:
-    - drop prefix testing
-
- - jQueryUI 1.9 related:
-    - add jQueryUI 1.9 bindings
-    - add destroy method (needs testing)
-    - allow orientation change by providing _init() (needs testing + custom event)
-
- - internals:
-    - use easier assignments (dropped props-Property)
-    - whitespacing - see jQueryUI code guidelines
-    - add: beforeselect event
-    - fix: move select event trigger - triggers after animation finished
-    - fix: animation stop - jump to end
-    - fix: currentIndex assignMent
-    - refactored internals to make the code DRY
-    - moved demo/lib related files
-	- fix itemscale
-	- cleanup dirs
-	- added jQueryui dist files
-	- added jshint (use `npm install -d` and run `make test`)
 
 **LICENSE**
     MIT-license

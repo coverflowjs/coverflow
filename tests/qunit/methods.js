@@ -1,6 +1,6 @@
 (function($) {
 
-	module( 'ui-coverflow: methods', {
+	module( 'CoverflowJS: methods', {
 		setup: function() {
 			this.el = $( '#qunit-fixture' ).find( '.coverflow' );
 			this.items = this.el.children();

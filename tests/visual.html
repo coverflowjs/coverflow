@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>jQuery UI CSS3 CoverFlow visual positioning test</title>
+	<title>CoverflowJS - visual positioning test</title>
 	<meta charset="UTF-8" />
 
 	<link type="text/css" href="css/visual.css" rel="stylesheet" />
@@ -26,14 +26,16 @@
 
 	<script type="text/javascript">
 	$(function(){
-		$('#coverflow').coverflow();
+		$( '#coverflow' ).coverflow({
+			orientation : 'vertical'
+		});
 	});
 	</script>
 </head>
 <body>
 
 <div>
-	<h1>jQuery UI CSS3 CoverFlow 2.3 alpha</h1>
+	<h1>CoverflowJS</h1>
 	<div class="demo">
 		<div class="wrapper">
 			<div id="coverflow" class="ui-helper-clearfix">

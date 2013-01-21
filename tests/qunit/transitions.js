@@ -3,7 +3,7 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-	module( 'ui-coverflow: transitions', {
+	module( 'CoverflowJS: transitions', {
 		setup: function() {
 			this.el = $( '#qunit-fixture' ).find( '.coverflow' );
 			this.items = this.el.children();
