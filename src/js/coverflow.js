@@ -1,5 +1,5 @@
 /*
- * jQuery UI CoverFlow II
+ * CoverflowJS
  *
  * Refactored for jQuery 1.8 / jQueryUI 1.9 Sebastian Sauer
  * Re-written for jQueryUI 1.8.6/jQuery core 1.4.4+ by Addy Osmani with adjustments
@@ -12,6 +12,13 @@
  *  jquery.ui.core.js
  *  jquery.ui.widget.js
  *  jquery.ui.effect.js
+ *
+ * optionally depends on
+ * - css transitions:
+ * 		jquery.transit.js/ raf.js
+ *
+ * - in case you want swipe support and you don't use jQery mobile yet:
+ * 		jquery-mobile.custom.js
  *
  * Events:
  *  beforeselect
@@ -31,7 +38,7 @@
 
 	var el = $( '<div />' ),
 		style = el.get( 0 ).style,
-		prefixes = 'Webkit Moz O ms'.split( ' ' );
+		prefixes = [ 'Webkit', 'Moz', 'O', 'ms' ];
 
 	$.support.transform = 'transform' in style;
 
@@ -70,7 +77,6 @@
 			}
 		},
 		isTicking : false,
-
 		_create: function () {
 
 			var o = this.options;
@@ -103,7 +109,6 @@
 					swiperight: this.prev
 				});
 			}
-
 		},
 		_init : function () {
 
@@ -326,7 +331,6 @@
 					mod = ( i === to )
 						? ( 1 - state )
 						: ( i === from ? state : 1 ),
-					before = ( i > from && i !== to ),
 					css = {
 						zIndex: self.items.length + ( side === 'left' ? to - i : i - to )
 					},
@@ -373,7 +377,6 @@
 				.scrollTop( 0 );
 
 		},
-
 		_ui : function ( active, index ) {
 			return {
 				active: this.activeItem,
@@ -406,8 +409,6 @@
 
 			this._super();
 		}
-
 	});
-
 
 })( jQuery );
