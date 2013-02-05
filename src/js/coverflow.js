@@ -15,10 +15,10 @@
  *
  * optionally depends on
  * - css transitions:
- * 		jquery.transit.js/ raf.js
+ * jquery.transit.js/ raf.js
  *
  * - in case you want swipe support and you don't use jQery mobile yet:
- * 		jquery-mobile.custom.js
+ * jquery-mobile.custom.js
  *
  * Events:
  *  beforeselect

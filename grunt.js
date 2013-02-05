@@ -19,8 +19,8 @@ module.exports = function (grunt) {
         },
         min: {
             dist: {
-                src: [ '<banner:meta.banner>', 'src/js/ui.coverflow.js' ],
-                dest: 'dist/ui.coverflow.min.js'
+                src: [ '<banner:meta.banner>', 'src/js/coverflow.js' ],
+                dest: 'dist/coverflow.min.js'
             }
         },
 		copy: {
@@ -33,7 +33,7 @@ module.exports = function (grunt) {
 						'AUTHORS.txt',
 						'MIT-LICENSE.txt',
 						'README.md',
-						'src/css/ui.coverflow.css'
+						'src/css/coverflow.css'
 					]
 				}
 			}
@@ -42,7 +42,7 @@ module.exports = function (grunt) {
 			all: ['tests/qunit/**/*.html']
 		},
         lint: {
-			all : [ 'src/js/ui.coverflow.js' ]
+			src : 'src/js/coverflow.js'
         },
         jshint: {
             options: {
