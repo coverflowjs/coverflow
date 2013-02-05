@@ -3,11 +3,11 @@
 <head>
 	<title>CoverflowJS - visual positioning test</title>
 	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
 
 	<link type="text/css" href="css/visual.css" rel="stylesheet" />
-	<link type="text/css" href="../src/css/ui.coverflow.css" rel="stylesheet" />
+	<link type="text/css" href="../src/css/coverflow.css" rel="stylesheet" />
 	<link type="text/css" href="../libs/jquery-ui/themes/base/jquery.ui.core.css" rel="stylesheet" />
-
 
 	<!-- Include jQuery and UI -->
 	<script type="text/javascript" src="../libs/jquery-ui/jquery-1.9.0.js"></script>
@@ -22,13 +22,11 @@
 	<script type="text/javascript" src="../libs/raf.js"></script>
 
 	<!-- Include jQuery CoverFlow widget -->
-	<script type="text/javascript" src="../src/js/ui.coverflow.js"></script>
+	<script type="text/javascript" src="../src/js/coverflow.js"></script>
 
 	<script type="text/javascript">
 	$(function(){
-		$( '#coverflow' ).coverflow({
-			orientation : 'vertical'
-		});
+		$( '#coverflow' ).coverflow();
 	});
 	</script>
 </head>

@@ -3,25 +3,6 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-	/*
-	======== A Handy Little QUnit Reference ========
-	http://docs.jquery.com/QUnit
-
-	Test methods:
-		expect(numAssertions)
-		stop(increment)
-		start(decrement)
-	Test assertions:
-		ok(value, [message])
-		equal(actual, expected, [message])
-		notEqual(actual, expected, [message])
-		deepEqual(actual, expected, [message])
-		notDeepEqual(actual, expected, [message])
-		strictEqual(actual, expected, [message])
-		notStrictEqual(actual, expected, [message])
-		raises(block, [expected], [message])
-	*/
-
 	var transformations = {
 		left : 'matrix(1, -0.2, 0, 1, 0, 0)',
 		active : 'matrix(1.3, 0, 0, 1.3, 0, 0)',
@@ -29,38 +10,56 @@
 	},
 	testItemProperties = function( item, state ) {
 
+		item = item.jquery ? item.get( 0 ) : item;
+
 		var $item = $( item ),
-			cssTransformation = $.trim( $item.css( 'transform' ) );
+			cssTransformation = ( $.support.transform )
+				? $.trim( $item.css( 'transform' ) )
+				: item.filters[ 'DXImageTransform.Microsoft.Matrix' ];
 
 		if( typeof state === 'undefined' ) {
 			state = 'active';
 		}
 		ok( $item.hasClass( 'ui-coverflow-item' ), 'item has widget items class.' );
 
-		switch( state ) {
-			case 'left':
-				strictEqual(
-						cssTransformation,
-						transformations.left,
-						'Item aligned left.'
-					);
-				equal( $item.hasClass( 'ui-state-active' ), false, 'item without ui-state-active css class' );
-				break;
-			case 'right':
-				strictEqual(
-						cssTransformation,
-						transformations.right,
-						'Item aligned right.'
-					);
-				equal( $item.hasClass( 'ui-state-active' ), false, 'item without ui-state-active css class' );
-				break;
-			default:
-				strictEqual(
-						cssTransformation,
-						transformations.active,
-						'Item at center position, scaled, active.'
-					);
-				equal( $item.hasClass( 'ui-state-active' ), true, 'item has ui-state-active css class' );
+		if( $.support.transform ) {
+			switch( state ) {
+				case 'left':
+					strictEqual(
+							cssTransformation,
+							transformations.left,
+							'Item aligned left.'
+						);
+					equal( $item.hasClass( 'ui-state-active' ), false, 'item without ui-state-active css class' );
+					break;
+				case 'right':
+					strictEqual(
+							cssTransformation,
+							transformations.right,
+							'Item aligned right.'
+						);
+					equal( $item.hasClass( 'ui-state-active' ), false, 'item without ui-state-active css class' );
+					break;
+				default:
+					strictEqual(
+							cssTransformation,
+							transformations.active,
+							'Item at center position, scaled, active.'
+						);
+					equal( $item.hasClass( 'ui-state-active' ), true, 'item has ui-state-active css class' );
+			}
+		} else {
+			switch( state ) {
+				case 'left':
+					equal( $item.hasClass( 'ui-state-active' ), false, 'item without ui-state-active css class' );
+					break;
+				case 'right':
+					equal( $item.hasClass( 'ui-state-active' ), false, 'item without ui-state-active css class' );
+					break;
+				default:
+					equal( $item.hasClass( 'ui-state-active' ), true, 'item has ui-state-active css class' );
+			}
+			ok( $.isPlainObject( cssTransformation ), 'dx filter matrix styles on item' )
 		}
 
 	};

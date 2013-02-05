@@ -306,7 +306,11 @@
 					function() {
 						self.isTicking = false;
 						self._refresh( 1, from, to );
-						self._onAnimationEnd.apply( self );
+
+						// apply animationend after last raf tick - otherwise Firefox fails randomly on offset unit testing
+						setTimeout( function() {
+							self._onAnimationEnd.apply( self );
+						}, 17 );
 					}
 				);
 		},
@@ -322,6 +326,10 @@
 		_refresh: function( state, from, to ) {
 			var self = this,
 				offset = null;
+
+			this.element
+				.parent()
+				.scrollTop( 0 );
 
 			this.items.each( function ( i ) {
 
@@ -371,11 +379,6 @@
 				$( this ).css( css );
 
 			});
-
-			this.element
-				.parent()
-				.scrollTop( 0 );
-
 		},
 		_ui : function ( active, index ) {
 			return {

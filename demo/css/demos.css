@@ -382,25 +382,20 @@ div.wrapper {
 
 }
 
-#sortable {
+#playlist {
 	list-style-type: none;
 	margin: 0 auto;
 	padding: 0;
-	width: 100%;
 }
 
-#sortable li {
+#playlist li {
 	margin: 0 3px 3px 3px;
 	padding: 0.4em;
 	padding-left: 1.5em;
 	font-size: 1.4em;
 	height: 18px;
 	border:none;
-}
-
-#sortable li span {
-	position: absolute;
-	margin-left: -1.3em;
+	cursor: pointer;
 }
 
 .ui-selected {
@@ -411,7 +406,6 @@ div.wrapper {
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#EDA32D), color-stop(99%,#F9731E)); /* webkit */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#EDA32D', endColorstr='#F9731E',GradientType=0 ); /* ie */
 	border:none;
-
 
 }
 
