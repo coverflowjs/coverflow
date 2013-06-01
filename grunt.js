@@ -62,7 +62,8 @@ module.exports = function (grunt) {
             globals: {
                 jQuery: true,
 				Modernizr: true,
-				requestAnimationFrame: true
+				requestAnimationFrame: true,
+				cancelAnimationFrame: true
             }
         }
     });

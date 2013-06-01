@@ -46,18 +46,16 @@
 		$.each( prefixes, function( i, p ) {
 			if( p + 'Transform' in style ) {
 				$.support.transform = true;
-				// stop iteration
 				return false;
 			}
 			return true;
 		});
 	}
-
 	el.remove();
 
 })( jQuery );
 
-(function ( $ ) {
+(function( $ ) {
 
 	$.widget( 'ui.coverflow', {
 
@@ -81,12 +79,16 @@
 
 			var o = this.options;
 
-			this.items = this.element.find( o.items );
+			this.items = this.element.find( o.items )
+					// set tabindex so widget items get focusable
+					// makes items accessible by keyboard
+					.addClass( 'ui-coverflow-item' )
+					.prop( 'tabIndex', 0 );
 
-			this.origElementDimensions = {
-				width: this.element.width(),
-				height: this.element.height()
-			};
+			this.element
+				.addClass( 'ui-coverflow' )
+				.parent()
+				.addClass( 'ui-coverflow-wrapper ui-clearfix' );
 
 			if( o.trigger.itemfocus ) {
 				this._on( this.items, { focus : this._select });
@@ -109,6 +111,10 @@
 					swiperight: this.prev
 				});
 			}
+
+			this.useJqueryAnimate = ! $.fn.transit
+					|| ! $.support.transition
+					|| ! $.isFunction( window.requestAnimationFrame );
 		},
 		_init : function () {
 
@@ -125,45 +131,36 @@
 				o.duration = 1;
 			}
 
-			this.element
-				.addClass( 'ui-coverflow' )
-				.parent()
-				.addClass( 'ui-coverflow-wrapper ui-clearfix' );
+			this.origElementDimensions = {
+				width: this.element.width(),
+				height: this.element.height()
+			};
 
 			this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * this.items.innerWidth() );
-
-			this.currentIndex = this._isValidIndex( o.active ) ? o.active : 0;
-
+			this.currentIndex = this._isValidIndex( o.active, true ) ? o.active : 0;
 			this.activeItem = this.items
 				// apply a negative margin so items stack
 				.css({
-					margin : this.itemMargin
+					marginLeft : this.itemMargin,
+					marginRight : this.itemMargin
 				})
-				// set tabindex so widget items get focusable
-				// makes items accessible by keyboard
-				.addClass( 'ui-coverflow-item' )
-				.prop( 'tabIndex', 0 )
 				.removeClass( 'ui-state-active' )
 				.eq( this.currentIndex )
 				.addClass( 'ui-state-active' );
 
-
 			this.itemWidth = this.items.width();
-
 			this.itemHeight = this.items.height();
-
 			this.itemSize = this.items.outerWidth( true );
-
 			this.outerWidth = this.element.parent().outerWidth( false );
 
 			// make sure there's enough space
 			css.width = this.itemWidth * this.items.length;
 
-			//Center the actual parents' left side within it's parent
+			// Center the actual parents' left side within it's parent
 			$.extend( css, this._getCenterPosition() );
 			this.element.css( css );
 
-			//Jump to the first item
+			// Jump to the first item
 			this._refresh( 1, this._getFrom(), this.currentIndex );
 
 			this.initialOffset = parseInt( this.activeItem.css( 'left' ), 10 );
@@ -180,10 +177,11 @@
 
 			return { left : pos };
 		},
-		_isValidIndex : function ( index ) {
+		_isValidIndex : function ( index, ignoreCurrent ) {
 
+			ignoreCurrent = !! ignoreCurrent;
 			index = ~~index;
-			return this.currentIndex !== index && index > -1 && !! this.items.get( index );
+			return ( this.currentIndex !== index || ignoreCurrent ) && index > -1 && !! this.items.get( index );
 		},
 		_select: function ( ev ) {
 			this.select( ev.currentTarget );
@@ -206,7 +204,7 @@
 					? parseInt( item, 10 )
 					: this.items.index( item );
 
-			if( ! this._isValidIndex( index ) || this.isTicking ) {
+			if( ! this._isValidIndex( index ) ) {
 				return false;
 			}
 
@@ -221,8 +219,23 @@
 				return false;
 			}
 
+			if( this.isTicking ) {
+				if( this.useJqueryAnimate ) {
+					this.element.stop( true, false );
+				} else {
+
+					if( this.element.data( 'coverflowrafid' ) ) {
+						cancelAnimationFrame( this.element.data( 'coverflowrafid' ) );
+					}
+
+					this.element.transitionStop( true, false );
+
+				}
+			}
+			this.isTicking = true;
+
 			this.previousIndex = this.currentIndex;
-			this.currentIndex = index;
+			this.options.active = this.currentIndex = index;
 
 			var self = this,
 				animation = {
@@ -232,7 +245,7 @@
 
 			$.extend( animation, this._getCenterPosition() );
 
-			if( ! $.fn.transit || ! $.support.transition || ! $.isFunction( window.requestAnimationFrame ) ) {
+			if( this.useJqueryAnimate ) {
 				this._animation( o, animation );
 				return true;
 			}
@@ -260,8 +273,6 @@
 			// 3. Use our custom coverflow animation which animates the item
 
 			this.element
-				// jump to end and release select trigger
-				.stop( true, true )
 				.animate(
 					animation,
 					{
@@ -282,10 +293,11 @@
 				from = this._getFrom(),
 				to = this.currentIndex,
 				loopRefresh = function() {
-					var state = ( Date.now() - d.getTime() ) / o.duration;
+					var state = ( (new Date()).getTime() - d.getTime() ) / o.duration;
 
 					if( self.isTicking ) {
-						requestAnimationFrame( loopRefresh );
+						self.element
+							.data( 'coverflowrafid', requestAnimationFrame( loopRefresh ) );
 					}
 					if( state > 1 ) {
 						self.isTicking = false;
@@ -294,32 +306,32 @@
 					}
 				};
 
-			this.isTicking = true;
-			loopRefresh();
-
 			this.element
+				.data( 'coverflowrafid', requestAnimationFrame( loopRefresh ) )
 				.transit({
 						x : - this.currentIndex * this.itemSize / 2 - this.initialOffset
 					},
 					o.duration,
 					this.options.easing,
 					function() {
-						self.isTicking = false;
+						cancelAnimationFrame( self.element.data( 'rafId' ) );
 						self._refresh( 1, from, to );
 
 						// apply animationend after last raf tick - otherwise Firefox fails randomly on offset unit testing
 						setTimeout( function() {
 							self._onAnimationEnd.apply( self );
-						}, 17 );
+						}, 0 );
 					}
 				);
 		},
 		_onAnimationEnd : function() {
 
+			this.isTicking = false;
 			this.activeItem = this.items
 					.removeClass( 'ui-state-active' )
 					.eq( this.currentIndex )
 					.addClass( 'ui-state-active' );
+
 			// fire select after animation has finished
 			this._trigger( 'select', null, this._ui() );
 		},
@@ -390,7 +402,6 @@
 			var origEv = ev.originalEvent;
 
 			ev.preventDefault();
-
 			if( origEv.wheelDelta > 0 || origEv.detail < 0 ) {
 				this.prev();
 				return;
@@ -407,7 +418,8 @@
 
 			this.items.css({
 				transform : '',
-				margin: 0
+				marginLeft: 0,
+				marginRight: 0
 			});
 
 			this._super();
