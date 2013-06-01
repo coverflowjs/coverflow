@@ -1,0 +1,9 @@
+permalink: /:categories/:title
+
+exclude: [".git", ".gitignore", ".gitmodules", "package.json", "README.md", "Gemfile", "Guardfile", "Gemfile.lock", "Makefile"]
+title : coverflowjs
+production_url : http://coverflowjs.github.io
+
+safe: true
+lsi: false
+pygments: true

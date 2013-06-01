@@ -1,0 +1,120 @@
+.border-box () {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+html, body {
+	height: 99%;
+}
+body {
+	min-width: 320px;
+
+	#wrapper {
+
+		.border-box ();
+
+		min-height: 100%;
+		height: auto !important;
+		height: 100%;
+		padding-bottom: 60px;
+		margin: 0 auto;
+
+		@media (min-width: @navbarCollapseDesktopWidth ) {
+
+			padding-top: 60px;
+			.navbar .pull-right {
+				float: right;
+			}
+
+		}
+		&.lt-ie9 {
+
+			padding-top: 60px;
+			.navbar .pull-right {
+				float: right;
+			}
+
+		}
+		ul.checklist {
+
+			list-style: none;
+			padding-left: 0;
+			margin: 0 0 11px 0;
+
+			li {
+				position: relative;
+				padding: .2em 0 .2em 1.2em;
+				border-bottom: 1px solid @grayLighter;
+
+				&:first-child {
+					border-top: 1px solid @grayLighter;
+				}
+				&:before {
+					content: "✓";
+					color: @green;
+					display: table;
+					position: absolute;
+					top: 50%;
+					margin-top: -.5em;
+					left: 0;
+					height: 100%;
+					width: 1.2em;
+					font-weight: 700;
+				}
+			}
+		}
+
+		.ui-coverflow-wrapper {
+			height: 350px;
+			padding: 40px 0 0 0;
+
+			@media (max-width: 480px ) {
+				height: 170px;
+			}
+			@media (max-width: 1280px ) {
+				height: 250px;
+			}
+
+			#coverflow {
+				// image height
+				min-height: 240px;
+				max-height: 320px;
+				> img {
+					width: 240px;
+					height: 180px;
+					@media (max-width: 480px ) {
+						width: 80px;
+						height: 60px;
+					}
+					@media (max-width: @navbarCollapseWidth ) {
+						width: 140px;
+						height: 105px;
+					}
+					@media (max-width: 1280px ) {
+						width: 160px;
+						height: 120px;
+					}
+				}
+			}
+		}
+
+		#license {
+			position: absolute;
+			bottom: 0;
+			text-align: center;
+			width: 100%;
+			background: rgba(0,0,0,.8);
+			padding-top: .4em;
+			* {
+				color: #fff;
+			}
+		}
+	}
+	.footer {
+		margin-top: -60px;
+		border-top: 1px solid @grayLighter;
+		height: 60px;
+		padding-top: .5em;
+	}
+}
