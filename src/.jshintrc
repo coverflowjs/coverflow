@@ -1,0 +1,30 @@
+{
+	"boss": true,
+	"curly": true,
+	"eqeqeq": true,
+	"eqnull": true,
+	"expr": true,
+	"immed": true,
+	"noarg": true,
+	"onevar": true,
+	"quotmark": "double",
+	"smarttabs": true,
+	"trailing": true,
+	"undef": true,
+	"unused": true,
+
+	"latedef": true,
+	"newcap": true,
+	"sub": true,
+	"laxbreak": true,
+
+	"browser": true,
+	"jquery": true,
+
+	"globals": {
+		"jQuery": true,
+		"Modernizr": true,
+		"requestAnimationFrame": true,
+		"cancelAnimationFrame": true
+	}
+}
