@@ -1,0 +1,37 @@
+/*! CoverflowJS - v2.3.0rc2 - 2013-06-01
+* Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer; Licensed MIT */
+.ui-coverflow-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.ui-coverflow {
+    -webkit-perspective: 1000px;
+       -moz-perspective: 1000px;
+        -ms-perspective: 1000px;
+         -o-perspective: 1000px;
+            perspective: 1000px;
+
+    position: absolute;
+
+}
+
+.ui-coverflow-item {
+    -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(black), color-stop(.7, black), to(transparent));
+    position: relative;
+    cursor: pointer;
+    float: left;
+}
+
+.ui-coverflow-item:focus {
+    outline: 0;
+}
+.ui-coverflow img {
+    -webkit-user-drag: none;
+       -moz-user-drag: none;
+        -ms-user-drag: none;
+         -o-user-drag: none;
+            user-drag: none;
+
+    border: 0 none;
+}

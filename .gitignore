@@ -24,9 +24,6 @@ dwsync.xml
 #npm log
 npm-debug.log
 
-#dist dir
-dist/
-
 # Komodo
 *.komodoproject
 .komodotools
