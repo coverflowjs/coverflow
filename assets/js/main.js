@@ -12,7 +12,7 @@ require.config({
 		bootstrap : 'bootstrap/js/bootstrap-collapse',
 		transitionPackage : 'js/coverflowjs/libs/jquery.transit.package.min',
 		jqm : 'js/coverflowjs/libs/jquery.mobile.custom.min',
-		coverflowjs : 'js/coverflowjs/coverflow'
+		coverflowjs : 'js/coverflowjs/coverflow.min'
     },
     shim: {
         jqueryui : {
