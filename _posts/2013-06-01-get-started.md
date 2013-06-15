@@ -42,18 +42,11 @@ This minimal implementation should already work.
 What we got there?
 
 <ul class="checklist">
-    <li>Animations based on jQuery animate</li>
-    <li>Rotation polyfill for older Internet Explorer versions</li>
+	<li>CSS based animation</li>
+    <li>fallback based on jQuery animate</li>
+    <li>rotation polyfill for older Internet Explorer versions</li>
     <li>mousewheel support</li>
 </ul>
-
-### CSS3 Transitions support
-
-**tl;dr**
-Additionally **include libs/jquery.transit.package.min.js** to your header (from our release package). Include it *before* coverflow.min.js.
-
-This is currently based on a fork of [jQuery transit](https://github.com/tblasv/jquery.transit) (See this [pull request](https://github.com/rstacruz/jquery.transit/pull/110)). The plugin homepage can be found [here](http://ricostacruz.com/jquery.transit/).
-Additionally it requires [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window.requestAnimationFrame) for a smooth rotation of coverflow items while transitioning.
 
 ### Swipe support
 
