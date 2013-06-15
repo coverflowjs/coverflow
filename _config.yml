@@ -7,4 +7,4 @@ safe: true
 lsi: false
 pygments: true
 
-baseurl : coverflow/
+baseurl : /coverflow

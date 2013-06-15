@@ -18,4 +18,4 @@ guard:
 	@@bundle exec guard
 
 serve:
-	@@bundle exec jekyll serve -w --baseurl ''
+	@@bundle exec jekyll serve -w --baseurl '/'
