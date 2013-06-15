@@ -1,6 +1,6 @@
 require.config({
 
-    baseUrl: '/coverflow/assets/',
+    baseUrl: './assets/',
     paths: {
 		jquery: [
             '//code.jquery.com/jquery-1.10.1.min',
@@ -10,7 +10,6 @@ require.config({
 		jqueryui : 'js/jquery-ui/jquery.ui.min',
 		smartresize : 'js/jquery.smartresize',
 		bootstrap : 'bootstrap/js/bootstrap-collapse',
-		transitionPackage : 'js/coverflowjs/libs/jquery.transit.package.min',
 		jqm : 'js/coverflowjs/libs/jquery.mobile.custom.min',
 		coverflowjs : 'js/coverflowjs/coverflow.min'
     },
@@ -34,10 +33,6 @@ require.config({
 		coverflowjs : {
 			deps: [ 'jquery', 'jqueryui' ] ,
 			exports: '$'
-		},
-		transitionPackage : {
-			deps: [ 'jquery' ] ,
-			exports: '$'
 		}
 	}
 });
@@ -57,7 +52,6 @@ require([
 	// coverflow - required js files (full featureset)
 	'jquery',
 	'jqueryui',
-	'transitionPackage',
 	'jqm',
 	'coverflowjs',
 	// api page dependencies

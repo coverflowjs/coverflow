@@ -6,3 +6,5 @@ title : coverflowjs
 safe: true
 lsi: false
 pygments: true
+
+basepath : coverflow/

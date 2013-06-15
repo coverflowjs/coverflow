@@ -1,36 +1,151 @@
-/*! CoverflowJS - v2.3.0pre - 2013-06-01
+/*! CoverflowJS - v2.3.0rc3 - 2013-06-15
 * Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer; Licensed MIT */
 (function( $ ) {
 
-	if( $.support.transform != null ) {
-		return;
+	// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+	// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+	// requestAnimationFrame polyfill by Erik Möller
+	// fixes from Paul Irish and Tino Zijdel
+
+	var el = document.body || document.documentElement,
+		style = el.style,
+		lastTime = 0,
+		vendors = [ "ms", "moz", "webkit", "o" ],
+		vendorsLength = vendors.length,
+		x = 0,
+		capitalize = function( string ) {
+			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
+		};
+
+	for( ; x < vendorsLength && ! window.requestAnimationFrame ; x++ ) {
+		requestAnimationFrame = window[ vendors[ x ] + "RequestAnimationFrame" ];
+		cancelAnimationFrame =
+			window[ vendors[ x ] + "CancelAnimationFrame" ]
+			|| window[ vendors[ x ] + "CancelRequestAnimationFrame" ];
 	}
 
-	if( typeof Modernizr !== "undefined" && Modernizr.csstransforms != null ) {
-		$.support.transform = Modernizr.csstransforms;
-		return;
+	if( ! window.requestAnimationFrame && ! window.cancelAnimationFrame ) {
+
+		requestAnimationFrame = function( callback ) {
+			var currTime = new Date().getTime(),
+				timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) ),
+				id = window.setTimeout(function() {
+						callback( currTime + timeToCall );
+					}, timeToCall );
+
+			lastTime = currTime + timeToCall;
+			return id;
+		};
+
+		cancelAnimationFrame = function(id) {
+			clearTimeout( id );
+		};
+
 	}
 
-	var el = $( "<div />" ),
-		style = el.get( 0 ).style,
-		prefixes = [ "Webkit", "Moz", "O", "ms" ];
+	$.support.transform = "transform" in style
+		? "transform"
+		: false;
 
-	$.support.transform = "transform" in style;
+	$.support.transition = "transition" in style
+		? "transition"
+		: false;
 
-	if( ! $.support.transform ) {
-		$.each( prefixes, function( i, p ) {
-			if( p + "Transform" in style ) {
-				$.support.transform = true;
+	if( ! $.support.transform || ! $.support.transition ) {
+
+		$.each( vendors, function( i, p ) {
+
+			if( p !== "ms" ) {
+				p = capitalize( p );
+			}
+			if( ! $.support.transform ) {
+				if( p + "Transform" in style ) {
+					$.support.transform = p + "Transform";
+				}
+			}
+			if( ! $.support.transition ) {
+				if( p + "Transition" in style ) {
+					$.support.transition = p + "Transition";
+				}
+			}
+
+			if( $.support.transform && $.support.transition ) {
 				return false;
 			}
 			return true;
 		});
 	}
-	el.remove();
 
 })( jQuery );
 
 (function( $ ) {
+
+	var availableCssTransitions = {
+
+		/**
+		 * @see http://matthewlein.com/ceaser/
+		 *
+		 * easing not available as css timing functions:
+		 *
+		 * easeInElastic
+		 * easeOutElastic
+		 * easeInOutElastic
+		 *
+		 * easeInBounce
+		 * easeOutBounce
+		 * easeInOutBounce
+		 */
+
+
+		// ease-in
+		"easeInQuad" : "cubic-bezier( .55,.085,.68,.53 )",
+		"easeInCubic": "cubic-bezier( .550, .055, .675, .190 )",
+		"easeInQuart": "cubic-bezier( .895, .03, .685, .22 )",
+		"easeInQuint": "cubic-bezier( .755, .05, .855, .06 )",
+		"easeInSine" : "cubic-bezier( .47, 0, .745, .715 )",
+		"easeInExpo" : "cubic-bezier( .95, .05, .795, .035 )",
+		"easeInCirc" : "cubic-bezier( .6, .04, .98, .335 )",
+		"easeInBack" : "cubic-bezier( .6, -.28, .735, .045 )",
+
+		// ease-out
+		"easeOutQuad" : "cubic-bezier( .25,.46,.45,.94 )",
+		"easeOutCubic": "cubic-bezier( .215,.61,.355,1 )",
+		"easeOutQuart": "cubic-bezier( .165, .84, .44, 1 )",
+		"easeOutQuint": "cubic-bezier( .23, 1, .32, 1 )",
+		"easeOutSine" : "cubic-bezier( .39, .575, .565, 1 )",
+		"easeOutExpo" : "cubic-bezier( .19,1,.22,1 )",
+		"easeOutCirc" : "cubic-bezier( .075, .82, .165, 1 )",
+		"easeOutBack" : "cubic-bezier( .175, .885, .32, 1.275 )",
+
+		// ease-in-out
+		"easeInOutQuad" : "cubic-bezier( .455, .03, .515, .955 )",
+		"easeInOutCubic": "cubic-bezier( .645, .045, .355, 1 )",
+		"easeInOutQuart": "cubic-bezier( .77, 0, .175, 1 )",
+		"easeInOutQuint": "cubic-bezier( .86, 0, .07, 1 )",
+		"easeInOutSine" : "cubic-bezier( .445, .05, .55, .95 )",
+		"easeInOutExpo" : "cubic-bezier( 1, 0, 0, 1 )",
+		"easeInOutCirc" : "cubic-bezier( .785, .135, .15, .86 )",
+		"easeInOutBack" : "cubic-bezier( .68, -.55, .265, 1.55 )"
+	},
+	eventsMap = {
+		"transition":       "transitionend",
+		"MozTransition":    "transitionend",
+		"OTransition":      "oTransitionEnd",
+		"WebkitTransition": "webkitTransitionEnd",
+		"msTransition":     "MSTransitionEnd"
+	},
+	isOldie = (function() {
+
+		if( $.browser != null ) {
+			// old jQuery versions and jQuery migrate plugin users
+			return $.browser.msie && ( ( ~~$.msie.version ) < 10 );
+		}
+
+		var match = /(msie) ([\w.]+)/.exec( navigator.userAgent.toLowerCase() );
+
+		return match != null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
+	})();
 
 	$.widget( "ui.coverflow", {
 
@@ -39,7 +154,7 @@
 			// item stacking - value 0>x<1
 			stacking : 0.73,
 			active: 0,
-			duration : 200,
+			duration : 400,
 			easing: "easeOutQuint",
 			// selection triggers
 			trigger : {
@@ -87,9 +202,10 @@
 				});
 			}
 
-			this.useJqueryAnimate = ! $.fn.transit
-					|| ! $.support.transition
-					|| ! $.isFunction( window.requestAnimationFrame );
+			this.useJqueryAnimate = ! ( $.support.transition && $.isFunction( window.requestAnimationFrame ));
+			this.transformItems = (!! $.support.transform) || isOldie;
+
+			this.coverflowrafid = 0;
 		},
 		_init : function () {
 
@@ -200,12 +316,12 @@
 					this.element.stop( true, false );
 				} else {
 
-					if( this.element.data( "coverflowrafid" ) ) {
-						cancelAnimationFrame( this.element.data( "coverflowrafid" ) );
+					if( this.coverflowrafid ) {
+						cancelAnimationFrame( this.coverflowrafid );
 					}
 
-					this.element.transitionStop( true, false );
-
+					this.element
+						.unbind( eventsMap[ $.support.transition ] );
 				}
 			}
 			this.isTicking = true;
@@ -265,37 +381,35 @@
 				d = new Date(),
 				from = this._getFrom(),
 				to = this.currentIndex,
+				transitionFn = availableCssTransitions[ o.easing ] || availableCssTransitions.easeOutQuint,
 				loopRefresh = function() {
 					var state = ( (new Date()).getTime() - d.getTime() ) / o.duration;
 
-					if( self.isTicking ) {
-						self.element
-							.data( "coverflowrafid", requestAnimationFrame( loopRefresh ) );
-					}
 					if( state > 1 ) {
 						self.isTicking = false;
 					} else {
 						self._refresh( state, from, to );
 					}
+
+					if( self.isTicking ) {
+						self.coverflowrafid = requestAnimationFrame( loopRefresh );
+					}
 				};
 
-			this.element
-				.data( "coverflowrafid", requestAnimationFrame( loopRefresh ) )
-				.transit({
-						x : - this.currentIndex * this.itemSize / 2 - this.initialOffset
-					},
-					o.duration,
-					this.options.easing,
-					function() {
-						cancelAnimationFrame( self.element.data( "rafId" ) );
-						self._refresh( 1, from, to );
+			this.coverflowrafid = requestAnimationFrame( loopRefresh );
 
-						// apply animationend after last raf tick - otherwise Firefox fails randomly on offset unit testing
-						setTimeout( function() {
-							self._onAnimationEnd.apply( self );
-						}, 0 );
+			this.element
+				.one( eventsMap[ $.support.transition ],
+					function() {
+						cancelAnimationFrame( self.coverflowrafid );
+
+						self._refresh( 1, from, to );
+						self._onAnimationEnd( self );
 					}
-				);
+				)
+				.css($.extend( this._getCenterPosition(), {
+					"transition" : "left " + o.duration + "ms " + transitionFn
+				}));
 		},
 		_onAnimationEnd : function() {
 
@@ -337,27 +451,29 @@
 					) * mod
 				);
 
-				// transponed matrix
-				matrixT = [
-					scale, ( mod * ( side === "right" ? -0.2 : 0.2 ) ),
-					0, scale,
-					0, 0
-				];
+				if( self.transformItems ) {
+					// transponed matrix
+					matrixT = [
+						scale, ( mod * ( side === "right" ? -0.2 : 0.2 ) ),
+						0, scale,
+						0, 0
+					];
 
-				if( ! $.support.transform ) {
+					if( isOldie && ! $.support.transform ) {
 
-					// Adapted from Paul Baukus transformie lib
-					if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
-						this.style.filter = (this.style.filter ? "" : " " ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\"auto expand\")";
+						// Adapted from Paul Baukus transformie lib
+						if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
+							this.style.filter = (this.style.filter ? "" : " " ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\"auto expand\")";
+						}
+						filters = this.filters[ "DXImageTransform.Microsoft.Matrix" ];
+						filters.M11 = matrixT[ 0 ];
+						filters.M12 = matrixT[ 2 ];
+						filters.M21 = matrixT[ 1 ];
+						filters.M22 = matrixT[ 3 ];
+
+					} else {
+						css.transform = "matrix(" + matrixT.join( "," ) + ")";
 					}
-					filters = this.filters[ "DXImageTransform.Microsoft.Matrix" ];
-					filters.M11 = matrixT[ 0 ];
-					filters.M12 = matrixT[ 2 ];
-					filters.M21 = matrixT[ 1 ];
-					filters.M22 = matrixT[ 3 ];
-
-				} else {
-					css.transform = "matrix(" + matrixT.join( "," ) + ")";
 				}
 
 				$( this ).css( css );
