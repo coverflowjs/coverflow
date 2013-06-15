@@ -4,6 +4,12 @@
 		setup: function() {
 			this.el = $( '#qunit-fixture' ).find( '.coverflow' );
 			this.items = this.el.children();
+
+			this.el
+				.coverflow({
+					active : 0,
+					duration : 1
+				});
 		}
 	});
 
@@ -13,18 +19,12 @@
 	});
 
 	asyncTest( 'focus tabbable', 22, function() {
-		var el = this.el,
-			items = this.items,
+		var items = this.items,
 			itemsLength = items.length,
 			i = 1;
 
-		el
-			.coverflow({
-				active : 0,
-				duration : 1
-			})
+		this.el
 			.on( 'coverflowselect', function( ev, ui ) {
-
 				strictEqual( i++ , ui.index, 'focused item ' + ( ui.index + 1 ) );
 
 				equal( document.activeElement, ui.active.get( 0 ),

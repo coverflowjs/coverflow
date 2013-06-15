@@ -2,7 +2,7 @@
 	"name": "CoverflowJS",
 	"title": "CoverflowJS",
 	"description": "A jQuery UI powered coverflow component that takes advantage of CSS3 features",
-	"version": "2.3.0rc2",
+	"version": "2.3.0rc3",
 	"author": {
 		"name": "Paul Baukus, Addy Osmani, Sebastian Sauer",
 		"url": "https://github.com/addyosmani/jqueryui-coverflow-ii"

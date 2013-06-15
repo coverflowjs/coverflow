@@ -1,4 +1,4 @@
-# UI Coverflow
+# CoverflowJS
 
 ![](https://raw.github.com/coverflowjs/coverflow/master/demo/img/screenshot.png)
 
@@ -6,11 +6,7 @@ The jQueryUI Coverflow project seeks to create a fully functional 'CoverFlow' ef
 
 ## Getting Started
 
-`#: git clone git://github.com/coverflowjs/coverflow.git`
-
-`#: cd coverflow`
-
-`#: git pull origin master && git submodule update --init`
+`#: git clone --recursive git://github.com/coverflowjs/coverflow.git`
 
 ## automatic event binding:
 
@@ -43,7 +39,7 @@ This coverflow effect binds to the following events on initialization:
     ` $('#coverflow' ).coverflow( 'prev' );`
 
     Returns a boolean (selection success). Selects next/previous item.
-    
+
  - prev()
 
     ` $('#coverflow' ).coverflow( 'prev' );`
@@ -107,7 +103,7 @@ You don't need transformie or sylvester. Filter matrices for IE are applied if t
 Check out demo/index.html or tests/visual.html in your browser.
 
 ## License
-Copyright (c) 2008-2012 Paul Baukus, Addy Osmani, Sebastian Sauer
+Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer
 Licensed under the MIT licenses.
 
 ## Contributing

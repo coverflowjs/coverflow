@@ -12,17 +12,16 @@
 	<link type="text/css" href="../src/css/coverflow.css" rel="stylesheet" />
 
 	<!-- Include jQuery and UI -->
-	<script type="text/javascript" src="../libs/jquery-ui/jquery-1.9.1.js"></script>
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="//code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 
-	<!-- transitions support -->
-	<script type="text/javascript" src="../libs/jquery.transit.package.min.js"></script>
-
+	<!--<script type="text/javascript" src="../libs/jquery.transit.package.min.js"></script>-->
 	<!-- mobile swipe event support -->
-	<script type="text/javascript" src="../libs/jquery-mobile/jquery.mobile.custom.min.js"></script>
+	<script type="text/javascript" src="../libs/jquery.mobile.custom.min.js"></script>
 
 	<!-- Include jQuery CoverFlow widget -->
 	<script type="text/javascript" src="../src/js/coverflow.js"></script>
+	<!--<script type="text/javascript" src="../dist/coverflow.min.js"></script>-->
 
 	<script type="text/javascript">
 	$(function(){
@@ -35,7 +34,7 @@
 
 
 		$slider.slider({
-			orientation: 'vertical',
+			orientation : 'vertical',
 			min: 0,
 			max : $coverflowItems.length - 1,
 			slide: function( event, ui ) {

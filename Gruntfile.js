@@ -93,8 +93,6 @@ grunt.initConfig({
 					"MIT-LICENSE.txt",
 					"README.md",
 					"package.json",
-					"libs/jquery.transit.package.js",
-					"libs/jquery.transit.package.min.js",
 					"libs/jquery.mobile.custom.js",
 					"libs/jquery.mobile.custom.min.js",
 				],

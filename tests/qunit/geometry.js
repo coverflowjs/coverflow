@@ -8,12 +8,23 @@
 		active : 'matrix(1.3, 0, 0, 1.3, 0, 0)',
 		right : 'matrix(1, 0.2, 0, 1, 0, 0)'
 	},
+	isOldie = (function() {
+
+		if( $.browser != null ) {
+			// old jQuery versions and jQuery migrate plugin users
+			return $.browser.msie && ( ( ~~$.msie.version ) < 10 );
+		}
+
+		var match = /(msie) ([\w.]+)/.exec( navigator.userAgent.toLowerCase() );
+
+		return match != null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
+	})(),
 	testItemProperties = function( item, state ) {
 
 		item = item.jquery ? item.get( 0 ) : item;
 
 		var $item = $( item ),
-			cssTransformation = ( $.support.transform )
+			cssTransformation = $.support.transform
 				? $.trim( $item.css( 'transform' ) )
 				: item.filters[ 'DXImageTransform.Microsoft.Matrix' ];
 
@@ -48,7 +59,9 @@
 						);
 					equal( $item.hasClass( 'ui-state-active' ), true, 'item has ui-state-active css class' );
 			}
-		} else {
+		}
+
+		if( ! $.support.transform && isOldie ) {
 			switch( state ) {
 				case 'left':
 					equal( $item.hasClass( 'ui-state-active' ), false, 'item without ui-state-active css class' );

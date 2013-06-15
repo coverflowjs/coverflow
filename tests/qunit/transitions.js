@@ -16,10 +16,12 @@
 			if( ! $.isFunction( requestAnimationFrame ) ) {
 				throw 'requestAnimationFrame is not defined';
 			}
-			if( ! $.isFunction( $.fn.transit ) ) {
-				throw '$.fn.transit is not defined';
-			}
+
 			this._super();
+
+			if( this.useJqueryAnimate ) {
+				throw 'no transitions support, using jQuery animate instead.';
+			}
 		},
 		_transition : function( o ) {
 
