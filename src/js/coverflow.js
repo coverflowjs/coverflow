@@ -189,12 +189,17 @@
 		_create: function () {
 
 			var o = this.options;
+			
+			this.origStyle = $(this.element).attr("style") || "";
 
 			this.items = this.element.find( o.items )
 					// set tabindex so widget items get focusable
 					// makes items accessible by keyboard
 					.addClass( "ui-coverflow-item" )
-					.prop( "tabIndex", 0 );
+					.prop( "tabIndex", 0 )
+					.each(function(){
+						$(this).data("origstyle", $(this).attr("style") || "");
+					})
 
 			this.element
 				.addClass( "ui-coverflow" )
@@ -242,11 +247,6 @@
 			if( o.duration < 1 ) {
 				o.duration = 1;
 			}
-
-			this.origElementDimensions = {
-				width: this.element.width(),
-				height: this.element.height()
-			};
 
 			this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * this.items.innerWidth() );
 			this.currentIndex = this._isValidIndex( o.active, true ) ? o.active : 0;
@@ -520,16 +520,15 @@
 		_destroy : function () {
 
 			this.element
-				.css( this.origElementDimensions )
+				.attr( "style", this.origStyle )
 				.removeClass( "ui-coverflow" )
 				.parent()
-				.removeClass( "ui-coverflow-wrapper" );
+				.removeClass( "ui-coverflow-wrapper ui-clearfix" );
 
-			this.items.css({
-				transform : "",
-				marginLeft: 0,
-				marginRight: 0
-			});
+			this.items.removeClass("ui-coverflow-item ui-state-active")
+				.each(function(){
+					$(this).attr("style", $(this).data("origstyle"));
+				});
 
 			this._super();
 		}
