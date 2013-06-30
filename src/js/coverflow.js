@@ -190,7 +190,7 @@
 
 			var o = this.options;
 			
-			this.origStyle = $(this.element).attr("style") || "";
+			this.origStyle = this.element.attr("style") || "";
 
 			this.items = this.element.find( o.items )
 					// set tabindex so widget items get focusable
