@@ -198,7 +198,8 @@
 					.addClass( "ui-coverflow-item" )
 					.prop( "tabIndex", 0 )
 					.each(function(){
-						$(this).data("origstyle", $(this).attr("style") || "");
+						var $this = $(this);
+						$this.data("origstyle", $this.attr("style") || "");
 					})
 
 			this.element
@@ -527,7 +528,8 @@
 
 			this.items.removeClass("ui-coverflow-item ui-state-active")
 				.each(function(){
-					$(this).attr("style", $(this).data("origstyle"));
+					var $this = $(this);
+					$this.attr("style", $this.data("origstyle"));
 				});
 
 			this._super();
