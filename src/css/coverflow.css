@@ -4,18 +4,16 @@
 }
 
 .ui-coverflow {
-    -webkit-perspective: 1000px;
-       -moz-perspective: 1000px;
-        -ms-perspective: 1000px;
-         -o-perspective: 1000px;
-            perspective: 1000px;
+    -webkit-perspective: 500px;
+       -moz-perspective: 500px;
+        -ms-perspective: 500px;
+         -o-perspective: 500px;
+            perspective: 500px;
 
     position: absolute;
-
 }
 
 .ui-coverflow-item {
-    -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(black), color-stop(.7, black), to(transparent));
     position: relative;
     cursor: pointer;
     float: left;
