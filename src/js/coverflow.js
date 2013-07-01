@@ -504,8 +504,8 @@
 		},
 		_ui : function ( active, index ) {
 			return {
-				active: this.activeItem,
-				index: index || this.currentIndex
+				active: active || this.activeItem,
+				index: typeof index === "undefined" ? this.currentIndex : index
 			};
 		},
 		_onMouseWheel : function ( ev ) {
