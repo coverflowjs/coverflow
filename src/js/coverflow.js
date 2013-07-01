@@ -1,10 +1,11 @@
-/*
+/**
  * CoverflowJS
  *
  * Refactored for jQuery 1.8 / jQueryUI 1.9 Sebastian Sauer
  * Re-written for jQueryUI 1.8.6/jQuery core 1.4.4+ by Addy Osmani with adjustments
  * Maintenance updates for 1.8.9/jQuery core 1.5, 1.6.2 made.
  * Original Component: Paul Bakaus for jQueryUI 1.7
+ * 3D transformations: Brandon Belvin
  *
  * Released under the MIT license.
  *
@@ -13,7 +14,7 @@
  *  jquery.ui.widget.js
  *  jquery.ui.effect.js
  *
- * - in case you want swipe support and you don"t use jQery mobile yet:
+ * - in case you want swipe support and you don't use jQuery mobile yet:
  * jquery-mobile.custom.js
  *
  * Events:
@@ -21,8 +22,9 @@
  *  select
  */
 
-(function( $ ) {
-
+(function( $, document, window ) {
+	"use strict";
+	
 	// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 	// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 
@@ -39,7 +41,7 @@
 			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
 		};
 
-	for( ; x < vendorsLength && ! window.requestAnimationFrame ; x++ ) {
+	for( ; x < vendorsLength && ! window.requestAnimationFrame; x++ ) {
 		requestAnimationFrame = window[ vendors[ x ] + "RequestAnimationFrame" ];
 		cancelAnimationFrame =
 			window[ vendors[ x ] + "CancelAnimationFrame" ]
@@ -98,9 +100,63 @@
 		});
 	}
 
-})( jQuery );
+})( jQuery, document, window );
 
-(function( $ ) {
+(function( $, document, window ) {
+	"use strict";
+	
+	/**
+	 * Finds the calculated CSS for the given jQuery-wrapped element.
+	 * @see http://stackoverflow.com/questions/754607/can-jquery-get-all-css-styles-associated-with-an-element
+	 */
+	function activeCss( $element ) {
+		function css2json( css ) {
+			var style = {};
+			if ( !css ) {
+				return style; 
+			}
+			
+			if ( css instanceof CSSStyleDeclaration ) {
+				for ( var i in css ) {
+					if ( ( css[ i ]).toLowerCase ) {
+						style[ ( css[ i ] ).toLowerCase() ] = css[ css[ i ] ];
+					}
+				}
+			} else if ( typeof css === "string" ) {
+				css = css.split( ";" );
+				for ( var i in css ) {
+					var rule = css[ $.trim( i ) ].split( ":" );
+					style[ rule[ 0 ].toLowerCase() ] = $.trim( rule[ 1 ] );
+				}
+			}
+			return style;
+		}
+
+		var activeRules = {};
+		var rules = window.getMatchedCSSRules( $element.get( 0 ) );
+		$.each( rules, function( i, rule ) {
+			activeRules = $.extend( activeRules, css2json( rule.style ),
+				css2json( $element.attr( 'style' ) ) );
+		});
+		return activeRules;
+	}
+	
+	/**
+	 * Determines the necessary CSS browser prefix. Defaults to "o" if no other found
+	 * @see http://davidwalsh.name/vendor-prefix
+	 */
+	var browserPrefix = (function () {
+		var styles = window.getComputedStyle( document.documentElement, "" ),
+			pre = (Array.prototype.slice
+				.call( styles )
+				.join( "" )
+				.match( /-(moz|webkit|ms)-/ ) || ( styles.OLink === "" && [ "", "o" ] )
+			)[1];   
+		
+		return {
+			css: "-" + pre + "-"
+		};
+	})();
 
 	var availableCssTransitions = {
 
@@ -150,15 +206,15 @@
 		"easeInOutBack" : "cubic-bezier( .68, -.55, .265, 1.55 )"
 	},
 	eventsMap = {
-		"transition":       "transitionend",
-		"MozTransition":    "transitionend",
-		"OTransition":      "oTransitionEnd",
+		"transition":     "transitionend",
+		"MozTransition":  "transitionend",
+		"OTransition":    "oTransitionEnd",
 		"WebkitTransition": "webkitTransitionEnd",
-		"msTransition":     "MSTransitionEnd"
+		"msTransition":   "MSTransitionEnd"
 	},
 	isOldie = (function() {
 
-		if( $.browser != null ) {
+		if( $.browser !== undefined ) {
 			// old jQuery versions and jQuery migrate plugin users
 			return $.browser.msie && ( ( ~~$.msie.version ) < 10 );
 		}
@@ -172,8 +228,6 @@
 
 		options: {
 			items: "> *",
-			// item stacking - value 0>x<1
-			stacking : 0.73,
 			active: 0,
 			duration : 400,
 			easing: "easeOutQuint",
@@ -183,7 +237,11 @@
 				itemclick : true,
 				mousewheel : true,
 				swipe : true
-			}
+			},
+			
+			angle: 60,
+			scale: 0.85,
+			overlap: 0.3
 		},
 		isTicking : false,
 		_create: function () {
@@ -239,24 +297,13 @@
 			var o = this.options,
 				css = {};
 
-			o.stacking = parseFloat( o.stacking );
-			o.stacking = o.stacking > 0 && o.stacking < 1
-				? o.stacking
-				: 0.73;
-
 			o.duration = ~~ o.duration;
 			if( o.duration < 1 ) {
 				o.duration = 1;
 			}
 
-			this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * this.items.innerWidth() );
 			this.currentIndex = this._isValidIndex( o.active, true ) ? o.active : 0;
 			this.activeItem = this.items
-				// apply a negative margin so items stack
-				.css({
-					marginLeft : this.itemMargin,
-					marginRight : this.itemMargin
-				})
 				.removeClass( "ui-state-active" )
 				.eq( this.currentIndex )
 				.addClass( "ui-state-active" );
@@ -269,8 +316,8 @@
 			// make sure there's enough space
 			css.width = this.itemWidth * this.items.length;
 
-			// Center the actual parents' left side within it"s parent
-			$.extend( css, this._getCenterPosition() );
+			// Center the actual parents' left side within its parent
+			$.extend( css, this._getCenterPosition(), this._getPerspectiveOrigin() );
 			this.element.css( css );
 
 			// Jump to the first item
@@ -278,17 +325,43 @@
 
 			this.initialOffset = parseInt( this.activeItem.css( "left" ), 10 );
 
+			this._trigger( "beforeselect", null, this._ui() );
 			this._trigger( "select", null, this._ui() );
 		},
-		_getCenterPosition : function () {
+		_getItemRenderedWidth : function( angle, scale ) {
+			// Estimate the rendered width (not taking perspective into account)
+			return Math.cos( angle * ( Math.PI / 180 ) ) * this.itemSize * scale;
+		},
+		_getCenterPosition : function ( index ) {
 			var pos;
-
-			pos = - this.currentIndex * this.itemSize / 2;
-			pos += this.outerWidth / 2 - this.itemSize / 2;
-			pos -= parseInt( this.element.css( "paddingLeft" ) ,10 ) || 0;
-			pos = Math.round( pos );
+			
+			var renderedWidth = this._getItemRenderedWidth( this.options.angle, this.options.scale );
+			
+			index = typeof index === "undefined" ? this.currentIndex : index;
+			
+			// Get default center
+			pos = this.outerWidth / 2 - this.itemSize / 2;
+			
+			// Shift left based on the number of elements before selection
+			pos -= index * renderedWidth;
+			
+			// Adjust back right for the overlap of the elements
+			pos += index * renderedWidth * this.options.overlap;
+			
+			// Adjust for the padding
+			pos -= parseInt( this.element.css( "paddingLeft" ), 10 ) || 0;
 
 			return { left : pos };
+		},
+		_getPerspectiveOrigin : function () {
+			// Center the perspective on the visual center of the container
+			return {
+				perspectiveOrigin : this.itemSize / 2 +
+					( this.currentIndex *
+						this._getItemRenderedWidth( this.options.angle, this.options.scale ) *
+						( 1 - this.options.overlap )
+					) + "px 45%"
+			};
 		},
 		_isValidIndex : function ( index, ignoreCurrent ) {
 
@@ -355,7 +428,7 @@
 				coverflow : 1
 			};
 
-			$.extend( animation, this._getCenterPosition() );
+			$.extend( animation, this._getCenterPosition(), this._getPerspectiveOrigin() );
 
 			if( this.useJqueryAnimate ) {
 				this._animation( o, animation );
@@ -375,13 +448,13 @@
 			var self = this,
 				from = this._getFrom();
 
-			//Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
+			// Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
 			$.fx.step.coverflow = function( fx ) {
 				self._refresh( fx.now, from, self.currentIndex );
 			};
 
 			// 1. Stop the previous animation
-			// 2. Animate the parent"s left/top property so the current item is in the center
+			// 2. Animate the parent's left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
 
 			this.element
@@ -416,10 +489,40 @@
 					if( self.isTicking ) {
 						self.coverflowrafid = requestAnimationFrame( loopRefresh );
 					}
+				},
+				transition = {
+					"transition-property" : "left",
+					"transition-duration" : o.duration + "ms",
+					"transition-timing-function" : transitionFn,
+					"transition-delay" : "initial"
 				};
 
 			this.coverflowrafid = requestAnimationFrame( loopRefresh );
-
+			
+			// Query the element's active CSS in case a transition property is already defined
+			var css = activeCss(this.element);
+			
+			$.each( [ "", browserPrefix.css ], function(i, prefix) {
+				var activeProperty = css[ prefix + "transition-property" ];
+				if ( activeProperty ) {
+					
+					// Transition property already defined, check if the one we want to add is present
+					if ( activeProperty.indexOf( transition[ "transition-property" ] ) < 0 ) {
+						
+						// Add transition property since it is not yet included
+						$.each( transition, function( name, value ) {
+							css[ prefix + name ] += ", " + value;
+						});
+					}
+				} else {
+					
+					// Transition property not yet defined, add it
+					$.each( transition, function( name, value ) {
+						css[ prefix + name ] = value;
+					});
+				}
+			});
+			
 			this.element
 				.one( eventsMap[ $.support.transition ],
 					function() {
@@ -429,9 +532,7 @@
 						self._onAnimationEnd( self );
 					}
 				)
-				.css($.extend( this._getCenterPosition(), {
-					"transition" : "left " + o.duration + "ms " + transitionFn
-				}));
+				.css( $.extend( css, this._getCenterPosition(), this._getPerspectiveOrigin() ) );
 		},
 		_onAnimationEnd : function() {
 
@@ -445,7 +546,8 @@
 			this._trigger( "select", null, this._ui() );
 		},
 		_refresh: function( state, from, to ) {
-			var self = this;
+			var self = this,
+				renderedWidth = self._getItemRenderedWidth( self.options.angle, self.options.scale );
 
 			this.element
 				.parent()
@@ -462,26 +564,23 @@
 					css = {
 						zIndex: self.items.length + ( side === "left" ? to - i : i - to )
 					},
-					scale = ( 1 + ( ( 1 - mod ) * 0.3 ) ),
+					scale = 1 - ( mod * ( 1 - self.options.scale ) ),
+					angle = side === "right" ? self.options.angle : - self.options.angle,
 					matrixT, filters;
-
-				css.left = (
-					( -i * ( self.itemSize / 2 ) )
-					+ ( side === "right"
-						? -self.itemSize / 2
-						: self.itemSize / 2
-					) * mod
-				);
-
+				
+				// Adjust left to center active item in display window
+				css.left = -i * self.itemSize +
+					( mod * i * renderedWidth * ( 1 - self.options.overlap ) ) +
+					( ( 1 - mod ) * i * renderedWidth * ( 1 - self.options.overlap ) );
+						
 				if( self.transformItems ) {
-					// transponed matrix
-					matrixT = [
-						scale, ( mod * ( side === "right" ? -0.2 : 0.2 ) ),
-						0, scale,
-						0, 0
-					];
-
 					if( isOldie && ! $.support.transform ) {
+						// Fallback to matrix if the browser does not support transfrom
+						matrixT = [
+							scale, ( mod * ( side === "right" ? -0.2 : 0.2 ) ),
+							0, scale,
+							0, 0
+						];
 
 						// Adapted from Paul Baukus transformie lib
 						if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
@@ -494,7 +593,8 @@
 						filters.M22 = matrixT[ 3 ];
 
 					} else {
-						css.transform = "matrix(" + matrixT.join( "," ) + ")";
+						css.transform = "rotateY(" + ( mod * angle ) + "deg) scale(" + scale + ")";
+						css.transformOrigin = side === "right" ? "left center" : "right center";
 					}
 				}
 
@@ -504,8 +604,8 @@
 		},
 		_ui : function ( active, index ) {
 			return {
-				active: this.activeItem,
-				index: index || this.currentIndex
+				active: active || this.activeItem,
+				index: typeof index === "undefined" ? this.currentIndex : index
 			};
 		},
 		_onMouseWheel : function ( ev ) {
@@ -536,4 +636,4 @@
 		}
 	});
 
-})( jQuery );
+})( jQuery, document, window );
