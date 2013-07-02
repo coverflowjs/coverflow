@@ -1,5 +1,3 @@
-/* global jQuery, CSSStyleDeclaration */
-
 /**
  * @license Released under the MIT license.
  * 
