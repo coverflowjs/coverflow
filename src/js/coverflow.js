@@ -135,15 +135,24 @@
 	 * @see http://davidwalsh.name/vendor-prefix
 	 */
 	var browserPrefix = (function () {
+		if ( ! window.getComputedStyle ) {
+			// IE <= 8 doesn't support getComputedStyle and doesn't work with x-tags anyway
+			return {
+				css : "",
+				js : ""
+			};
+		}
+		
 		var styles = window.getComputedStyle( document.documentElement, "" ),
-			pre = (Array.prototype.slice
+			pre = ( Array.prototype.slice
 				.call( styles )
 				.join( "" )
 				.match( /-(moz|webkit|ms)-/ ) || ( styles.OLink === "" && [ "", "o" ] )
-			)[1];
+			)[ 1 ];
+			
 		return {
 			css : "-" + pre + "-",
-			js : pre[0].toUpperCase() + pre.substr(1)
+			js : pre[ 0 ].toUpperCase() + pre.substr( 1 )
 		};
 	})();
 
