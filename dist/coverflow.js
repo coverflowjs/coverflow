@@ -169,7 +169,7 @@
 
 			var o = this.options;
 
-			this.origStyle = this.element.attr("style") || "";
+			this.elementOrigStyle = this.element.attr("style") || "";
 
 			this.items = this.element.find( o.items )
 					// set tabindex so widget items get focusable
@@ -508,8 +508,10 @@
 			this.items
 				.removeClass( "ui-coverflow-item ui-state-active" )
 				.each(function(){
-					var $this = $(this);
-					$this.attr("style", $this.data("coverflowbeforestyle"));
+					var $this = $( this );
+					$this
+						.attr( "style", $this.data( "coverflowbeforestyle" ) )
+						.data( "coverflowbeforestyle", null );
 				});
 
 			this._super();
