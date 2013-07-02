@@ -1,4 +1,8 @@
+/* global jQuery, CSSStyleDeclaration */
+
 /**
+ * @license Released under the MIT license.
+ * 
  * CoverflowJS
  *
  * Refactored for jQuery 1.8 / jQueryUI 1.9 Sebastian Sauer
@@ -7,12 +11,11 @@
  * Original Component: Paul Bakaus for jQueryUI 1.7
  * 3D transformations: Brandon Belvin
  *
- * Released under the MIT license.
- *
  * Depends:
  *  jquery.ui.core.js
  *  jquery.ui.widget.js
  *  jquery.ui.effect.js
+ *  jquery.copycss.js
  *
  * - in case you want swipe support and you don't use jQuery mobile yet:
  * jquery-mobile.custom.js
@@ -52,7 +55,7 @@
 	}
 	
 	if ( ! window.requestAnimationFrame ) {
-		window.requestAnimationFrame = function( callback, element ) {
+		window.requestAnimationFrame = function( callback /* , element */ ) {
 			var currTime = new Date().getTime(),
 				timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) ),
 				id = window.setTimeout( function() {
@@ -71,13 +74,9 @@
 		};
 	}
 
-	$.support.transform = "transform" in style
-		? "transform"
-		: false;
+	$.support.transform = "transform" in style ? "transform" : false;
 
-	$.support.transition = "transition" in style
-		? "transition"
-		: false;
+	$.support.transition = "transition" in style ? "transition" : false;
 
 	if( ! $.support.transform || ! $.support.transition ) {
 
@@ -109,40 +108,28 @@
 (function( $, document, window ) {
 	"use strict";
 	
-	/**
-	 * Finds the calculated CSS for the given jQuery-wrapped element.
-	 * @see http://stackoverflow.com/questions/754607/can-jquery-get-all-css-styles-associated-with-an-element
-	 */
-	function activeCss( $element ) {
-		function css2json( css ) {
-			var style = {};
-			if ( !css ) {
-				return style; 
-			}
-			
-			if ( css instanceof CSSStyleDeclaration ) {
-				for ( var i in css ) {
-					if ( ( css[ i ]).toLowerCase ) {
-						style[ ( css[ i ] ).toLowerCase() ] = css[ css[ i ] ];
-					}
-				}
-			} else if ( typeof css === "string" ) {
-				css = css.split( ";" );
-				for ( var i in css ) {
-					var rule = css[ $.trim( i ) ].split( ":" );
-					style[ rule[ 0 ].toLowerCase() ] = $.trim( rule[ 1 ] );
-				}
-			}
-			return style;
+	function appendCamelCase() {
+		/**
+		 * @see http://stackoverflow.com/questions/1026069/capitalize-the-first-letter-of-string-in-javascript
+		 */
+		function capitalizeFirstLetter( string ) {
+			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
 		}
-
-		var activeRules = {};
-		var rules = window.getMatchedCSSRules( $element.get( 0 ) );
-		$.each( rules, function( i, rule ) {
-			activeRules = $.extend( activeRules, css2json( rule.style ),
-				css2json( $element.attr( 'style' ) ) );
-		});
-		return activeRules;
+		
+		var strings = [], i = 0;
+		
+		for ( ; i < arguments.length; i++ ) {
+			if ( typeof arguments[ i ] === "string" && arguments[ i ].length > 0 ) {
+				if ( strings.length > 0 ) {
+					strings.push( capitalizeFirstLetter( arguments[ i ] ) );
+				}
+				else {
+					strings.push( arguments[ i ] );
+				}
+			}
+		}
+		
+		return strings.join( "" );
 	}
 	
 	/**
@@ -155,10 +142,10 @@
 				.call( styles )
 				.join( "" )
 				.match( /-(moz|webkit|ms)-/ ) || ( styles.OLink === "" && [ "", "o" ] )
-			)[1];   
-		
+			)[1];
 		return {
-			css: "-" + pre + "-"
+			css : "-" + pre + "-",
+			js : pre[0].toUpperCase() + pre.substr(1)
 		};
 	})();
 
@@ -225,7 +212,7 @@
 
 		var match = /(msie) ([\w.]+)/.exec( navigator.userAgent.toLowerCase() );
 
-		return match != null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
+		return match !== null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
 	})();
 
 	$.widget( "ui.coverflow", {
@@ -259,10 +246,10 @@
 					// makes items accessible by keyboard
 					.addClass( "ui-coverflow-item" )
 					.prop( "tabIndex", 0 )
-					.each(function(){
+					.each( function () {
 						var $this = $(this);
 						$this.data("origstyle", $this.attr("style") || "");
-					})
+					});
 
 			this.element
 				.addClass( "ui-coverflow" )
@@ -383,16 +370,16 @@
 			return this.select( this.currentIndex - 1 );
 		},
 		_getFrom : function () {
-			return Math.abs( this.previous - this.currentIndex ) <= 1
-				? this.previousIndex
-				: this.currentIndex + ( this.previousIndex < this.currentIndex ? -1 : 1 );
+			return Math.abs( this.previous - this.currentIndex ) <= 1 ?
+				this.previousIndex :
+					this.currentIndex + ( this.previousIndex < this.currentIndex ? -1 : 1 );
 		},
 		select : function( item ) {
 
 			var o = this.options,
-				index = ! isNaN( parseInt( item, 10 ) )
-					? parseInt( item, 10 )
-					: this.items.index( item ),
+				index = ! isNaN( parseInt( item, 10 ) ) ?
+					parseInt( item, 10 ) :
+						this.items.index( item ),
 				animation;
 
 			if( ! this._isValidIndex( index ) ) {
@@ -416,7 +403,7 @@
 				} else {
 
 					if( this.coverflowrafid ) {
-						cancelAnimationFrame( this.coverflowrafid );
+						window.cancelAnimationFrame( this.coverflowrafid );
 					}
 
 					this.element
@@ -491,38 +478,44 @@
 					}
 
 					if( self.isTicking ) {
-						self.coverflowrafid = requestAnimationFrame( loopRefresh );
+						self.coverflowrafid = window.requestAnimationFrame( loopRefresh );
 					}
 				},
 				transition = {
-					"transition-property" : "left",
-					"transition-duration" : o.duration + "ms",
-					"transition-timing-function" : transitionFn,
-					"transition-delay" : "initial"
-				};
+					transitionProperty : "left",
+					transitionDuration : o.duration + "ms",
+					transitionTimingFunction : transitionFn,
+					transitionDelay : "initial"
+				},
+				css, transitionPropertyName, activeProperty, propertyName;
 
-			this.coverflowrafid = requestAnimationFrame( loopRefresh );
+			this.coverflowrafid = window.requestAnimationFrame( loopRefresh );
 			
 			// Query the element's active CSS in case a transition property is already defined
-			var css = activeCss(this.element);
+			css = $(this.element).getStyles();
 			
-			$.each( [ "", browserPrefix.css ], function(i, prefix) {
-				var activeProperty = css[ prefix + "transition-property" ];
+			// TODO: Refactor to function
+			$.each( [ "", browserPrefix.js ], function( i, prefix ) {
+				transitionPropertyName = appendCamelCase.call( undefined, prefix, "transitionProperty" );
+				
+				activeProperty = css[ transitionPropertyName ];
 				if ( activeProperty ) {
 					
 					// Transition property already defined, check if the one we want to add is present
-					if ( activeProperty.indexOf( transition[ "transition-property" ] ) < 0 ) {
+					if ( activeProperty.indexOf( transition.transitionProperty ) < 0 ) {
 						
 						// Add transition property since it is not yet included
 						$.each( transition, function( name, value ) {
-							css[ prefix + name ] += ", " + value;
+							propertyName = appendCamelCase.call( undefined, prefix, name );
+							css[ propertyName ] += ", " + value;
 						});
 					}
 				} else {
 					
 					// Transition property not yet defined, add it
 					$.each( transition, function( name, value ) {
-						css[ prefix + name ] = value;
+						propertyName = appendCamelCase.call( undefined, prefix, name );
+						css[ propertyName ] = value;
 					});
 				}
 			});
@@ -530,7 +523,7 @@
 			this.element
 				.one( eventsMap[ $.support.transition ],
 					function() {
-						cancelAnimationFrame( self.coverflowrafid );
+						window.cancelAnimationFrame( self.coverflowrafid );
 
 						self._refresh( 1, from, to );
 						self._onAnimationEnd( self );
@@ -559,12 +552,12 @@
 
 			this.items.each( function ( i ) {
 
-				var side = ( ( i === to && from - to < 0 ) || i - to  > 0 )
-						? "left"
-						: "right",
-					mod = ( i === to )
-						? ( 1 - state )
-						: ( i === from ? state : 1 ),
+				var side = ( ( i === to && from - to < 0 ) || i - to  > 0 ) ?
+						"left" :
+							"right",
+					mod = ( i === to ) ?
+						( 1 - state ) :
+							( i === from ? state : 1 ),
 					css = {
 						zIndex: self.items.length + ( side === "left" ? to - i : i - to )
 					},
@@ -578,7 +571,9 @@
 					( ( 1 - mod ) * i * renderedWidth * ( 1 - self.options.overlap ) );
 						
 				if( self.transformItems ) {
+					
 					if( isOldie && ! $.support.transform ) {
+						
 						// Fallback to matrix if the browser does not support transfrom
 						matrixT = [
 							scale, ( mod * ( side === "right" ? -0.2 : 0.2 ) ),
@@ -597,6 +592,7 @@
 						filters.M22 = matrixT[ 3 ];
 
 					} else {
+						// Invoke 3D transform
 						css.transform = "rotateY(" + ( mod * angle ) + "deg) scale(" + scale + ")";
 						css.transformOrigin = side === "right" ? "left center" : "right center";
 					}
