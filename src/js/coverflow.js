@@ -189,7 +189,7 @@
 		_create: function () {
 
 			var o = this.options;
-			
+
 			this.origStyle = this.element.attr("style") || "";
 
 			this.items = this.element.find( o.items )
@@ -198,9 +198,9 @@
 					.addClass( "ui-coverflow-item" )
 					.prop( "tabIndex", 0 )
 					.each(function(){
-						var $this = $(this);
-						$this.data("origstyle", $this.attr("style") || "");
-					})
+						var $this = $( this );
+						$this.data( "coverflowbeforestyle", $this.attr( "style" ) || "" );
+					});
 
 			this.element
 				.addClass( "ui-coverflow" )
@@ -505,7 +505,7 @@
 		_ui : function ( active, index ) {
 			return {
 				active: active || this.activeItem,
-				index: typeof index === "undefined" ? this.currentIndex : index
+				index: index != null ? index : this.currentIndex
 			};
 		},
 		_onMouseWheel : function ( ev ) {
@@ -521,15 +521,16 @@
 		_destroy : function () {
 
 			this.element
-				.attr( "style", this.origStyle )
+				.attr( "style", this.elementOrigStyle )
 				.removeClass( "ui-coverflow" )
 				.parent()
 				.removeClass( "ui-coverflow-wrapper ui-clearfix" );
 
-			this.items.removeClass("ui-coverflow-item ui-state-active")
+			this.items
+				.removeClass( "ui-coverflow-item ui-state-active" )
 				.each(function(){
 					var $this = $(this);
-					$this.attr("style", $this.data("origstyle"));
+					$this.attr("style", $this.data("coverflowbeforestyle"));
 				});
 
 			this._super();
