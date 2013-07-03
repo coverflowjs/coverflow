@@ -57,7 +57,7 @@
 			var currTime = new Date().getTime(),
 				timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) ),
 				id = window.setTimeout( function() {
-					callback( currTime + timeToCall ); 
+					callback( currTime + timeToCall );
 				}, timeToCall );
 			
 			lastTime = currTime + timeToCall;
@@ -154,9 +154,8 @@
 			css : "-" + pre + "-",
 			js : pre[ 0 ].toUpperCase() + pre.substr( 1 )
 		};
-	})();
-
-	var availableCssTransitions = {
+	})(),
+	availableCssTransitions = {
 
 		/**
 		 * @see http://matthewlein.com/ceaser/
@@ -331,9 +330,8 @@
 			return Math.cos( angle * ( Math.PI / 180 ) ) * this.itemSize * scale;
 		},
 		_getCenterPosition : function ( index ) {
-			var pos;
-			
-			var renderedWidth = this._getItemRenderedWidth( this.options.angle, this.options.scale );
+			var pos,
+				renderedWidth = this._getItemRenderedWidth( this.options.angle, this.options.scale );
 			
 			index = typeof index === "undefined" ? this.currentIndex : index;
 			
@@ -348,6 +346,8 @@
 			
 			// Adjust for the padding
 			pos -= parseInt( this.element.css( "paddingLeft" ), 10 ) || 0;
+			
+			pos = Math.round( pos );
 
 			return { left : pos };
 		},
@@ -573,9 +573,11 @@
 					matrixT, filters;
 				
 				// Adjust left to center active item in display window
-				css.left = -i * self.itemSize +
+				css.left = Math.round(
+					-i * self.itemSize +
 					( mod * i * renderedWidth * ( 1 - self.options.overlap ) ) +
-					( ( 1 - mod ) * i * renderedWidth * ( 1 - self.options.overlap ) );
+					( ( 1 - mod ) * i * renderedWidth * ( 1 - self.options.overlap ) )
+				);
 						
 				if( self.transformItems ) {
 					

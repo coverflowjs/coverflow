@@ -84,7 +84,7 @@ Swipe support depends on jQuery mobile. If you only want to support swipe (and d
 
 **CSS3 Transitions support:**
 
-Depends on [$.fn.transit](https://github.com/rstacruz/jquery.transit) and [requestAnimationFrame(RAF) polyfill](https://gist.github.com/paulirish/1579671). Simply include libs/jquery.transit.js and libs/raf.js.
+Depends on [$.fn.transit](https://github.com/rstacruz/jquery.transit) and [$.fn.getStyles](https://github.com/moagrius/copycss). Simply include libs/jquery.transit.js and libs/jquery.copycss.js.
 
 **jQuery animate fallback:**
 
@@ -107,7 +107,7 @@ Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer
 Licensed under the MIT licenses.
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [grunt](https://github.com/cowboy/grunt).
+In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [grunt](http://gruntjs.com).
 
 ### Important notes
 Please don't edit files in the `dist` subdirectory as they are generated via grunt. You'll find source code in the `src` subdirectory!
