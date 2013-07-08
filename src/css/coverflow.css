@@ -31,3 +31,7 @@
 
     border: 0 none;
 }
+
+.ui-coverflow-classic-render .ui-coverflow-item {
+	-webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(black), color-stop(.7, black), to(transparent));
+}

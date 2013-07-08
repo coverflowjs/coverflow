@@ -106,7 +106,7 @@
 (function( $, document, window ) {
 	"use strict";
 	
-	function appendCamelCase() {
+	function appendCamelCase () {
 		/**
 		 * @see http://stackoverflow.com/questions/1026069/capitalize-the-first-letter-of-string-in-javascript
 		 */
@@ -219,15 +219,304 @@
 		var match = /(msie) ([\w.]+)/.exec( navigator.userAgent.toLowerCase() );
 
 		return match !== null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
-	})();
+	})(),
+	availableRenderers = {
+		"3d" : {
+			cssClass : "3d",
+			options : {
+				angle: 60,
+				scale: 0.85,
+				overlap: 0.3,
+				perspectiveY: 45
+			},
+			_init : function ( that ) {
+				var css = {};
+				
+				// make sure there's enough space
+				css.width = that.itemWidth * that.items.length;
+
+				// Center the actual parents' left side within its parent
+				$.extend( css, this._getCenterPosition( that ), this._getPerspectiveOrigin( that ) );
+				that.element.css( css );
+			},
+			_getItemRenderedWidth : function ( size, angle, scale ) {
+				// Estimate the rendered width (not taking perspective into account)
+				return Math.cos( angle * ( Math.PI / 180 ) ) * size * scale;
+			},
+			_getPerspectiveOrigin : function ( that ) {
+				// Center the perspective on the visual center of the container
+				return {
+					perspectiveOrigin : that.itemSize / 2 +
+						( that.currentIndex *
+							this._getItemRenderedWidth( that.itemSize, this.options.angle, this.options.scale ) *
+							( 1 - this.options.overlap )
+						) + "px " +
+						this.options.perspectiveY + "%"
+				};
+			},
+			_getCenterPosition : function ( that, index ) {
+				var pos,
+					renderedWidth = this._getItemRenderedWidth( that.itemSize, this.options.angle, this.options.scale );
+			
+				index = typeof index === "undefined" ? that.currentIndex : index;
+			
+				// Get default center
+				pos = that.outerWidth / 2 - that.itemSize / 2;
+			
+				// Shift left based on the number of elements before selection
+				pos -= index * renderedWidth;
+			
+				// Adjust back right for the overlap of the elements
+				pos += index * renderedWidth * this.options.overlap;
+			
+				// Adjust for the padding
+				pos -= parseInt( that.element.css( "paddingLeft" ), 10 ) || 0;
+			
+				pos = Math.round( pos );
+
+				return { left : pos };
+			},
+			select : function ( that, o ) {
+				var animation = {
+					coverflow : 1
+				};
+
+				$.extend( animation, this._getCenterPosition( that ), this._getPerspectiveOrigin( that ) );
+
+				if( that.useJqueryAnimate ) {
+					that._animation( o, animation );
+					return true;
+				}
+
+				$.extend( animation, {
+					duration: o.duration,
+					easing: o.easing
+				});
+
+				that._transition( animation );
+			},
+			_transition : function ( that, o, from, to ) {
+				// Query the element's active CSS in case a transition property is already defined
+				var elementCss = $( that.element ).getStyles(),
+					css = {},
+					transitionFn = availableCssTransitions[ o.easing ] || availableCssTransitions.easeOutQuint,
+					transitionPropertyName,
+					activeProperty,
+					propertyName,
+					transition = {
+						transitionProperty : "left",
+						transitionDuration : o.duration + "ms",
+						transitionTimingFunction : transitionFn,
+						transitionDelay : "initial"
+					};
+			
+				// TODO: Refactor to function
+				$.each( [ "", browserPrefix.js ], function( i, prefix ) {
+					transitionPropertyName = appendCamelCase.call( undefined, prefix, "transitionProperty" );
+				
+					activeProperty = elementCss[ transitionPropertyName ];
+					if ( activeProperty ) {
+						// Transition property already defined, check if the one we want to add is present
+						if ( activeProperty.indexOf( transition.transitionProperty ) < 0 ) {
+						
+							// Add transition property since it is not yet included
+							$.each( transition, function( name, value ) {
+								propertyName = appendCamelCase.call( undefined, prefix, name );
+								css[ propertyName ] = elementCss[ propertyName ] + ", " + value;
+							});
+						}
+					} else {
+					
+						// Transition property not yet defined, add it
+						$.each( transition, function( name, value ) {
+							propertyName = appendCamelCase.call( undefined, prefix, name );
+							css[ propertyName ] = value;
+						});
+					}
+				});
+			
+				that.element
+					.one( eventsMap[ $.support.transition ],
+						function() {
+							window.cancelAnimationFrame( that.coverflowrafid );
+
+							that._refresh( 1, from, to );
+							that._onAnimationEnd( that );
+						}
+					)
+					.css( $.extend( css, this._getCenterPosition( that ),
+						this._getPerspectiveOrigin( that ) ) );
+			},
+			_refresh : function ( that, state, from, to ) {
+				var self = this,
+					renderedWidth = self._getItemRenderedWidth( that.itemSize, self.options.angle, self.options.scale );
+
+				that.items.each( function ( i ) {
+
+					var side = ( ( i === to && from - to < 0 ) || i - to  > 0 ) ?
+							"left" :
+								"right",
+						mod = ( i === to ) ?
+							( 1 - state ) :
+								( i === from ? state : 1 ),
+						css = {
+							zIndex: that.items.length + ( side === "left" ? to - i : i - to )
+						},
+						scale = 1 - ( mod * ( 1 - self.options.scale ) ),
+						angle = side === "right" ? self.options.angle : - self.options.angle;
+				
+					// Adjust left to center active item in display window
+					css.left = Math.round(
+						-i * that.itemSize +
+						( mod * i * renderedWidth * ( 1 - self.options.overlap ) ) +
+						( ( 1 - mod ) * i * renderedWidth * ( 1 - self.options.overlap ) )
+					);
+					
+					css.transform = "rotateY(" + ( mod * angle ) + "deg) scale(" + scale + ")";
+					css.transformOrigin = side === "right" ? "left center" : "right center";
+
+					$( this ).css( css );
+
+				});
+			}
+		},
+		classic : {
+			cssClass : "classic",
+			options : {
+				stacking: 0.73
+			},
+			_init : function ( that ) {
+				var o = that.options,
+					css = {};
+				
+				o.stacking = parseFloat( o.stacking );
+				this.options.stacking = o.stacking > 0 && o.stacking < 1 ?
+					o.stacking :
+					this.options.stacking;
+				
+				this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * that.items.innerWidth() );
+				that.items
+					// apply a negative margin so items stack
+					.css({
+						marginLeft : this.itemMargin,
+						marginRight : this.itemMargin
+					});
+			
+				// make sure there's enough space
+				css.width = that.itemWidth * that.items.length;
+
+				// Center the actual parent's left side within its parent
+				$.extend( css, this._getCenterPosition( that ) );
+				that.element.css( css );
+				
+				// Set up transformer
+				this._transform = $.support.transform ? this._matrixTransform :
+					isOldie ? this._fallbackTransform : $.noop;
+			},
+			_getCenterPosition : function ( that ) {
+				var pos;
+
+				pos = - that.currentIndex * that.itemSize / 2;
+				pos += that.outerWidth / 2 - that.itemSize / 2;
+				pos -= parseInt( that.element.css( "paddingLeft" ), 10 ) || 0;
+				pos = Math.round( pos );
+
+				return { left : pos };
+			},
+			select : function ( that, o ) {
+				var animation = {
+					coverflow : 1
+				};
+
+				$.extend( animation, this._getCenterPosition( that ) );
+
+				if( that.useJqueryAnimate ) {
+					that._animation( o, animation );
+					return true;
+				}
+
+				$.extend( animation, {
+					duration: o.duration,
+					easing: o.easing
+				});
+
+				that._transition( animation );
+			},
+			_transition : function ( that, o, from, to ) {
+				var self = this,
+					transitionFn = availableCssTransitions[ o.easing ] || availableCssTransitions.easeOutQuint;
+				
+				that.element
+					.one( eventsMap[ $.support.transition ],
+						function() {
+							cancelAnimationFrame( that.coverflowrafid );
+
+							that._refresh( 1, from, to );
+							that._onAnimationEnd( that );
+						}
+					)
+					.css($.extend( self._getCenterPosition( that ), {
+						"transition" : "left " + o.duration + "ms " + transitionFn
+					}));
+			},
+			_refresh : function ( that, state, from, to ) {
+				var self = this;
+				
+				that.items.each( function ( i ) {
+
+					var side = ( ( i === to && from - to < 0 ) || i - to  > 0 )
+							? "left"
+							: "right",
+						mod = ( i === to )
+							? ( 1 - state )
+							: ( i === from ? state : 1 ),
+						css = {
+							zIndex: that.items.length + ( side === "left" ? to - i : i - to )
+						},
+						scale = ( 1 + ( ( 1 - mod ) * 0.3 ) ),
+						matrixT = [
+							scale, ( mod * ( side === "right" ? -0.2 : 0.2 ) ),
+							0, scale,
+							0, 0
+						];
+
+					css.left = (
+						( -i * ( that.itemSize / 2 ) )
+						+ ( side === "right"
+							? -that.itemSize / 2
+							: that.itemSize / 2
+						) * mod
+					);
+					
+					self._transform.call( this, css, matrixT );
+					
+					$( this ).css( css );
+				});
+			},
+			_matrixTransform : function ( css, matrixT ) {
+				css.transform = "matrix(" + matrixT.join( "," ) + ")";
+			},
+			_fallbackTransform : function ( css, matrixT ) {
+				// Adapted from Paul Baukus transformie lib
+				if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
+					this.style.filter = (this.style.filter ? "" : " " ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\"auto expand\")";
+				}
+				var filters = this.filters[ "DXImageTransform.Microsoft.Matrix" ];
+				filters.M11 = matrixT[ 0 ];
+				filters.M12 = matrixT[ 2 ];
+				filters.M21 = matrixT[ 1 ];
+				filters.M22 = matrixT[ 3 ];
+			}
+		}
+	};
 
 	$.widget( "ui.coverflow", {
 
 		options: {
-			items: "> *",
-			active: 0,
+			items : "> *",
+			active : 0,
 			duration : 400,
-			easing: "easeOutQuint",
+			easing : "easeOutQuint",
 			// selection triggers
 			trigger : {
 				itemfocus : true,
@@ -235,17 +524,23 @@
 				mousewheel : true,
 				swipe : true
 			},
-			
-			angle: 60,
-			scale: 0.85,
-			overlap: 0.3
+			renderer : "classic"
 		},
 		isTicking : false,
-		_create: function () {
+		_create : function () {
 
 			var o = this.options;
 			
-			this.elementOrigStyle = this.element.attr( "style ") || "";
+			if ( ! $.support.transform || isOldie ) {
+				// If transform is not supported or is old IE, force classic renderer
+				this.renderer = availableRenderers.classic;
+			} else {
+				this.renderer = availableRenderers[ o.renderer ] || availableRenderers.classic;
+			}
+			
+			this.renderer.options = $.extend( this.renderer.options, this.options.rendererOptions );
+			
+			this.elementOrigStyle = this.element.attr( "style" ) || "";
 
 			this.items = this.element.find( o.items )
 					// set tabindex so widget items get focusable
@@ -258,7 +553,7 @@
 					});
 
 			this.element
-				.addClass( "ui-coverflow" )
+				.addClass( "ui-coverflow ui-coverflow-" + this.renderer.cssClass + "-render" )
 				.parent()
 				.addClass( "ui-coverflow-wrapper ui-clearfix" );
 
@@ -285,14 +580,11 @@
 			}
 
 			this.useJqueryAnimate = ! ( $.support.transition && $.isFunction( window.requestAnimationFrame ));
-			this.transformItems = (!! $.support.transform) || isOldie;
 
 			this.coverflowrafid = 0;
 		},
 		_init : function () {
-
-			var o = this.options,
-				css = {};
+			var o = this.options;
 
 			o.duration = ~~ o.duration;
 			if( o.duration < 1 ) {
@@ -309,13 +601,9 @@
 			this.itemHeight = this.items.height();
 			this.itemSize = this.items.outerWidth( true );
 			this.outerWidth = this.element.parent().outerWidth( false );
-
-			// make sure there's enough space
-			css.width = this.itemWidth * this.items.length;
-
-			// Center the actual parents' left side within its parent
-			$.extend( css, this._getCenterPosition(), this._getPerspectiveOrigin() );
-			this.element.css( css );
+			
+			// Call renderer-specific code
+			this.renderer._init(this);
 
 			// Jump to the first item
 			this._refresh( 1, this._getFrom(), this.currentIndex );
@@ -325,41 +613,8 @@
 			this._trigger( "beforeselect", null, this._ui() );
 			this._trigger( "select", null, this._ui() );
 		},
-		_getItemRenderedWidth : function( angle, scale ) {
-			// Estimate the rendered width (not taking perspective into account)
-			return Math.cos( angle * ( Math.PI / 180 ) ) * this.itemSize * scale;
-		},
 		_getCenterPosition : function ( index ) {
-			var pos,
-				renderedWidth = this._getItemRenderedWidth( this.options.angle, this.options.scale );
-			
-			index = typeof index === "undefined" ? this.currentIndex : index;
-			
-			// Get default center
-			pos = this.outerWidth / 2 - this.itemSize / 2;
-			
-			// Shift left based on the number of elements before selection
-			pos -= index * renderedWidth;
-			
-			// Adjust back right for the overlap of the elements
-			pos += index * renderedWidth * this.options.overlap;
-			
-			// Adjust for the padding
-			pos -= parseInt( this.element.css( "paddingLeft" ), 10 ) || 0;
-			
-			pos = Math.round( pos );
-
-			return { left : pos };
-		},
-		_getPerspectiveOrigin : function () {
-			// Center the perspective on the visual center of the container
-			return {
-				perspectiveOrigin : this.itemSize / 2 +
-					( this.currentIndex *
-						this._getItemRenderedWidth( this.options.angle, this.options.scale ) *
-						( 1 - this.options.overlap )
-					) + "px 45%"
-			};
+			return this.renderer._getCenterPosition(this, index);
 		},
 		_isValidIndex : function ( index, ignoreCurrent ) {
 
@@ -386,8 +641,7 @@
 			var o = this.options,
 				index = ! isNaN( parseInt( item, 10 ) ) ?
 					parseInt( item, 10 ) :
-						this.items.index( item ),
-				animation;
+						this.items.index( item );
 
 			if( ! this._isValidIndex( index ) ) {
 				return false;
@@ -420,25 +674,9 @@
 			this.isTicking = true;
 
 			this.previousIndex = this.currentIndex;
-			this.options.active = this.currentIndex = index;
-
-			animation = {
-				coverflow : 1
-			};
-
-			$.extend( animation, this._getCenterPosition(), this._getPerspectiveOrigin() );
-
-			if( this.useJqueryAnimate ) {
-				this._animation( o, animation );
-				return true;
-			}
-
-			$.extend( animation, {
-				duration: o.duration,
-				easing: o.easing
-			});
-
-			this._transition( animation );
+			o.active = this.currentIndex = index;
+			
+			this.renderer.select(this, o);
 			return true;
 		},
 		_animation : function( o, animation ) {
@@ -469,12 +707,10 @@
 				});
 		},
 		_transition : function( o ) {
-
 			var self = this,
 				d = new Date(),
 				from = this._getFrom(),
 				to = this.currentIndex,
-				transitionFn = availableCssTransitions[ o.easing ] || availableCssTransitions.easeOutQuint,
 				loopRefresh = function() {
 					var state = ( (new Date()).getTime() - d.getTime() ) / o.duration;
 
@@ -487,56 +723,11 @@
 					if( self.isTicking ) {
 						self.coverflowrafid = window.requestAnimationFrame( loopRefresh );
 					}
-				},
-				transition = {
-					transitionProperty : "left",
-					transitionDuration : o.duration + "ms",
-					transitionTimingFunction : transitionFn,
-					transitionDelay : "initial"
-				},
-				css, transitionPropertyName, activeProperty, propertyName;
+				};
 
 			this.coverflowrafid = window.requestAnimationFrame( loopRefresh );
 			
-			// Query the element's active CSS in case a transition property is already defined
-			css = $(this.element).getStyles();
-			
-			// TODO: Refactor to function
-			$.each( [ "", browserPrefix.js ], function( i, prefix ) {
-				transitionPropertyName = appendCamelCase.call( undefined, prefix, "transitionProperty" );
-				
-				activeProperty = css[ transitionPropertyName ];
-				if ( activeProperty ) {
-					
-					// Transition property already defined, check if the one we want to add is present
-					if ( activeProperty.indexOf( transition.transitionProperty ) < 0 ) {
-						
-						// Add transition property since it is not yet included
-						$.each( transition, function( name, value ) {
-							propertyName = appendCamelCase.call( undefined, prefix, name );
-							css[ propertyName ] += ", " + value;
-						});
-					}
-				} else {
-					
-					// Transition property not yet defined, add it
-					$.each( transition, function( name, value ) {
-						propertyName = appendCamelCase.call( undefined, prefix, name );
-						css[ propertyName ] = value;
-					});
-				}
-			});
-			
-			this.element
-				.one( eventsMap[ $.support.transition ],
-					function() {
-						window.cancelAnimationFrame( self.coverflowrafid );
-
-						self._refresh( 1, from, to );
-						self._onAnimationEnd( self );
-					}
-				)
-				.css( $.extend( css, this._getCenterPosition(), this._getPerspectiveOrigin() ) );
+			this.renderer._transition(this, o, from, to);
 		},
 		_onAnimationEnd : function() {
 
@@ -550,66 +741,11 @@
 			this._trigger( "select", null, this._ui() );
 		},
 		_refresh: function( state, from, to ) {
-			var self = this,
-				renderedWidth = self._getItemRenderedWidth( self.options.angle, self.options.scale );
-
 			this.element
 				.parent()
 				.scrollTop( 0 );
-
-			this.items.each( function ( i ) {
-
-				var side = ( ( i === to && from - to < 0 ) || i - to  > 0 ) ?
-						"left" :
-							"right",
-					mod = ( i === to ) ?
-						( 1 - state ) :
-							( i === from ? state : 1 ),
-					css = {
-						zIndex: self.items.length + ( side === "left" ? to - i : i - to )
-					},
-					scale = 1 - ( mod * ( 1 - self.options.scale ) ),
-					angle = side === "right" ? self.options.angle : - self.options.angle,
-					matrixT, filters;
 				
-				// Adjust left to center active item in display window
-				css.left = Math.round(
-					-i * self.itemSize +
-					( mod * i * renderedWidth * ( 1 - self.options.overlap ) ) +
-					( ( 1 - mod ) * i * renderedWidth * ( 1 - self.options.overlap ) )
-				);
-						
-				if( self.transformItems ) {
-					
-					if( isOldie && ! $.support.transform ) {
-						
-						// Fallback to matrix if the browser does not support transfrom
-						matrixT = [
-							scale, ( mod * ( side === "right" ? -0.2 : 0.2 ) ),
-							0, scale,
-							0, 0
-						];
-
-						// Adapted from Paul Baukus transformie lib
-						if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
-							this.style.filter = (this.style.filter ? "" : " " ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\"auto expand\")";
-						}
-						filters = this.filters[ "DXImageTransform.Microsoft.Matrix" ];
-						filters.M11 = matrixT[ 0 ];
-						filters.M12 = matrixT[ 2 ];
-						filters.M21 = matrixT[ 1 ];
-						filters.M22 = matrixT[ 3 ];
-
-					} else {
-						// Invoke 3D transform
-						css.transform = "rotateY(" + ( mod * angle ) + "deg) scale(" + scale + ")";
-						css.transformOrigin = side === "right" ? "left center" : "right center";
-					}
-				}
-
-				$( this ).css( css );
-
-			});
+			this.renderer._refresh( this, state, from, to );
 		},
 		_ui : function ( active, index ) {
 			return {
@@ -628,10 +764,9 @@
 			this.next();
 		},
 		_destroy : function () {
-
 			this.element
 				.attr( "style", this.elementOrigStyle )
-				.removeClass( "ui-coverflow" )
+				.removeClass( "ui-coverflow ui-coverflow-" + this.renderer.cssClass + "-render" )
 				.parent()
 				.removeClass( "ui-coverflow-wrapper ui-clearfix" );
 

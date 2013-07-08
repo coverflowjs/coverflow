@@ -4,9 +4,9 @@
 (function($) {
 
 	var transformations = {
-		left : 'matrix3d(0.4250000000000001, 0, -0.7361215932167728, 0, 0, 0.85, 0, 0, 0.8660254037844386, 0, 0.5000000000000001, 0, 0, 0, 0, 1)',
-		active : 'matrix(1, 0, 0, 1, 0, 0)',
-		right : 'matrix3d(0.4250000000000001, 0, 0.7361215932167728, 0, 0, 0.85, 0, 0, -0.8660254037844386, 0, 0.5000000000000001, 0, 0, 0, 0, 1)'
+		left : 'matrix(1, -0.2, 0, 1, 0, 0)',
+		active : 'matrix(1.3, 0, 0, 1.3, 0, 0)',
+		right : 'matrix(1, 0.2, 0, 1, 0, 0)'
 	},
 	isOldie = (function() {
 
@@ -39,7 +39,7 @@
 					strictEqual(
 							cssTransformation,
 							transformations.left,
-							'Item aligned left, scaled.'
+							'Item aligned left.'
 						);
 					equal( $item.hasClass( 'ui-state-active' ), false, 'item without ui-state-active css class' );
 					break;
@@ -47,7 +47,7 @@
 					strictEqual(
 							cssTransformation,
 							transformations.right,
-							'Item aligned right, scaled.'
+							'Item aligned right.'
 						);
 					equal( $item.hasClass( 'ui-state-active' ), false, 'item without ui-state-active css class' );
 					break;
@@ -55,7 +55,7 @@
 					strictEqual(
 							cssTransformation,
 							transformations.active,
-							'Item at center position, active.'
+							'Item at center position, scaled, active.'
 						);
 					equal( $item.hasClass( 'ui-state-active' ), true, 'item has ui-state-active css class' );
 			}
