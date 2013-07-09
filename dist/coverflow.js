@@ -1,4 +1,4 @@
-/*! CoverflowJS - v2.3.0rc3 - 2013-07-02
+/*! CoverflowJS - v2.3.0rc3 - 2013-07-09
 * Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer; Licensed MIT */
 (function( $ ) {
 
@@ -139,7 +139,7 @@
 
 		if( $.browser != null ) {
 			// old jQuery versions and jQuery migrate plugin users
-			return $.browser.msie && ( ( ~~$.msie.version ) < 10 );
+			return $.browser.msie && ( ( ~~$.browser.version ) < 10 );
 		}
 
 		var match = /(msie) ([\w.]+)/.exec( navigator.userAgent.toLowerCase() );

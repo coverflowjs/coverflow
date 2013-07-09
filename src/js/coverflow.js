@@ -160,7 +160,7 @@
 
 		if( $.browser != null ) {
 			// old jQuery versions and jQuery migrate plugin users
-			return $.browser.msie && ( ( ~~$.msie.version ) < 10 );
+			return $.browser.msie && ( ( ~~$.browser.version ) < 10 );
 		}
 
 		var match = /(msie) ([\w.]+)/.exec( navigator.userAgent.toLowerCase() );
