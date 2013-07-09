@@ -200,7 +200,7 @@
 					.each(function(){
 						var $this = $(this);
 						$this.data("origstyle", $this.attr("style") || "");
-					})
+					});
 
 			this.element
 				.addClass( "ui-coverflow" )
