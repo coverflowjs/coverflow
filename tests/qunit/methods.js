@@ -41,13 +41,12 @@
 		
 		// Have to compare each attribute since the original element may not have had any styling, leading to a comparison of "" to undefined
 		$.each( endAttrs, function ( n, v ) {
-			strictEqual	( v, ( originalAttrs[ n ] || ""), "Element attribute " + n + " matches original after destroy" );
+			strictEqual( v, ( originalAttrs[ n ] || "" ), "Element attribute " + n + " matches original after destroy" );
 		});
 		
 		parentEndAttrs = getAttributes( this.el.parent() );
 		
 		deepEqual( parentOriginalAttrs, parentEndAttrs, "Element's parent attributes match originals after destroy" );
-		
 	});
 
 })( jQuery );
