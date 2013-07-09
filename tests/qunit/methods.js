@@ -19,10 +19,15 @@
 		deepEqual( this.el.get( 0 ), this.el.coverflow( 'widget' ).get( 0 ), 'widget method' );
 	});
 	
-	test( 'destroy', 9, function () {
+	test( 'destroy', 20, function () {
 		var originalAttrs = getAttributes( this.el ),
 			parentOriginalAttrs = getAttributes( this.el.parent() ),
+			childOriginalAttrs = [],
 			endAttrs, parentEndAttrs;
+			
+		$.each( this.items, function( i, item ) {
+			childOriginalAttrs[ i ] = getAttributes( $( item ) );
+		});
 			
 		ok( ! this.el.hasClass( "ui-coverflow" ), "Element does not have coverflow class" );
 		ok( ! this.el.parent().hasClass( "ui-coverflow-wrapper" ), "Element's parent does not have coverflow wrapper class" );
@@ -39,14 +44,17 @@
 		
 		endAttrs = getAttributes( this.el );
 		
-		// Have to compare each attribute since the original element may not have had any styling, leading to a comparison of "" to undefined
-		$.each( endAttrs, function ( n, v ) {
-			strictEqual( v, ( originalAttrs[ n ] || "" ), "Element attribute " + n + " matches original after destroy" );
-		});
+		deepEqual( endAttrs, originalAttrs, "Element's attributes match original after destroy" );
 		
 		parentEndAttrs = getAttributes( this.el.parent() );
 		
 		deepEqual( parentOriginalAttrs, parentEndAttrs, "Element's parent attributes match originals after destroy" );
+		
+		$.each( this.items, function( i, item ) {
+			endAttrs = getAttributes( $( item ) );
+			
+			deepEqual( endAttrs, childOriginalAttrs[ i ], "Element attributes match for child " + i + " after destroy" );
+		});
 	});
 
 })( jQuery );
