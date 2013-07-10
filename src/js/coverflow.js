@@ -193,10 +193,10 @@
 			this.origStyle = this.element.attr("style");
 
 			this.items = this.element.find( o.items )
-					.each(function(){
-						var $this = $(this);
+					.each( function () {
+						var $this = $( this );
 						$this.data({
-							origElemAttr : {
+							coverflowOrigElemAttr : {
 								style : $this.attr( "style" ),
 								class : $this.attr( "class" ),
 								// Tab index is included here as attr, even though we call it as a prop because when you removeProp it sets it to 0 instead of actually removing
@@ -541,7 +541,7 @@
 			this.items.removeClass( "ui-coverflow-item ui-state-active" )
 				.each( function () {
 					var $this = $( this ),
-						origAttr = $this.data( "origElemAttr" );
+						origAttr = $this.data( "coverflowOrigElemAttr" );
 
 					$.each( origAttr, function( name, value ) {
 						if ( value !== undefined ) {
@@ -551,6 +551,8 @@
 							$this.removeAttr( name );
 						}
 					});
+					
+					$this.data( "coverflowOrigElemAttr", null );
 				});
 
 			this._super();
