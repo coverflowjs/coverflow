@@ -540,17 +540,24 @@
 			
 			this.renderer.options = $.extend( this.renderer.options, this.options.rendererOptions );
 			
-			this.elementOrigStyle = this.element.attr( "style" ) || "";
+			this.origStyle = this.element.attr("style");
 
 			this.items = this.element.find( o.items )
+					.each(function(){
+						var $this = $(this);
+						$this.data({
+							origElemAttr : {
+								style : $this.attr( "style" ),
+								class : $this.attr( "class" ),
+								// Tab index is included here as attr, even though we call it as a prop because when you removeProp it sets it to 0 instead of actually removing
+								tabIndex : $this.attr( "tabIndex" )
+							}
+						});
+					})
+					.addClass( "ui-coverflow-item" )
 					// set tabindex so widget items get focusable
 					// makes items accessible by keyboard
-					.addClass( "ui-coverflow-item" )
-					.prop( "tabIndex", 0 )
-					.each( function () {
-						var $this = $( this );
-						$this.data( "coverflowbeforestyle", $this.attr( "style" ) || "" );
-					});
+					.prop( "tabIndex", 0 );
 
 			this.element
 				.addClass( "ui-coverflow ui-coverflow-" + this.renderer.cssClass + "-render" )
@@ -750,7 +757,7 @@
 		_ui : function ( active, index ) {
 			return {
 				active: active || this.activeItem,
-				index: typeof index !== "undefined" ? index : this.currentIndex
+				index: typeof index != null ? index : this.currentIndex
 			};
 		},
 		_onMouseWheel : function ( ev ) {
@@ -764,17 +771,32 @@
 			this.next();
 		},
 		_destroy : function () {
+			if ( this.origStyle !== undefined ) {
+				this.element.attr( "style", this.origStyle );
+			} else {
+				this.element.removeAttr( "style" );
+			}
+
 			this.element
-				.attr( "style", this.elementOrigStyle )
 				.removeClass( "ui-coverflow ui-coverflow-" + this.renderer.cssClass + "-render" )
 				.parent()
 				.removeClass( "ui-coverflow-wrapper ui-clearfix" );
 
-			this.items
-				.removeClass( "ui-coverflow-item ui-state-active" )
-				.each(function(){
-					var $this = $( this );
-					$this.attr( "style", $this.data( "coverflowbeforestyle" ) );
+			this.items.removeClass( "ui-coverflow-item ui-state-active" )
+				.each( function () {
+					var $this = $( this ),
+						origAttr = $this.data( "origElemAttr" );
+
+					$.each( origAttr, function( name, value ) {
+						if ( value !== undefined ) {
+							$this.attr( name, value );
+						}
+						else {
+							$this.removeAttr( name );
+						}
+					});
+					
+					$this.data( "origElemAttr", null );
 				});
 
 			this._super();
