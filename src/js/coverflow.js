@@ -190,7 +190,7 @@
 
 			var o = this.options;
 
-			this.origStyle = this.element.attr("style");
+			this.elementOrigStyle = this.element.attr("style");
 
 			this.items = this.element.find( o.items )
 					.each( function () {
@@ -512,7 +512,7 @@
 		_ui : function ( active, index ) {
 			return {
 				active: active || this.activeItem,
-				index: typeof index === "undefined" ? this.currentIndex : index
+				index: index != null ? index : this.currentIndex
 			};
 		},
 		_onMouseWheel : function ( ev ) {
@@ -527,8 +527,8 @@
 		},
 		_destroy : function () {
 
-			if ( this.origStyle !== undefined ) {
-				this.element.attr( "style", this.origStyle );
+			if ( this.elementOrigStyle !== undefined ) {
+				this.element.attr( "style", this.elementOrigStyle );
 			} else {
 				this.element.removeAttr( "style" );
 			}
