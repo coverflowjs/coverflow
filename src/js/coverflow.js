@@ -551,7 +551,7 @@
 							$this.removeAttr( name );
 						}
 					});
-					
+
 					$this.data( "coverflowOrigElemAttr", null );
 				});
 
