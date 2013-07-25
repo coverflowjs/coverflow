@@ -1,4 +1,4 @@
-/*! CoverflowJS - v2.3.0rc3 - 2013-06-15
+/*! CoverflowJS - v2.3.0rc3 - 2013-07-24
 * Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer; Licensed MIT */
 (function( $ ) {
 
@@ -169,10 +169,23 @@
 
 			var o = this.options;
 
+			this.elementOrigStyle = this.element.attr("style");
+
 			this.items = this.element.find( o.items )
+					.each( function () {
+						var $this = $( this );
+						$this.data({
+							coverflowOrigElemAttr : {
+								style : $this.attr( "style" ),
+								class : $this.attr( "class" ),
+								// Tab index is included here as attr, even though we call it as a prop because when you removeProp it sets it to 0 instead of actually removing
+								tabIndex : $this.attr( "tabIndex" )
+							}
+						});
+					})
+					.addClass( "ui-coverflow-item" )
 					// set tabindex so widget items get focusable
 					// makes items accessible by keyboard
-					.addClass( "ui-coverflow-item" )
 					.prop( "tabIndex", 0 );
 
 			this.element
@@ -221,11 +234,6 @@
 			if( o.duration < 1 ) {
 				o.duration = 1;
 			}
-
-			this.origElementDimensions = {
-				width: this.element.width(),
-				height: this.element.height()
-			};
 
 			this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * this.items.innerWidth() );
 			this.currentIndex = this._isValidIndex( o.active, true ) ? o.active : 0;
@@ -353,13 +361,13 @@
 			var self = this,
 				from = this._getFrom();
 
-			//Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
+			// Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
 			$.fx.step.coverflow = function( fx ) {
 				self._refresh( fx.now, from, self.currentIndex );
 			};
 
 			// 1. Stop the previous animation
-			// 2. Animate the parent"s left/top property so the current item is in the center
+			// 2. Animate the parent's left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
 
 			this.element
@@ -463,7 +471,8 @@
 
 						// Adapted from Paul Baukus transformie lib
 						if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
-							this.style.filter = (this.style.filter ? "" : " " ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\"auto expand\")";
+							this.style.filter = (this.style.filter ? "" : " " ) +
+								"progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\"auto expand\")";
 						}
 						filters = this.filters[ "DXImageTransform.Microsoft.Matrix" ];
 						filters.M11 = matrixT[ 0 ];
@@ -482,8 +491,8 @@
 		},
 		_ui : function ( active, index ) {
 			return {
-				active: this.activeItem,
-				index: index || this.currentIndex
+				active: active || this.activeItem,
+				index: index != null ? index : this.currentIndex
 			};
 		},
 		_onMouseWheel : function ( ev ) {
@@ -498,17 +507,33 @@
 		},
 		_destroy : function () {
 
+			if ( this.elementOrigStyle !== undefined ) {
+				this.element.attr( "style", this.elementOrigStyle );
+			} else {
+				this.element.removeAttr( "style" );
+			}
+
 			this.element
-				.css( this.origElementDimensions )
 				.removeClass( "ui-coverflow" )
 				.parent()
-				.removeClass( "ui-coverflow-wrapper" );
+				.removeClass( "ui-coverflow-wrapper ui-clearfix" );
 
-			this.items.css({
-				transform : "",
-				marginLeft: 0,
-				marginRight: 0
-			});
+			this.items.removeClass( "ui-coverflow-item ui-state-active" )
+				.each( function () {
+					var $this = $( this ),
+						origAttr = $this.data( "coverflowOrigElemAttr" );
+
+					$.each( origAttr, function( name, value ) {
+						if ( value !== undefined ) {
+							$this.attr( name, value );
+						}
+						else {
+							$this.removeAttr( name );
+						}
+					});
+
+					$this.data( "coverflowOrigElemAttr", null );
+				});
 
 			this._super();
 		}

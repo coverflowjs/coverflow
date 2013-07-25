@@ -13,7 +13,7 @@
  *  jquery.ui.widget.js
  *  jquery.ui.effect.js
  *
- * - in case you want swipe support and you don"t use jQery mobile yet:
+ * - in case you want swipe support and you don't use jQuery mobile yet:
  * jquery-mobile.custom.js
  *
  * Events:
@@ -382,13 +382,13 @@
 			var self = this,
 				from = this._getFrom();
 
-			//Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
+			// Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
 			$.fx.step.coverflow = function( fx ) {
 				self._refresh( fx.now, from, self.currentIndex );
 			};
 
 			// 1. Stop the previous animation
-			// 2. Animate the parent"s left/top property so the current item is in the center
+			// 2. Animate the parent's left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
 
 			this.element
@@ -492,7 +492,8 @@
 
 						// Adapted from Paul Baukus transformie lib
 						if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
-							this.style.filter = (this.style.filter ? "" : " " ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\"auto expand\")";
+							this.style.filter = (this.style.filter ? "" : " " ) +
+								"progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\"auto expand\")";
 						}
 						filters = this.filters[ "DXImageTransform.Microsoft.Matrix" ];
 						filters.M11 = matrixT[ 0 ];
