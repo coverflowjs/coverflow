@@ -1,6 +1,6 @@
 /**
  * @license Released under the MIT license.
- * 
+ *
  * CoverflowJS
  *
  * Refactored for jQuery 1.8 / jQueryUI 1.9 Sebastian Sauer
@@ -25,14 +25,14 @@
 
 (function( $, document, window ) {
 	"use strict";
-	
+
 	/**
 	 * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 	 * http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-	 * 
+	 *
 	 * requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
 	 * MIT license
-	 * 
+	 *
 	 * @see https://gist.github.com/paulirish/1579671
 	 */
 
@@ -45,13 +45,13 @@
 		capitalize = function( string ) {
 			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
 		};
-	
+
 	for( ; x < vendorsLength && ! window.requestAnimationFrame; ++x ) {
 		window.requestAnimationFrame = window[ vendors[ x ] + "RequestAnimationFrame" ];
 		window.cancelAnimationFrame = window[ vendors[ x ] + "CancelAnimationFrame" ] ||
 			window[ vendors[ x ] + "CancelRequestAnimationFrame" ];
 	}
-	
+
 	if ( ! window.requestAnimationFrame ) {
 		window.requestAnimationFrame = function( callback /* , element */ ) {
 			var currTime = new Date().getTime(),
@@ -59,13 +59,13 @@
 				id = window.setTimeout( function() {
 					callback( currTime + timeToCall );
 				}, timeToCall );
-			
+
 			lastTime = currTime + timeToCall;
-			
+
 			return id;
 		};
 	}
-	
+
 	if ( ! window.cancelAnimationFrame ) {
 		window.cancelAnimationFrame = function( id ) {
 			clearTimeout(id);
@@ -105,7 +105,7 @@
 
 (function( $, document, window ) {
 	"use strict";
-	
+
 	function appendCamelCase () {
 		/**
 		 * @see http://stackoverflow.com/questions/1026069/capitalize-the-first-letter-of-string-in-javascript
@@ -113,9 +113,9 @@
 		function capitalizeFirstLetter( string ) {
 			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
 		}
-		
+
 		var strings = [], i = 0;
-		
+
 		for ( ; i < arguments.length; i++ ) {
 			if ( typeof arguments[ i ] === "string" && arguments[ i ].length > 0 ) {
 				if ( strings.length > 0 ) {
@@ -126,10 +126,10 @@
 				}
 			}
 		}
-		
+
 		return strings.join( "" );
 	}
-	
+
 	/**
 	 * Determines the necessary CSS browser prefix. Defaults to "o" if no other found
 	 * @see http://davidwalsh.name/vendor-prefix
@@ -142,14 +142,14 @@
 				js : ""
 			};
 		}
-		
+
 		var styles = window.getComputedStyle( document.documentElement, "" ),
 			pre = ( Array.prototype.slice
 				.call( styles )
 				.join( "" )
 				.match( /-(moz|webkit|ms)-/ ) || ( styles.OLink === "" && [ "", "o" ] )
 			)[ 1 ];
-			
+
 		return {
 			css : "-" + pre + "-",
 			js : pre[ 0 ].toUpperCase() + pre.substr( 1 )
@@ -231,7 +231,7 @@
 			},
 			_init : function ( that ) {
 				var css = {};
-				
+
 				// make sure there's enough space
 				css.width = that.itemWidth * that.items.length;
 
@@ -257,21 +257,21 @@
 			_getCenterPosition : function ( that, index ) {
 				var pos,
 					renderedWidth = this._getItemRenderedWidth( that.itemSize, this.options.angle, this.options.scale );
-			
+
 				index = typeof index === "undefined" ? that.currentIndex : index;
-			
+
 				// Get default center
 				pos = that.outerWidth / 2 - that.itemSize / 2;
-			
+
 				// Shift left based on the number of elements before selection
 				pos -= index * renderedWidth;
-			
+
 				// Adjust back right for the overlap of the elements
 				pos += index * renderedWidth * this.options.overlap;
-			
+
 				// Adjust for the padding
 				pos -= parseInt( that.element.css( "paddingLeft" ), 10 ) || 0;
-			
+
 				pos = Math.round( pos );
 
 				return { left : pos };
@@ -309,16 +309,16 @@
 						transitionTimingFunction : transitionFn,
 						transitionDelay : "initial"
 					};
-			
+
 				// TODO: Refactor to function
 				$.each( [ "", browserPrefix.js ], function( i, prefix ) {
 					transitionPropertyName = appendCamelCase.call( undefined, prefix, "transitionProperty" );
-				
+
 					activeProperty = elementCss[ transitionPropertyName ];
 					if ( activeProperty ) {
 						// Transition property already defined, check if the one we want to add is present
 						if ( activeProperty.indexOf( transition.transitionProperty ) < 0 ) {
-						
+
 							// Add transition property since it is not yet included
 							$.each( transition, function( name, value ) {
 								propertyName = appendCamelCase.call( undefined, prefix, name );
@@ -326,7 +326,7 @@
 							});
 						}
 					} else {
-					
+
 						// Transition property not yet defined, add it
 						$.each( transition, function( name, value ) {
 							propertyName = appendCamelCase.call( undefined, prefix, name );
@@ -334,7 +334,7 @@
 						});
 					}
 				});
-			
+
 				that.element
 					.one( eventsMap[ $.support.transition ],
 						function() {
@@ -364,14 +364,14 @@
 						},
 						scale = 1 - ( mod * ( 1 - self.options.scale ) ),
 						angle = side === "right" ? self.options.angle : - self.options.angle;
-				
+
 					// Adjust left to center active item in display window
 					css.left = Math.round(
 						-i * that.itemSize +
 						( mod * i * renderedWidth * ( 1 - self.options.overlap ) ) +
 						( ( 1 - mod ) * i * renderedWidth * ( 1 - self.options.overlap ) )
 					);
-					
+
 					css.transform = "rotateY(" + ( mod * angle ) + "deg) scale(" + scale + ")";
 					css.transformOrigin = side === "right" ? "left center" : "right center";
 
@@ -388,12 +388,12 @@
 			_init : function ( that ) {
 				var o = that.options,
 					css = {};
-				
+
 				o.stacking = parseFloat( o.stacking );
 				this.options.stacking = o.stacking > 0 && o.stacking < 1 ?
 					o.stacking :
 					this.options.stacking;
-				
+
 				this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * that.items.innerWidth() );
 				that.items
 					// apply a negative margin so items stack
@@ -401,14 +401,14 @@
 						marginLeft : this.itemMargin,
 						marginRight : this.itemMargin
 					});
-			
+
 				// make sure there's enough space
 				css.width = that.itemWidth * that.items.length;
 
 				// Center the actual parent's left side within its parent
 				$.extend( css, this._getCenterPosition( that ) );
 				that.element.css( css );
-				
+
 				// Set up transformer
 				this._transform = $.support.transform ? this._matrixTransform :
 					isOldie ? this._fallbackTransform : $.noop;
@@ -445,7 +445,7 @@
 			_transition : function ( that, o, from, to ) {
 				var self = this,
 					transitionFn = availableCssTransitions[ o.easing ] || availableCssTransitions.easeOutQuint;
-				
+
 				that.element
 					.one( eventsMap[ $.support.transition ],
 						function() {
@@ -461,7 +461,7 @@
 			},
 			_refresh : function ( that, state, from, to ) {
 				var self = this;
-				
+
 				that.items.each( function ( i ) {
 
 					var side = ( ( i === to && from - to < 0 ) || i - to  > 0 )
@@ -487,9 +487,9 @@
 							: that.itemSize / 2
 						) * mod
 					);
-					
+
 					self._transform.call( this, css, matrixT );
-					
+
 					$( this ).css( css );
 				});
 			},
@@ -522,24 +522,26 @@
 				itemfocus : true,
 				itemclick : true,
 				mousewheel : true,
+				// If you want to use momentum swipe, make sure to set itemfocus: false
 				swipe : true
 			},
-			renderer : "classic"
+			renderer : "classic",
+			swipefriction : 0.43
 		},
 		isTicking : false,
 		_create : function () {
 
 			var o = this.options;
-			
+
 			if ( ! $.support.transform || isOldie ) {
 				// If transform is not supported or is old IE, force classic renderer
 				this.renderer = availableRenderers.classic;
 			} else {
 				this.renderer = availableRenderers[ o.renderer ] || availableRenderers.classic;
 			}
-			
+
 			this.renderer.options = $.extend( this.renderer.options, this.options.rendererOptions );
-			
+
 			this.elementOrigStyle = this.element.attr( "style" );
 
 			this.items = this.element.find( o.items )
@@ -580,10 +582,26 @@
 			}
 
 			if( o.trigger.swipe ) {
-				this._on({
-					swipeleft: this.next,
-					swiperight: this.prev
-				});
+				if ( o.trigger.swipe === "momentum" ) {
+					// FIXME: Remove this override once jQuery Mobile 1.4 is launched
+					$.event.special.swipe.handleSwipe = function( start, stop ) {
+						if ( stop.time - start.time < $.event.special.swipe.durationThreshold &&
+							Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.horizontalDistanceThreshold &&
+							Math.abs( start.coords[ 1 ] - stop.coords[ 1 ] ) < $.event.special.swipe.verticalDistanceThreshold ) {
+
+							start.origin.trigger( "swipe", { swipestart: start, swipestop: stop } )
+								.trigger( start.coords[0] > stop.coords[ 0 ] ? "swipeleft" : "swiperight", { swipestart: start, swipestop: stop } );
+						}
+					};
+					this._on({
+						swipe: this._handleSwipe
+					});
+				} else {
+					this._on({
+						swipeleft: this.next,
+						swiperight: this.prev
+					});
+				}
 			}
 
 			this.useJqueryAnimate = ! ( $.support.transition && $.isFunction( window.requestAnimationFrame ) );
@@ -608,7 +626,7 @@
 			this.itemHeight = this.items.height();
 			this.itemSize = this.items.outerWidth( true );
 			this.outerWidth = this.element.parent().outerWidth( false );
-			
+
 			// Call renderer-specific code
 			this.renderer._init(this);
 
@@ -624,7 +642,6 @@
 			return this.renderer._getCenterPosition(this, index);
 		},
 		_isValidIndex : function ( index, ignoreCurrent ) {
-
 			ignoreCurrent = !! ignoreCurrent;
 			index = ~~index;
 			return ( this.currentIndex !== index || ignoreCurrent ) && index > -1 && !! this.items.get( index );
@@ -637,6 +654,37 @@
 		},
 		prev : function () {
 			return this.select( this.currentIndex - 1 );
+		},
+		_handleSwipe : function ( ev, data ) {
+			// Handle the momentum-based swipe action
+			// Based in-part on the formula used by iScroll 4
+			var o = this.options,
+				start = data.swipestart,
+				stop = data.swipestop,
+				time = stop.time - start.time,
+				distance = stop.coords[ 0 ] - start.coords[ 0 ],
+				speed = distance / time,
+				direction = distance < 0 ? "left" : "right",
+				destination = ~~ ( this.currentIndex + ( speed * speed ) /
+					o.swipefriction * ( direction === "left" ? 1 : -1 ) );
+
+			if ( destination === this.currentIndex ) {
+				// If the swipe is short/slow enough to not move due to friction, treat it as a non-momentum swipe
+				if ( direction === "left" ) {
+					this.next();
+				} else {
+					this.prev();
+				}
+			} else if ( destination < 0 ) {
+				// Can't scroll past first element, select first
+				this.select( 0 );
+			} else if ( this._isValidIndex( destination ) ) {
+				// Destination is valid, select it
+				this.select( destination );
+			} else {
+				// Otherwise, destination was past last item, select last
+				this.select( this.items.length - 1 );
+			}
 		},
 		_getFrom : function () {
 			return Math.abs( this.previous - this.currentIndex ) <= 1 ?
@@ -682,7 +730,7 @@
 
 			this.previousIndex = this.currentIndex;
 			o.active = this.currentIndex = index;
-			
+
 			this.renderer.select(this, o);
 			return true;
 		},
@@ -733,7 +781,7 @@
 				};
 
 			this.coverflowrafid = window.requestAnimationFrame( loopRefresh );
-			
+
 			this.renderer._transition(this, o, from, to);
 		},
 		_onAnimationEnd : function() {
@@ -751,7 +799,7 @@
 			this.element
 				.parent()
 				.scrollTop( 0 );
-				
+
 			this.renderer._refresh( this, state, from, to );
 		},
 		_ui : function ( active, index ) {
@@ -777,7 +825,7 @@
 			} else {
 				this.element.removeAttr( "style" );
 			}
-			
+
 			this.element
 				.removeClass( "ui-coverflow ui-coverflow-" + this.renderer.cssClass + "-render" )
 				.parent()
