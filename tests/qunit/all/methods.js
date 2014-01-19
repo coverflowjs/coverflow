@@ -64,4 +64,25 @@
 			deepEqual( endAttrs, childOriginalAttrs[ i ], "Element attributes match for child " + i + " after destroy" );
 		});
 	});
+
+	asyncTest( 'beforeselect event returns correct item', function() {
+
+		var items = this.items;
+
+		this.el
+			.coverflow({
+				active : 0,
+				duration : 1
+			})
+			.one( 'coverflowselect', function( ev, ui ) {
+
+				equal( 1, ui.index, 'beforeselect event triggers new index' )
+				deepEqual( ui.active.get(0), items.eq( 1 ).get(0), 'active element before select matches first image.' );
+
+				start();
+			})
+			.coverflow( 'select', 1 );
+
+		expect( 2 );
+	});
 })( jQuery );
