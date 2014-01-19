@@ -3,21 +3,16 @@ require.config({
     baseUrl: baseUrl + '/assets/',
     paths: {
 		jquery: [
-            '//code.jquery.com/jquery-1.10.1.min',
+            '//code.jquery.com/jquery-1.10.2.min',
 			'js/jquery-1.10.1.min'
 		],
 		// custom minimal jQueryUI
-		jqueryui : 'js/jquery-ui/jquery.ui.min',
 		smartresize : 'js/jquery.smartresize',
 		bootstrap : 'bootstrap/js/bootstrap-collapse',
-		jqm : 'js/coverflowjs/libs/jquery.mobile.custom.min',
+		jqm : 'js/jquery.mobile.custom.min',
 		coverflowjs : 'js/coverflowjs/coverflow.min'
     },
     shim: {
-        jqueryui : {
-			deps: [ 'jquery' ] ,
-			exports: '$'
-		},
 		jqm : {
 			deps: [ 'jquery' ] ,
 			exports: '$'
@@ -31,7 +26,7 @@ require.config({
 			exports: '$'
 		},
 		coverflowjs : {
-			deps: [ 'jquery', 'jqueryui' ] ,
+			deps: [ 'jquery' ] ,
 			exports: '$'
 		}
 	}
@@ -51,7 +46,6 @@ require.onError =  function( error ) {
 require([
 	// coverflow - required js files (full featureset)
 	'jquery',
-	'jqueryui',
 	'jqm',
 	'coverflowjs',
 	// api page dependencies
@@ -64,6 +58,7 @@ function( $ ) {
 
 		var $license = $( '#license' ),
 			$coverflow = $( '#coverflow' ).coverflow({
+				active : 2,
 				select : function( ev, ui ) {
 					var el = ui.active;
 
