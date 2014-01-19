@@ -4,6 +4,19 @@
     overflow: hidden;
 }
 
+.ui-helper-clearfix {
+
+	&:before,
+	&:after {
+		content: " ";
+	    display: table;
+	}
+
+	&:after {
+		clear: both;
+	}
+}
+
 .ui-coverflow {
 	perspective: 500px;
 

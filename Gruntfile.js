@@ -182,6 +182,6 @@ grunt.registerTask( "lint", [ "jshint" ] );
 grunt.registerTask( "test", [ "qunit" ] );
 grunt.registerTask( "css", [ "less:dev", "autoprefixer" ] );
 grunt.registerTask( "css:release", [ "less:dist", "autoprefixer", "concat:css" ] );
-grunt.registerTask( "build", [ "css", "concat:js", "concat:standalone", "copy", "uglify" ] );
+grunt.registerTask( "build", [ "css:release", "concat:js", "concat:standalone", "copy", "uglify" ] );
 
 };
