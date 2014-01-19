@@ -103,9 +103,13 @@ ClassicRenderer.prototype = {
 				) * mod
 			);
 
-			if( $.coverflow.isOldie && i === to ) {
-				css.left += itemMargin;
-				css.top = Math.ceil( itemMargin / 2 );
+			if( $.coverflow.isOldie ) {
+				if( i === to ) {
+					css.left += itemMargin;
+					css.top = 0;
+				} else {
+					css.top = Math.ceil( -itemMargin / 2 );
+				}
 			}
 
 			self._transform( this, css, matrixT );
