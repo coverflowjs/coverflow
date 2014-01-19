@@ -1,5 +1,5 @@
 /*
-* jQuery Mobile v1.3.1
+* jQuery Mobile v1.4.0
 * http://jquerymobile.com
 *
 * Copyright 2010, 2013 jQuery Foundation, Inc. and other contributors
@@ -54,7 +54,8 @@ var dataPropertyName = "virtualMouseBindings",
 	eventCaptureSupported = "addEventListener" in document,
 	$document = $( document ),
 	nextTouchID = 1,
-	lastTouchID = 0, threshold;
+	lastTouchID = 0, threshold,
+	i;
 
 $.vmouse = {
 	moveDistanceThreshold: 10,
@@ -207,10 +208,11 @@ function triggerVirtualEvent( eventType, event, flags ) {
 }
 
 function mouseEventCallback( event ) {
-	var touchID = $.data( event.target, touchTargetPropertyName );
+	var touchID = $.data( event.target, touchTargetPropertyName ),
+		ve;
 
 	if ( !blockMouseTriggers && ( !lastTouchID || lastTouchID !== touchID ) ) {
-		var ve = triggerVirtualEvent( "v" + event.type, event );
+		ve = triggerVirtualEvent( "v" + event.type, event );
 		if ( ve ) {
 			if ( ve.isDefaultPrevented() ) {
 				event.preventDefault();
@@ -228,7 +230,7 @@ function mouseEventCallback( event ) {
 function handleTouchStart( event ) {
 
 	var touches = getNativeEvent( event ).touches,
-		target, flags;
+		target, flags, t;
 
 	if ( touches && touches.length === 1 ) {
 
@@ -245,7 +247,7 @@ function handleTouchStart( event ) {
 			disableMouseBindings();
 			didScroll = false;
 
-			var t = getNativeEvent( event ).touches[ 0 ];
+			t = getNativeEvent( event ).touches[ 0 ];
 			startX = t.pageX;
 			startY = t.pageY;
 
@@ -282,7 +284,6 @@ function handleTouchMove( event ) {
 			( Math.abs( t.pageX - startX ) > moveThreshold ||
 				Math.abs( t.pageY - startY ) > moveThreshold );
 
-
 	if ( didScroll && !didCancel ) {
 		triggerVirtualEvent( "vmousecancel", event, flags );
 	}
@@ -299,11 +300,11 @@ function handleTouchEnd( event ) {
 	disableTouchBindings();
 
 	var flags = getVirtualBindingFlags( event.target ),
-		t;
+		ve, t;
 	triggerVirtualEvent( "vmouseup", event, flags );
 
 	if ( !didScroll ) {
-		var ve = triggerVirtualEvent( "vclick", event, flags );
+		ve = triggerVirtualEvent( "vclick", event, flags );
 		if ( ve && ve.isDefaultPrevented() ) {
 			// The target of the mouse events that follow the touchend
 			// event don't necessarily match the target used during the
@@ -347,7 +348,7 @@ function getSpecialEventObject( eventType ) {
 	var realType = eventType.substr( 1 );
 
 	return {
-		setup: function( data, namespace ) {
+		setup: function(/* data, namespace */) {
 			// If this is the first virtual mouse binding for this element,
 			// add a bindings object to its data.
 
@@ -402,7 +403,7 @@ function getSpecialEventObject( eventType ) {
 			}
 		},
 
-		teardown: function( data, namespace ) {
+		teardown: function(/* data, namespace */) {
 			// If this is the last virtual binding for this eventType,
 			// remove its global handler from the document.
 
@@ -454,7 +455,7 @@ function getSpecialEventObject( eventType ) {
 
 // Expose our custom events to the jQuery bind/unbind mechanism.
 
-for ( var i = 0; i < virtualEventNames.length; i++ ) {
+for ( i = 0; i < virtualEventNames.length; i++ ) {
 	$.event.special[ virtualEventNames[ i ] ] = getSpecialEventObject( virtualEventNames[ i ] );
 }
 
@@ -481,7 +482,7 @@ if ( eventCaptureSupported ) {
 			//
 			// Because the target of the touch event that triggered the vclick
 			// can be different from the target of the click event synthesized
-			// by the browser. The target of a mouse/click event that is syntehsized
+			// by the browser. The target of a mouse/click event that is synthesized
 			// from a touch event seems to be implementation specific. For example,
 			// some browsers will fire mouse/click events for a link that is near
 			// a touch event, even though the target of the touchstart/touchend event
@@ -525,6 +526,7 @@ if ( eventCaptureSupported ) {
 (function( $ ) {
 	$.mobile = {};
 }( jQuery ));
+
 	(function( $, undefined ) {
 		var support = {
 			touch: "ontouchend" in document
@@ -537,9 +539,14 @@ if ( eventCaptureSupported ) {
 
 
 (function( $, window, undefined ) {
-	var $document = $( document );
+	var $document = $( document ),
+		supportTouch = $.mobile.support.touch,
+		scrollEvent = "touchmove scroll",
+		touchStartEvent = supportTouch ? "touchstart" : "mousedown",
+		touchStopEvent = supportTouch ? "touchend" : "mouseup",
+		touchMoveEvent = supportTouch ? "touchmove" : "mousemove";
 
-	// add new event shortcuts
+	// setup new event shortcuts
 	$.each( ( "touchstart touchmove touchend " +
 		"tap taphold " +
 		"swipe swipeleft swiperight " +
@@ -555,12 +562,6 @@ if ( eventCaptureSupported ) {
 		}
 	});
 
-	var supportTouch = $.mobile.support.touch,
-		scrollEvent = "touchmove scroll",
-		touchStartEvent = supportTouch ? "touchstart" : "mousedown",
-		touchStopEvent = supportTouch ? "touchend" : "mouseup",
-		touchMoveEvent = supportTouch ? "touchmove" : "mousemove";
-
 	function triggerCustomEvent( obj, eventType, event ) {
 		var originalType = event.type;
 		event.type = eventType;
@@ -572,7 +573,6 @@ if ( eventCaptureSupported ) {
 	$.event.special.scrollstart = {
 
 		enabled: true,
-
 		setup: function() {
 
 			var thisObject = this,
@@ -601,25 +601,28 @@ if ( eventCaptureSupported ) {
 					trigger( event, false );
 				}, 50 );
 			});
+		},
+		teardown: function() {
+			$( this ).unbind( scrollEvent );
 		}
 	};
 
 	// also handles taphold
 	$.event.special.tap = {
 		tapholdThreshold: 750,
-
+		emitTapOnTaphold: true,
 		setup: function() {
 			var thisObject = this,
-				$this = $( thisObject );
+				$this = $( thisObject ),
+				isTaphold = false;
 
 			$this.bind( "vmousedown", function( event ) {
-
+				isTaphold = false;
 				if ( event.which && event.which !== 1 ) {
 					return false;
 				}
 
 				var origTarget = event.target,
-					origEvent = event.originalEvent,
 					timer;
 
 				function clearTapTimer() {
@@ -639,8 +642,10 @@ if ( eventCaptureSupported ) {
 
 					// ONLY trigger a 'tap' event if the start target is
 					// the same as the stop target.
-					if ( origTarget === event.target ) {
+					if ( !isTaphold && origTarget === event.target ) {
 						triggerCustomEvent( thisObject, "tap", event );
+					} else if ( isTaphold ) {
+						event.stopPropagation();
 					}
 				}
 
@@ -649,9 +654,16 @@ if ( eventCaptureSupported ) {
 				$document.bind( "vmousecancel", clearTapHandlers );
 
 				timer = setTimeout( function() {
+					if ( !$.event.special.tap.emitTapOnTaphold ) {
+						isTaphold = true;
+					}
 					triggerCustomEvent( thisObject, "taphold", $.Event( "taphold", { target: origTarget } ) );
 				}, $.event.special.tap.tapholdThreshold );
 			});
+		},
+		teardown: function() {
+			$( this ).unbind( "vmousedown" ).unbind( "vclick" ).unbind( "vmouseup" );
+			$document.unbind( "vmousecancel" );
 		}
 	};
 
@@ -684,14 +696,18 @@ if ( eventCaptureSupported ) {
 					};
 		},
 
-		handleSwipe: function( start, stop ) {
+		handleSwipe: function( start, stop, thisObject, origTarget ) {
 			if ( stop.time - start.time < $.event.special.swipe.durationThreshold &&
 				Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.horizontalDistanceThreshold &&
 				Math.abs( start.coords[ 1 ] - stop.coords[ 1 ] ) < $.event.special.swipe.verticalDistanceThreshold ) {
+				var direction = start.coords[0] > stop.coords[ 0 ] ? "swipeleft" : "swiperight";
 
-				start.origin.trigger( "swipe" )
-					.trigger( start.coords[0] > stop.coords[ 0 ] ? "swipeleft" : "swiperight" );
+				triggerCustomEvent( thisObject, "swipe", $.Event( "swipe", { target: origTarget, swipestart: start, swipestop: stop }) );
+				triggerCustomEvent( thisObject, direction,$.Event( direction, { target: origTarget, swipestart: start, swipestop: stop } ) );
+				return true;
 			}
+			return false;
+
 		},
 
 		setup: function() {
@@ -699,8 +715,10 @@ if ( eventCaptureSupported ) {
 				$this = $( thisObject );
 
 			$this.bind( touchStartEvent, function( event ) {
-				var start = $.event.special.swipe.start( event ),
-					stop;
+				var stop,
+					start = $.event.special.swipe.start( event ),
+					origTarget = event.target,
+					emitted = false;
 
 				function moveHandler( event ) {
 					if ( !start ) {
@@ -708,7 +726,9 @@ if ( eventCaptureSupported ) {
 					}
 
 					stop = $.event.special.swipe.stop( event );
-
+					if ( !emitted ) {
+						emitted = $.event.special.swipe.handleSwipe( start, stop, thisObject, origTarget );
+					}
 					// prevent scrolling
 					if ( Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.scrollSupressionThreshold ) {
 						event.preventDefault();
@@ -717,14 +737,14 @@ if ( eventCaptureSupported ) {
 
 				$this.bind( touchMoveEvent, moveHandler )
 					.one( touchStopEvent, function() {
+						emitted = true;
 						$this.unbind( touchMoveEvent, moveHandler );
-
-						if ( start && stop ) {
-							$.event.special.swipe.handleSwipe( start, stop );
-						}
-						start = stop = undefined;
-					});
+				});
 			});
+		},
+
+		teardown: function() {
+			$( this ).unbind( touchStartEvent ).unbind( touchMoveEvent ).unbind( touchStopEvent );
 		}
 	};
 	$.each({
@@ -737,6 +757,9 @@ if ( eventCaptureSupported ) {
 		$.event.special[ event ] = {
 			setup: function() {
 				$( this ).bind( sourceEvent, $.noop );
+			},
+			teardown: function() {
+				$( this ).unbind( sourceEvent );
 			}
 		};
 	});

@@ -7,7 +7,11 @@
 
 			this.el
 				.coverflow({
-					renderer : "3d"
+					renderer : "ThreeD",
+					duration: 1,
+					trigger : {
+						"itemfocus" : true
+					}
 				});
 		}
 	});

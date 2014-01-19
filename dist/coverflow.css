@@ -1,26 +1,34 @@
+<<<<<<< HEAD
 /*! CoverflowJS - v2.3.0rc3 - 2013-07-09
 * Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer; Licensed MIT */
+=======
+/*! CoverflowJS - v2.3.0rc3 - 2014-01-16
+* Copyright (c) 2008-2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin; Licensed MIT */
+>>>>>>> next
 .ui-coverflow-wrapper {
     position: relative;
     overflow: hidden;
 }
 
 .ui-coverflow {
-    -webkit-perspective: 1000px;
-       -moz-perspective: 1000px;
-        -ms-perspective: 1000px;
-         -o-perspective: 1000px;
-            perspective: 1000px;
+    -webkit-perspective: 500px;
+       -moz-perspective: 500px;
+        -ms-perspective: 500px;
+         -o-perspective: 500px;
+            perspective: 500px;
 
     position: absolute;
-
 }
 
 .ui-coverflow-item {
-    -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(black), color-stop(.7, black), to(transparent));
     position: relative;
     cursor: pointer;
     float: left;
+	display: block;
+}
+
+.ui-coverflow-reflect .ui-coverflow-item {
+	-webkit-box-reflect: below 20px -webkit-gradient(linear, left top, left bottom, from(black), color-stop(.7, black), to(transparent));
 }
 
 .ui-coverflow-item:focus {

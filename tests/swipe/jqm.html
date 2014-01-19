@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
+
+	<title>CoverflowJS - test swipe with jQuery mobile</title>
+
+	<link type="text/css" href="../css/visual.css" rel="stylesheet" />
+	<link type="text/css" href="../../src/css/coverflow.css" rel="stylesheet" />
+	<link type="text/css" href="../../libs/jquery-ui/themes/base/jquery.ui.core.css" rel="stylesheet" />
+
+</head>
+<body>
+
+<div>
+	<h1>CoverflowJS</h1>
+	<div class="demo">
+		<div class="wrapper">
+			<div class="coverflow">
+	            <img src="../../demo/img/gorillaz-plasticbeach.jpg" data-artist="Gorillaz" data-album="Plastic Beach"/>
+				<img src="../../demo/img/kingsofleon-comearoundsunshine.jpg" data-artist="Kings Of Leon" data-album="Come Around Sunshine"/>
+				<img src="../../demo/img/kidrock-bornfree.jpg" data-artist="Kid Rock" data-album="Born Free"/>
+				<img src="../../demo/img/recovery-recovery.jpg" data-artist="Eminem" data-album="Recovery"/>
+				<img src="../../demo/img/lilwayne-iamnotahumanbeing.jpg" data-artist="Lil Wayne" data-album="I Am Not A Human Being"/>
+				<img src="../../demo/img/taylorswift-speaknow.jpg" data-artist="Taylor Swift" data-album="Speak Now"/>
+				<img src="../../demo/img/thebandperry-thebandperry.jpg" data-artist="The Band Perry" data-album="The Band Perry"/>
+				<img src="../../demo/img/maroon5-handsallover.jpg" data-artist="Maroon 5" data-album="Hands All Over"/>
+				<img src="../../demo/img/mychemicalromance-dangerdays.jpg" data-artist="My Chemical Romance" data-album="Danger Days"/>
+				<img src="../../demo/img/ironmaiden-thefinalfrontier.jpg" data-artist="Iron Maiden" data-album="The Final Frontier"/>
+				<img src="../../demo/img/order of the black - black label society.jpg" data-artist="Order Of The Black" data-album="Black Label Society"/>
+				<img src="../../demo/img/usher-raymondvraymond.jpg" data-artist="Usher" data-album="Raymond V Raymond"/>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="../../libs/jquery-ui/jquery-1.10.2.js"></script>
+<script src="../../libs/jquery-ui/ui/jquery.ui.core.js"></script>
+<script src="../../libs/jquery-ui/ui/jquery.ui.widget.js"></script>
+<script src="../../libs/jquery-ui/ui/jquery.ui.effect.js"></script>
+
+<script src="../../libs/jquery.mobile.custom.js"></script>
+
+<script src="../lib/debounce.js"></script>
+
+<script src="../../src/js/support.core.js"></script>
+<script src="../../src/js/support.transform3d.js"></script>
+<script src="../../src/js/renderer.3d.js"></script>
+<script src="../../src/js/renderer.classic.js"></script>
+<script src="../../src/js/coverflow.js"></script>
+
+<script>
+
+$(function() {
+var $el = $( '.coverflow' ).coverflow({
+			renderer : "ThreeD"
+		});
+
+	$( window ).resize( debounce( function() {
+		$el.coverflow();
+	}, 20, true ));
+});
+</script>
+</body>
+</html>

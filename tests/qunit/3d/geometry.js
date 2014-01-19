@@ -4,9 +4,9 @@
 (function($) {
 
 	var three_d_transformations = {
-		left : 'matrix3d(0.4250000000000001, 0, -0.7361215932167728, 0, 0, 0.85, 0, 0, 0.8660254037844386, 0, 0.5000000000000001, 0, 0, 0, 0, 1)',
+		left : 'matrix3d(0.494981, 0, -0.707097, 0, 0, 0.7, 0, 0, 0.707097, 0, 0.494981, 0, 0, 0, 0, 1)',
 		active : 'matrix(1, 0, 0, 1, 0, 0)',
-		right : 'matrix3d(0.4250000000000001, 0, 0.7361215932167728, 0, 0, 0.85, 0, 0, -0.8660254037844386, 0, 0.5000000000000001, 0, 0, 0, 0, 1)'
+		right : 'matrix3d(0.494981, 0, 0.707097, 0, 0, 0.7, 0, 0, -0.707097, 0, 0.494981, 0, 0, 0, 0, 1)'
 	},
 	testItemProperties = function( item, state ) {
 
@@ -61,7 +61,7 @@
 
 		this.el.coverflow({
 			active : 2,
-			renderer : "3d"
+			renderer : "ThreeD"
 		});
 
 		$.each( this.items, function ( k, item ) {
@@ -83,7 +83,7 @@
 				strictEqual( ui.active.get( 0 ), items.eq( itemIndex ).get( 0 ), 'active item is preselected item.' );
 				testItemProperties( ui.active );
 			},
-			renderer : "3d"
+			renderer : "ThreeD"
 		});
 
 	});
@@ -101,7 +101,7 @@
 			.coverflow({
 				active : 1,
 				duration: 1,
-				renderer : "3d"
+				renderer : "ThreeD"
 			});
 
 		el

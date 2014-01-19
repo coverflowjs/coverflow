@@ -8,124 +8,12 @@ The jQueryUI Coverflow project seeks to create a fully functional 'CoverFlow' ef
 
 `#: git clone --recursive git://github.com/coverflowjs/coverflow.git`
 
-## automatic event binding:
-
-This coverflow effect binds to the following events on initialization:
-
- - mousewheel
- - mobile swipe events
- - keyboard selection (tabbed)
- - items.click
- - items.focus
-
-## public events:
- - beforeselect
- - select
-
 ## Documentation
 
-**Plugin Methods**
-
- - select( Int/{jQuery} item ):
-
-    Returns a boolean (selection success). Pass an item index (zero based) or any valid jQuery coverflow item. So these expressions are equivalent:
-
-    ` $( '#coverflow' ).coverflow( 'select', 2 );`
-
-    ` $( '#coverflow' ).coverflow( 'select', $('#coverflow > *:eq(2)' ) );`
-
- - next()
-
-    ` $( '#coverflow' ).coverflow( 'prev' );`
-
-    Returns a boolean (selection success). Selects next/previous item.
-
- - prev()
-
-    ` $( '#coverflow' ).coverflow( 'prev' );`
-
-    Returns a boolean (selection success). Selects next/previous item.
-
-
-**Plugin Options:**
-
- - items (string):
-
-    Any valid jQuery Selector. Default any child element of your coverflow container.
-    
- - stacking (float) DEPRECATED:
-
-    This option is now deprecated. Please see the rendererOptions option below.
-
- - active (int >=0):
-
-    active item index on initialisation, zero based. Default the first item got selected.
-
- - duration (int):
-
-    animation duration in ms, default 200.
-
- - easing (string):
-
-    easing used for animation. Defaults to 'easeOutQuint'
-
- - trigger (plain object):
-
-    automatic event bindings you may want to customize. Your options are:
-
-        - itemfocus
-        - itemclick
-        - mousewheel
-        - swipe : true (default) or "momentum" for momentum-based swipe scrolling
-
- - swipefriction (float):
-
-    friction effect to apply on momentum-based swipe scrolling, default 0.43
-
- - renderer (string):
-
-    Select which renderer to use for coverflow effect: "classic" (default) or "3d"
-
- - rendererOptions (plain object):
-
-    Options to send to the renderer
-    
-    Options for "classic" :
-    
-        - stacking (float) - Value between 0 and 1. Defines how close items should stack. Default 0.73
-
-    Options for "3d" :
-    
-        - angle (float) - Angle in degrees at which to fold the items back from origin. Default 60
-        - scale (float) - Percentage scale to resize to non-active items. Default 0.85
-        - overlap (float) - Value between 0 and 1. Percentage overflap for non-active items. Default 0.3
-        - perspectiveY (int) - Percentage below origin to view the 3D transforms. Default 45
-
-**Swipe Support:**
-
-Swipe support depends on jQuery mobile. If you only want to support swipe (and don't need the full jQm lib), you can use the custom build that ships with this repository (it's just jQm core/events).
-
-It is hightly recommended to turn off the `itemfocus` trigger when using momentum-based swipe scrolling.
-
-**CSS3 Transitions support:**
-
-Depends on [$.fn.transit](https://github.com/rstacruz/jquery.transit) and [$.fn.getStyles](https://github.com/moagrius/copycss). Simply include libs/jquery.transit.js and libs/jquery.copycss.js.
-
-**jQuery animate fallback:**
-
-Don't want to include any external libraries besides jQueryUI? No problem. Coverflowjs will fallback to jQuery's animate fn.
-
-**Mousewheel support:**
-
-No external lib needed.
-
-**Internet Explorer transformations for IE<=9:**
-
-You don't need transformie or sylvester. Filter matrices for IE are applied if there's no css3 transform support.
-
-## Examples
-
-Check out demo/index.html or tests/visual.html in your browser.
+ - [Get started](http://coverflowjs.github.io/coverflow/tutorial/get-started/)
+ - [API options](http://coverflowjs.github.io/coverflow/api/options/)
+ - [API events](http://coverflowjs.github.io/coverflow/api/events/)
+ - [API methods](http://coverflowjs.github.io/coverflow/api/methods/)
 
 ## License
 Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin

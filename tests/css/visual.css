@@ -2,9 +2,10 @@
     width: 100%;
     height: 100%;
     min-height: 600px;
-    min-width: 800px;
+    min-width: 400px;
 
     padding: 20px 0;
+    border: 3px solid #fff;
 
     /**
      *
@@ -22,15 +23,56 @@
     position: relative;
     overflow: hidden;
 }
-.coverflow, #coverflow {
+.coverflow {
     width: 800px;
     height: 600px;
     margin-top: 50px;
     padding-top: 100px;
 }
 
-.coverflow img, #coverflow img {
+.coverflow img {
     width: 260px;
     height: 260px;
     -webkit-box-reflect: none !important;
+}
+
+@media only screen and (max-width: 480px ) {
+
+    .demo {
+        border: 3px solid red;
+    }
+
+    .coverflow img {
+        width: 200px;
+        height: 200px;
+    }
+}
+@media only screen and (min-width: 481px ) and (max-width: 767px) {
+
+    .demo {
+        border: 3px solid blue;
+    }
+
+    .coverflow img {
+        width: 220px;
+        height: 220px;
+    }
+}
+@media only screen and (min-width: 768px ) and (max-width: 900px) {
+
+    .demo {
+        border: 3px solid green;
+    }
+
+    .coverflow img {
+        width: 240px;
+        height: 240px;
+    }
+}
+
+@media only screen and (max-height: 600px) {
+    .coverflow {
+        margin-top: 0;
+        padding-top: 0;
+    }
 }

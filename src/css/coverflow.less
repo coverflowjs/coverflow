@@ -1,0 +1,41 @@
+.ui-coverflow-wrapper {
+    position: relative;
+	z-index: 1;
+    overflow: hidden;
+}
+
+.ui-coverflow {
+	perspective: 500px;
+
+    position: absolute;
+	z-index: 2;
+
+	&, * {
+		-ms-touch-action: pan-y !important;
+	}
+
+	.ui-coverflow-item {
+		position: relative;
+		cursor: pointer;
+		float: left;
+		display: block;
+		&:focus {
+		    outline: 0;
+		}
+	}
+
+	img {
+		user-select: none;
+
+		-webkit-touch-callout: none;
+		-webkit-tap-highlight-color: transparent;
+
+		-webkit-user-drag: none;
+		   -moz-user-drag: none;
+		    -ms-user-drag: none;
+		      o-user-drag: none;
+				user-drag: none;
+
+		border: 0 none;
+	}
+}

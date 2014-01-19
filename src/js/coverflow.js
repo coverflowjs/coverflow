@@ -3,20 +3,22 @@
  *
  * CoverflowJS
  *
+ * 3D transformations: Brandon Belvin
  * Refactored for jQuery 1.8 / jQueryUI 1.9 Sebastian Sauer
  * Re-written for jQueryUI 1.8.6/jQuery core 1.4.4+ by Addy Osmani with adjustments
  * Maintenance updates for 1.8.9/jQuery core 1.5, 1.6.2 made.
  * Original Component: Paul Bakaus for jQueryUI 1.7
- * 3D transformations: Brandon Belvin
+ *
  *
  * Depends:
  *  jquery.ui.core.js
  *  jquery.ui.widget.js
- *  jquery.ui.effect.js
- *  jquery.copycss.js
  *
- * - in case you want swipe support and you don't use jQuery mobile yet:
+ * In case you want swipe support and you don't use jQuery mobile yet:
  * jquery-mobile.custom.js
+ *
+ * $.animate support for older browsers depends on:
+ *  jquery.ui.effect.js
  *
  * Events:
  *  beforeselect
@@ -24,191 +26,16 @@
  */
 
 (function( $, document, window ) {
+
 	"use strict";
 
-	/**
-	 * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-	 * http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-	 *
-	 * requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
-	 * MIT license
-	 *
-	 * @see https://gist.github.com/paulirish/1579671
-	 */
-
-	var el = document.body || document.documentElement,
-		style = el.style,
-		lastTime = 0,
-		vendors = [ "ms", "moz", "webkit", "o" ],
-		vendorsLength = vendors.length,
-		x = 0,
-		capitalize = function( string ) {
-			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
-		};
-
-	for( ; x < vendorsLength && ! window.requestAnimationFrame; ++x ) {
-		window.requestAnimationFrame = window[ vendors[ x ] + "RequestAnimationFrame" ];
-		window.cancelAnimationFrame = window[ vendors[ x ] + "CancelAnimationFrame" ] ||
-			window[ vendors[ x ] + "CancelRequestAnimationFrame" ];
-	}
-
-	if ( ! window.requestAnimationFrame ) {
-		window.requestAnimationFrame = function( callback /* , element */ ) {
-			var currTime = new Date().getTime(),
-				timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) ),
-				id = window.setTimeout( function() {
-					callback( currTime + timeToCall );
-				}, timeToCall );
-
-			lastTime = currTime + timeToCall;
-
-			return id;
-		};
-	}
-
-	if ( ! window.cancelAnimationFrame ) {
-		window.cancelAnimationFrame = function( id ) {
-			clearTimeout(id);
-		};
-	}
-
-	$.support.transform = "transform" in style ? "transform" : false;
-
-	$.support.transition = "transition" in style ? "transition" : false;
-
-	if( ! $.support.transform || ! $.support.transition ) {
-
-		$.each( vendors, function( i, p ) {
-
-			if( p !== "ms" ) {
-				p = capitalize( p );
-			}
-			if( ! $.support.transform ) {
-				if( p + "Transform" in style ) {
-					$.support.transform = p + "Transform";
-				}
-			}
-			if( ! $.support.transition ) {
-				if( p + "Transition" in style ) {
-					$.support.transition = p + "Transition";
-				}
-			}
-
-			if( $.support.transform && $.support.transition ) {
-				return false;
-			}
-			return true;
-		});
-	}
-
-})( jQuery, document, window );
-
-(function( $, document, window ) {
-	"use strict";
-
-	function appendCamelCase () {
-		/**
-		 * @see http://stackoverflow.com/questions/1026069/capitalize-the-first-letter-of-string-in-javascript
-		 */
-		function capitalizeFirstLetter( string ) {
-			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
-		}
-
-		var strings = [], i = 0;
-
-		for ( ; i < arguments.length; i++ ) {
-			if ( typeof arguments[ i ] === "string" && arguments[ i ].length > 0 ) {
-				if ( strings.length > 0 ) {
-					strings.push( capitalizeFirstLetter( arguments[ i ] ) );
-				}
-				else {
-					strings.push( arguments[ i ] );
-				}
-			}
-		}
-
-		return strings.join( "" );
-	}
-
-	/**
-	 * Determines the necessary CSS browser prefix. Defaults to "o" if no other found
-	 * @see http://davidwalsh.name/vendor-prefix
-	 */
-	var browserPrefix = (function () {
-		if ( ! window.getComputedStyle ) {
-			// IE <= 8 doesn't support getComputedStyle and doesn't work with x-tags anyway
-			return {
-				css : "",
-				js : ""
-			};
-		}
-
-		var styles = window.getComputedStyle( document.documentElement, "" ),
-			pre = ( Array.prototype.slice
-				.call( styles )
-				.join( "" )
-				.match( /-(moz|webkit|ms)-/ ) || ( styles.OLink === "" && [ "", "o" ] )
-			)[ 1 ];
-
-		return {
-			css : "-" + pre + "-",
-			js : pre[ 0 ].toUpperCase() + pre.substr( 1 )
-		};
-	})(),
-	availableCssTransitions = {
-
-		/**
-		 * @see http://matthewlein.com/ceaser/
-		 *
-		 * easing not available as css timing functions:
-		 *
-		 * easeInElastic
-		 * easeOutElastic
-		 * easeInOutElastic
-		 *
-		 * easeInBounce
-		 * easeOutBounce
-		 * easeInOutBounce
-		 */
-
-
-		// ease-in
-		"easeInQuad" : "cubic-bezier( .55,.085,.68,.53 )",
-		"easeInCubic": "cubic-bezier( .550, .055, .675, .190 )",
-		"easeInQuart": "cubic-bezier( .895, .03, .685, .22 )",
-		"easeInQuint": "cubic-bezier( .755, .05, .855, .06 )",
-		"easeInSine" : "cubic-bezier( .47, 0, .745, .715 )",
-		"easeInExpo" : "cubic-bezier( .95, .05, .795, .035 )",
-		"easeInCirc" : "cubic-bezier( .6, .04, .98, .335 )",
-		"easeInBack" : "cubic-bezier( .6, -.28, .735, .045 )",
-
-		// ease-out
-		"easeOutQuad" : "cubic-bezier( .25,.46,.45,.94 )",
-		"easeOutCubic": "cubic-bezier( .215,.61,.355,1 )",
-		"easeOutQuart": "cubic-bezier( .165, .84, .44, 1 )",
-		"easeOutQuint": "cubic-bezier( .23, 1, .32, 1 )",
-		"easeOutSine" : "cubic-bezier( .39, .575, .565, 1 )",
-		"easeOutExpo" : "cubic-bezier( .19,1,.22,1 )",
-		"easeOutCirc" : "cubic-bezier( .075, .82, .165, 1 )",
-		"easeOutBack" : "cubic-bezier( .175, .885, .32, 1.275 )",
-
-		// ease-in-out
-		"easeInOutQuad" : "cubic-bezier( .455, .03, .515, .955 )",
-		"easeInOutCubic": "cubic-bezier( .645, .045, .355, 1 )",
-		"easeInOutQuart": "cubic-bezier( .77, 0, .175, 1 )",
-		"easeInOutQuint": "cubic-bezier( .86, 0, .07, 1 )",
-		"easeInOutSine" : "cubic-bezier( .445, .05, .55, .95 )",
-		"easeInOutExpo" : "cubic-bezier( 1, 0, 0, 1 )",
-		"easeInOutCirc" : "cubic-bezier( .785, .135, .15, .86 )",
-		"easeInOutBack" : "cubic-bezier( .68, -.55, .265, 1.55 )"
-	},
-	eventsMap = {
-		"transition":     "transitionend",
-		"MozTransition":  "transitionend",
-		"OTransition":    "oTransitionEnd",
-		"WebkitTransition": "webkitTransitionEnd",
-		"msTransition":   "MSTransitionEnd"
-	},
+	var eventsMap = {
+			"transition":     "transitionend",
+			"MozTransition":  "transitionend",
+			"OTransition":    "oTransitionEnd",
+			"WebkitTransition": "webkitTransitionEnd",
+			"msTransition":   "transitionend"
+		},
 	isOldie = (function() {
 
 		if( $.browser !== undefined ) {
@@ -219,296 +46,62 @@
 		var match = /(msie) ([\w.]+)/.exec( navigator.userAgent.toLowerCase() );
 
 		return match !== null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
-	})(),
-	availableRenderers = {
-		"3d" : {
-			cssClass : "3d",
-			options : {
-				angle: 60,
-				scale: 0.85,
-				overlap: 0.3,
-				perspectiveY: 45
-			},
-			_init : function ( that ) {
-				var css = {};
+	})();
 
-				// make sure there's enough space
-				css.width = that.itemWidth * that.items.length;
+	$.coverflow = $.extend( true, {}, $.coverflow, {
 
-				// Center the actual parents' left side within its parent
-				$.extend( css, this._getCenterPosition( that ), this._getPerspectiveOrigin( that ) );
-				that.element.css( css );
-			},
-			_getItemRenderedWidth : function ( size, angle, scale ) {
-				// Estimate the rendered width (not taking perspective into account)
-				return Math.cos( angle * ( Math.PI / 180 ) ) * size * scale;
-			},
-			_getPerspectiveOrigin : function ( that ) {
-				// Center the perspective on the visual center of the container
-				return {
-					perspectiveOrigin : that.itemSize / 2 +
-						( that.currentIndex *
-							this._getItemRenderedWidth( that.itemSize, this.options.angle, this.options.scale ) *
-							( 1 - this.options.overlap )
-						) + "px " +
-						this.options.perspectiveY + "%"
-				};
-			},
-			_getCenterPosition : function ( that, index ) {
-				var pos,
-					renderedWidth = this._getItemRenderedWidth( that.itemSize, this.options.angle, this.options.scale );
+		isAndroid : (/android/i).test( navigator.userAgent ),
 
-				index = typeof index === "undefined" ? that.currentIndex : index;
+		isOldie : isOldie,
 
-				// Get default center
-				pos = that.outerWidth / 2 - that.itemSize / 2;
+		transition : {
 
-				// Shift left based on the number of elements before selection
-				pos -= index * renderedWidth;
+			/**
+			 * @see http://matthewlein.com/ceaser/
+			 *
+			 * easing not available as css timing functions:
+			 *
+			 * easeInElastic
+			 * easeOutElastic
+			 * easeInOutElastic
+			 *
+			 * easeInBounce
+			 * easeOutBounce
+			 * easeInOutBounce
+			 */
 
-				// Adjust back right for the overlap of the elements
-				pos += index * renderedWidth * this.options.overlap;
+			// ease-in
+			"easeInQuad" : "cubic-bezier( .55,.085,.68,.53 )",
+			"easeInCubic": "cubic-bezier( .550, .055, .675, .190 )",
+			"easeInQuart": "cubic-bezier( .895, .03, .685, .22 )",
+			"easeInQuint": "cubic-bezier( .755, .05, .855, .06 )",
+			"easeInSine" : "cubic-bezier( .47, 0, .745, .715 )",
+			"easeInExpo" : "cubic-bezier( .95, .05, .795, .035 )",
+			"easeInCirc" : "cubic-bezier( .6, .04, .98, .335 )",
+			"easeInBack" : "cubic-bezier( .6, -.28, .735, .045 )",
 
-				// Adjust for the padding
-				pos -= parseInt( that.element.css( "paddingLeft" ), 10 ) || 0;
+			// ease-out
+			"easeOutQuad" : "cubic-bezier( .25,.46,.45,.94 )",
+			"easeOutCubic": "cubic-bezier( .215,.61,.355,1 )",
+			"easeOutQuart": "cubic-bezier( .165, .84, .44, 1 )",
+			"easeOutQuint": "cubic-bezier( .23, 1, .32, 1 )",
+			"easeOutSine" : "cubic-bezier( .39, .575, .565, 1 )",
+			"easeOutExpo" : "cubic-bezier( .19,1,.22,1 )",
+			"easeOutCirc" : "cubic-bezier( .075, .82, .165, 1 )",
+			"easeOutBack" : "cubic-bezier( .175, .885, .32, 1.275 )",
 
-				pos = Math.round( pos );
-
-				return { left : pos };
-			},
-			select : function ( that, o ) {
-				var animation = {
-					coverflow : 1
-				};
-
-				$.extend( animation, this._getCenterPosition( that ), this._getPerspectiveOrigin( that ) );
-
-				if( that.useJqueryAnimate ) {
-					that._animation( o, animation );
-					return true;
-				}
-
-				$.extend( animation, {
-					duration: o.duration,
-					easing: o.easing
-				});
-
-				that._transition( animation );
-			},
-			_transition : function ( that, o, from, to ) {
-				// Query the element's active CSS in case a transition property is already defined
-				var elementCss = $( that.element ).getStyles(),
-					css = {},
-					transitionFn = availableCssTransitions[ o.easing ] || availableCssTransitions.easeOutQuint,
-					transitionPropertyName,
-					activeProperty,
-					propertyName,
-					transition = {
-						transitionProperty : "left",
-						transitionDuration : o.duration + "ms",
-						transitionTimingFunction : transitionFn,
-						transitionDelay : "initial"
-					};
-
-				// TODO: Refactor to function
-				$.each( [ "", browserPrefix.js ], function( i, prefix ) {
-					transitionPropertyName = appendCamelCase.call( undefined, prefix, "transitionProperty" );
-
-					activeProperty = elementCss[ transitionPropertyName ];
-					if ( activeProperty ) {
-						// Transition property already defined, check if the one we want to add is present
-						if ( activeProperty.indexOf( transition.transitionProperty ) < 0 ) {
-
-							// Add transition property since it is not yet included
-							$.each( transition, function( name, value ) {
-								propertyName = appendCamelCase.call( undefined, prefix, name );
-								css[ propertyName ] = elementCss[ propertyName ] + ", " + value;
-							});
-						}
-					} else {
-
-						// Transition property not yet defined, add it
-						$.each( transition, function( name, value ) {
-							propertyName = appendCamelCase.call( undefined, prefix, name );
-							css[ propertyName ] = value;
-						});
-					}
-				});
-
-				that.element
-					.one( eventsMap[ $.support.transition ],
-						function() {
-							window.cancelAnimationFrame( that.coverflowrafid );
-
-							that._refresh( 1, from, to );
-							that._onAnimationEnd( that );
-						}
-					)
-					.css( $.extend( css, this._getCenterPosition( that ),
-						this._getPerspectiveOrigin( that ) ) );
-			},
-			_refresh : function ( that, state, from, to ) {
-				var self = this,
-					renderedWidth = self._getItemRenderedWidth( that.itemSize, self.options.angle, self.options.scale );
-
-				that.items.each( function ( i ) {
-
-					var side = ( ( i === to && from - to < 0 ) || i - to  > 0 ) ?
-							"left" :
-								"right",
-						mod = ( i === to ) ?
-							( 1 - state ) :
-								( i === from ? state : 1 ),
-						css = {
-							zIndex: that.items.length + ( side === "left" ? to - i : i - to )
-						},
-						scale = 1 - ( mod * ( 1 - self.options.scale ) ),
-						angle = side === "right" ? self.options.angle : - self.options.angle;
-
-					// Adjust left to center active item in display window
-					css.left = Math.round(
-						-i * that.itemSize +
-						( mod * i * renderedWidth * ( 1 - self.options.overlap ) ) +
-						( ( 1 - mod ) * i * renderedWidth * ( 1 - self.options.overlap ) )
-					);
-
-					css.transform = "rotateY(" + ( mod * angle ) + "deg) scale(" + scale + ")";
-					css.transformOrigin = side === "right" ? "left center" : "right center";
-
-					$( this ).css( css );
-
-				});
-			}
+			// ease-in-out
+			"easeInOutQuad" : "cubic-bezier( .455, .03, .515, .955 )",
+			"easeInOutCubic": "cubic-bezier( .645, .045, .355, 1 )",
+			"easeInOutQuart": "cubic-bezier( .77, 0, .175, 1 )",
+			"easeInOutQuint": "cubic-bezier( .86, 0, .07, 1 )",
+			"easeInOutSine" : "cubic-bezier( .445, .05, .55, .95 )",
+			"easeInOutExpo" : "cubic-bezier( 1, 0, 0, 1 )",
+			"easeInOutCirc" : "cubic-bezier( .785, .135, .15, .86 )",
+			"easeInOutBack" : "cubic-bezier( .68, -.55, .265, 1.55 )"
 		},
-		classic : {
-			cssClass : "classic",
-			options : {
-				stacking: 0.73
-			},
-			_init : function ( that ) {
-				var o = that.options,
-					css = {};
-
-				o.stacking = parseFloat( o.stacking );
-				this.options.stacking = o.stacking > 0 && o.stacking < 1 ?
-					o.stacking :
-					this.options.stacking;
-
-				this.itemMargin = - Math.floor( ( 1 - o.stacking ) / 2 * that.items.innerWidth() );
-				that.items
-					// apply a negative margin so items stack
-					.css({
-						marginLeft : this.itemMargin,
-						marginRight : this.itemMargin
-					});
-
-				// make sure there's enough space
-				css.width = that.itemWidth * that.items.length;
-
-				// Center the actual parent's left side within its parent
-				$.extend( css, this._getCenterPosition( that ) );
-				that.element.css( css );
-
-				// Set up transformer
-				this._transform = $.support.transform ? this._matrixTransform :
-					isOldie ? this._fallbackTransform : $.noop;
-			},
-			_getCenterPosition : function ( that ) {
-				var pos;
-
-				pos = - that.currentIndex * that.itemSize / 2;
-				pos += that.outerWidth / 2 - that.itemSize / 2;
-				pos -= parseInt( that.element.css( "paddingLeft" ), 10 ) || 0;
-				pos = Math.round( pos );
-
-				return { left : pos };
-			},
-			select : function ( that, o ) {
-				var animation = {
-					coverflow : 1
-				};
-
-				$.extend( animation, this._getCenterPosition( that ) );
-
-				if( that.useJqueryAnimate ) {
-					that._animation( o, animation );
-					return true;
-				}
-
-				$.extend( animation, {
-					duration: o.duration,
-					easing: o.easing
-				});
-
-				that._transition( animation );
-			},
-			_transition : function ( that, o, from, to ) {
-				var self = this,
-					transitionFn = availableCssTransitions[ o.easing ] || availableCssTransitions.easeOutQuint;
-
-				that.element
-					.one( eventsMap[ $.support.transition ],
-						function() {
-							cancelAnimationFrame( that.coverflowrafid );
-
-							that._refresh( 1, from, to );
-							that._onAnimationEnd( that );
-						}
-					)
-					.css($.extend( self._getCenterPosition( that ), {
-						"transition" : "left " + o.duration + "ms " + transitionFn
-					}));
-			},
-			_refresh : function ( that, state, from, to ) {
-				var self = this;
-
-				that.items.each( function ( i ) {
-
-					var side = ( ( i === to && from - to < 0 ) || i - to  > 0 )
-							? "left"
-							: "right",
-						mod = ( i === to )
-							? ( 1 - state )
-							: ( i === from ? state : 1 ),
-						css = {
-							zIndex: that.items.length + ( side === "left" ? to - i : i - to )
-						},
-						scale = ( 1 + ( ( 1 - mod ) * 0.3 ) ),
-						matrixT = [
-							scale, ( mod * ( side === "right" ? -0.2 : 0.2 ) ),
-							0, scale,
-							0, 0
-						];
-
-					css.left = (
-						( -i * ( that.itemSize / 2 ) )
-						+ ( side === "right"
-							? -that.itemSize / 2
-							: that.itemSize / 2
-						) * mod
-					);
-
-					self._transform.call( this, css, matrixT );
-
-					$( this ).css( css );
-				});
-			},
-			_matrixTransform : function ( css, matrixT ) {
-				css.transform = "matrix(" + matrixT.join( "," ) + ")";
-			},
-			_fallbackTransform : function ( css, matrixT ) {
-				// Adapted from Paul Baukus transformie lib
-				if( ! this.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
-					this.style.filter = (this.style.filter ? "" : " " ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\"auto expand\")";
-				}
-				var filters = this.filters[ "DXImageTransform.Microsoft.Matrix" ];
-				filters.M11 = matrixT[ 0 ];
-				filters.M12 = matrixT[ 2 ];
-				filters.M21 = matrixT[ 1 ];
-				filters.M22 = matrixT[ 3 ];
-			}
-		}
-	};
+		renderer : {}
+	});
 
 	$.widget( "ui.coverflow", {
 
@@ -517,30 +110,27 @@
 			active : 0,
 			duration : 400,
 			easing : "easeOutQuint",
+			// renderer options
+			// angle and perspective are only available when the browser supports 3d transformations
+			angle: 45,
+			perspectiveY: 45,
+			scale: 0.7,
+			overlap: 0.3,
 			// selection triggers
 			trigger : {
-				itemfocus : true,
+				itemfocus : false,
 				itemclick : true,
 				mousewheel : true,
-				// If you want to use momentum swipe, make sure to set itemfocus: false
+				// if swipe is enabled, itemfocus will be set to false
 				swipe : true
-			},
-			renderer : "classic",
-			swipefriction : 0.43
+			}
 		},
 		isTicking : false,
 		_create : function () {
 
-			var o = this.options;
-
-			if ( ! $.support.transform || isOldie ) {
-				// If transform is not supported or is old IE, force classic renderer
-				this.renderer = availableRenderers.classic;
-			} else {
-				this.renderer = availableRenderers[ o.renderer ] || availableRenderers.classic;
-			}
-
-			this.renderer.options = $.extend( this.renderer.options, this.options.rendererOptions );
+			var o = this.options,
+				Renderer,
+				rendererOptions;
 
 			this.elementOrigStyle = this.element.attr( "style" );
 
@@ -550,16 +140,45 @@
 						$this.data({
 							coverflowOrigElemAttr : {
 								style : $this.attr( "style" ),
-								class : $this.attr( "class" ),
+								"class" : $this.attr( "class" ),
 								// Tab index is included here as attr, even though we call it as a prop because when you removeProp it sets it to 0 instead of actually removing
 								tabIndex : $this.attr( "tabIndex" )
 							}
 						});
 					})
-					.addClass( "ui-coverflow-item" )
-					// set tabindex so widget items get focusable
-					// makes items accessible by keyboard
-					.prop( "tabIndex", 0 );
+					.addClass( "ui-coverflow-item" );
+
+			this._setDimensions();
+
+			if ( // transform is not supported
+				! $.support.transform
+				// or is old IE
+				|| isOldie
+				// or it's opera: fails to create a perspective on coverflow items
+				|| window.opera != null
+				// or no css3 transformation is available
+				|| ! $.support.transform3d
+			) {
+				Renderer = $.coverflow.renderer.Classic;
+			} else {
+				Renderer = $.coverflow.renderer.ThreeD;
+			}
+
+			rendererOptions = {
+				angle: o.angle,
+				perspectiveY: o.perspectiveY,
+				scale: o.scale,
+				overlap: o.overlap,
+				itemSize : this.itemSize,
+				outerWidth : this.outerWidth
+			};
+
+			this.renderer = new Renderer(
+					this,
+					this.element,
+					this.items,
+					rendererOptions
+				);
 
 			this.element
 				.addClass( "ui-coverflow ui-coverflow-" + this.renderer.cssClass + "-render" )
@@ -567,7 +186,7 @@
 				.addClass( "ui-coverflow-wrapper ui-clearfix" );
 
 			if( o.trigger.itemfocus ) {
-				this._on( this.items, { focus : this._select });
+				this._bindFocus();
 			}
 
 			if( o.trigger.itemclick ) {
@@ -582,31 +201,93 @@
 			}
 
 			if( o.trigger.swipe ) {
-				if ( o.trigger.swipe === "momentum" ) {
-					// FIXME: Remove this override once jQuery Mobile 1.4 is launched
-					$.event.special.swipe.handleSwipe = function( start, stop ) {
-						if ( stop.time - start.time < $.event.special.swipe.durationThreshold &&
-							Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.horizontalDistanceThreshold &&
-							Math.abs( start.coords[ 1 ] - stop.coords[ 1 ] ) < $.event.special.swipe.verticalDistanceThreshold ) {
-
-							start.origin.trigger( "swipe", { swipestart: start, swipestop: stop } )
-								.trigger( start.coords[0] > stop.coords[ 0 ] ? "swipeleft" : "swiperight", { swipestart: start, swipestop: stop } );
-						}
-					};
-					this._on({
-						swipe: this._handleSwipe
-					});
-				} else {
-					this._on({
-						swipeleft: this.next,
-						swiperight: this.prev
-					});
-				}
+				this._bindSwipe();
 			}
 
 			this.useJqueryAnimate = ! ( $.support.transition && $.isFunction( window.requestAnimationFrame ) );
 
 			this.coverflowrafid = 0;
+		},
+		_bindFocus : function() {
+
+			// set tabindex so widget items get focusable
+			// makes items accessible by keyboard
+			this.items
+				.prop( "tabIndex", 0 );
+
+			this._on( this.items, { focus : this._select });
+		},
+		_bindSwipe : function() {
+
+			var $el = this.element,
+				hasJqm = false,
+				hasHammer = false;
+
+			// jQuery mobile
+			if( $.event.special && $.event.special.swipe ) {
+
+				hasJqm = true;
+
+				if( $.coverflow.isAndroid ) {
+					$.event.special.swipe.scrollSupressionThreshold = 0;
+				}
+
+				$.event.special.swipe.handleSwipe = function( start, stop ) {
+
+					var startPos = start.coords,
+						endPos = stop.coords,
+						swipeEv = $.event.special.swipe;
+
+					if ( stop.time - start.time < swipeEv.durationThreshold &&
+						Math.abs( startPos[ 0 ] - endPos[ 0 ] ) > swipeEv.horizontalDistanceThreshold &&
+						Math.abs( startPos[ 1 ] - endPos[ 1 ] ) < swipeEv.verticalDistanceThreshold
+					) {
+
+						start.origin
+							.trigger( "swipe", { swipestart: start, swipestop: stop } )
+							.trigger(
+								start.coords[0] > stop.coords[ 0 ]
+									? "swipeleft"
+									: "swiperight", { swipestart: start, swipestop: stop }
+							);
+					}
+				};
+
+				this._on({
+					swipe: this._handleJQmSwipe
+				});
+			}
+
+			// hammer.js
+			if( $el.hammer && window.Hammer != null ) {
+
+				hasHammer = true;
+
+				$el
+					.hammer()
+					.on("drag swipe", function(ev) {
+
+						// only horizontal swipe
+						if( Hammer.utils.isVertical( ev.gesture.direction) ) {
+						   return;
+						}
+
+						// prevent scrolling, so the drag/swipe handler is getting called
+						// fix swipe on webkit based Android browsers
+						ev.gesture.preventDefault();
+					});
+
+				this._on({
+					swipe: this._handleHammerSwipe
+				});
+			}
+
+			if( ! hasJqm && hasHammer ) {
+				this._on({
+					swipeleft : this.next,
+					swiperight : this.prev
+				});
+			}
 		},
 		_init : function () {
 			var o = this.options;
@@ -622,24 +303,26 @@
 				.eq( this.currentIndex )
 				.addClass( "ui-state-active" );
 
-			this.itemWidth = this.items.width();
-			this.itemHeight = this.items.height();
-			this.itemSize = this.items.outerWidth( true );
-			this.outerWidth = this.element.parent().outerWidth( false );
+			this._setDimensions();
 
 			// Call renderer-specific code
-			this.renderer._init(this);
+			this.renderer.initialize();
 
 			// Jump to the first item
 			this._refresh( 1, this._getFrom(), this.currentIndex );
 
-			this.initialOffset = parseInt( this.activeItem.css( "left" ), 10 );
-
 			this._trigger( "beforeselect", null, this._ui() );
 			this._trigger( "select", null, this._ui() );
 		},
-		_getCenterPosition : function ( index ) {
-			return this.renderer._getCenterPosition(this, index);
+		_setDimensions : function() {
+
+			this.itemWidth = this.items.width();
+
+			this.itemHeight = this.items.height();
+
+			this.itemSize = this.items.outerWidth( true );
+
+			this.outerWidth = this.element.parent().outerWidth( false );
 		},
 		_isValidIndex : function ( index, ignoreCurrent ) {
 			ignoreCurrent = !! ignoreCurrent;
@@ -655,18 +338,35 @@
 		prev : function () {
 			return this.select( this.currentIndex - 1 );
 		},
-		_handleSwipe : function ( ev, data ) {
-			// Handle the momentum-based swipe action
-			// Based in-part on the formula used by iScroll 4
-			var o = this.options,
-				start = data.swipestart,
+		_handleJQmSwipe : function ( ev, data ) {
+			var start = data.swipestart,
 				stop = data.swipestop,
 				time = stop.time - start.time,
 				distance = stop.coords[ 0 ] - start.coords[ 0 ],
 				speed = distance / time,
-				direction = distance < 0 ? "left" : "right",
-				destination = ~~ ( this.currentIndex + ( speed * speed ) /
-					o.swipefriction * ( direction === "left" ? 1 : -1 ) );
+				direction = distance < 0 ? "left" : "right";
+
+			this._handleSwipe( direction, speed );
+		},
+		_handleHammerSwipe : function( ev ) {
+			var gesture = ev.gesture;
+
+			this._handleSwipe(
+				gesture.direction,
+				gesture.distance / gesture.deltaTime
+			);
+		},
+		_handleSwipe : function( direction, speed ) {
+
+			var delta = Math.pow( speed, 2 ),
+				destination;
+
+			// Handle the momentum-based swipe action
+			// Based in-part on the formula used by iScroll 4
+			//delta = this.element.hammer ? Math.log( delta ) : delta;
+			delta = ~~ ( delta / ( direction === "left" ? 3 : - 3 ) );
+
+			destination = this.currentIndex + delta;
 
 			if ( destination === this.currentIndex ) {
 				// If the swipe is short/slow enough to not move due to friction, treat it as a non-momentum swipe
@@ -685,6 +385,7 @@
 				// Otherwise, destination was past last item, select last
 				this.select( this.items.length - 1 );
 			}
+
 		},
 		_getFrom : function () {
 			return Math.abs( this.previous - this.currentIndex ) <= 1 ?
@@ -694,9 +395,10 @@
 		select : function( item ) {
 
 			var o = this.options,
-				index = ! isNaN( parseInt( item, 10 ) ) ?
-					parseInt( item, 10 ) :
-						this.items.index( item );
+				index = ! isNaN( parseInt( item, 10 ) )
+						? parseInt( item, 10 )
+						: this.items.index( item ),
+				animation;
 
 			if( ! this._isValidIndex( index ) ) {
 				return false;
@@ -731,7 +433,23 @@
 			this.previousIndex = this.currentIndex;
 			o.active = this.currentIndex = index;
 
-			this.renderer.select(this, o);
+			animation = $.extend( {}, this.renderer.select(), {
+					coverflow : 1
+				});
+
+			if( this.useJqueryAnimate ) {
+
+				this._animation( o, animation );
+			} else {
+
+				o = $.extend({
+						duration: o.duration,
+						easing: o.easing
+					}, animation );
+
+				this._transition( o );
+			}
+
 			return true;
 		},
 		_animation : function( o, animation ) {
@@ -758,7 +476,7 @@
 				)
 				.promise()
 				.done(function() {
-					self._onAnimationEnd.apply( self );
+					self._onAnimationEnd();
 				});
 		},
 		_transition : function( o ) {
@@ -766,6 +484,7 @@
 				d = new Date(),
 				from = this._getFrom(),
 				to = this.currentIndex,
+				styles = {},
 				loopRefresh = function() {
 					var state = ( (new Date()).getTime() - d.getTime() ) / o.duration;
 
@@ -780,11 +499,27 @@
 					}
 				};
 
-			this.coverflowrafid = window.requestAnimationFrame( loopRefresh );
 
-			this.renderer._transition(this, o, from, to);
+			if( $.isFunction( this.renderer.getElementTransitionStyles ) ) {
+				styles = $.extend( styles, this.renderer.getElementTransitionStyles( o ) );
+			}
+
+			this.element
+				.one( eventsMap[ $.support.transition ],
+					function() {
+						self._refresh( 1, from, to );
+						self._onAnimationEnd();
+					}
+				)
+				.css( styles );
+
+			this.coverflowrafid = window.requestAnimationFrame( loopRefresh );
 		},
 		_onAnimationEnd : function() {
+
+			if( this.coverflowrafid ) {
+				cancelAnimationFrame( this.coverflowrafid );
+			}
 
 			this.isTicking = false;
 			this.activeItem = this.items
@@ -800,7 +535,8 @@
 				.parent()
 				.scrollTop( 0 );
 
-			this.renderer._refresh( this, state, from, to );
+			this.renderer.refresh( state, from, to );
+
 		},
 		_ui : function ( active, index ) {
 			return {
@@ -827,7 +563,10 @@
 			}
 
 			this.element
-				.removeClass( "ui-coverflow ui-coverflow-" + this.renderer.cssClass + "-render" )
+				.removeClass(
+					"ui-coverflow ui-helper-clearfix ui-coverflow-"
+					+ ( this.renderer.cssClass || "classic" ) + "-render"
+				)
 				.parent()
 				.removeClass( "ui-coverflow-wrapper ui-clearfix" );
 
@@ -840,8 +579,7 @@
 					$.each( origAttr, function( name, value ) {
 						if ( value !== undefined ) {
 							$this.attr( name, value );
-						}
-						else {
+						} else {
 							$this.removeAttr( name );
 						}
 					});

@@ -4,9 +4,9 @@
 (function($) {
 
 	var transformations = {
-		left : 'matrix(1, -0.2, 0, 1, 0, 0)',
-		active : 'matrix(1.3, 0, 0, 1.3, 0, 0)',
-		right : 'matrix(1, 0.2, 0, 1, 0, 0)'
+		left : 'matrix(0.7, -0.15, 0, 0.7, 0, 0)',
+		active : 'matrix(1, 0, 0, 1, 0, 0)',
+		right : 'matrix(0.7, 0.15, 0, 0.7, 0, 0)'
 	},
 	isOldie = (function() {
 

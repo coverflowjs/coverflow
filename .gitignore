@@ -36,3 +36,4 @@ publish
 
 ## nodejs dependencies
 node_modules
+src/css/coverflow.unprefixed.css

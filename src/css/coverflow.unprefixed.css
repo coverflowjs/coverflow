@@ -4,8 +4,6 @@
   overflow: hidden;
 }
 .ui-coverflow {
-  -webkit-perspective: 500px;
-  -ms-perspective: 500px;
   perspective: 500px;
   position: absolute;
   z-index: 2;
@@ -24,9 +22,6 @@
   outline: 0;
 }
 .ui-coverflow img {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;

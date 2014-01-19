@@ -8,7 +8,10 @@
 			this.el
 				.coverflow({
 					active : 0,
-					duration : 1
+					duration : 1,
+					trigger : {
+						"itemfocus" : true
+					}
 				});
 		}
 	});

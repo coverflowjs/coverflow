@@ -5,28 +5,31 @@
 	<meta charset="UTF-8" />
     <title>CoverflowJS - testing animations with $.transit</title>
 
-    <link rel="stylesheet" href="../lib/qunit/qunit/qunit.css" />
+	<link rel="stylesheet" href="../lib/qunit/dist/qunit.css" />
     <link rel="stylesheet" href="../css/visual.css" />
     <link rel="stylesheet" href="../../src/css/coverflow.css" />
 	<link rel="stylesheet" href="../../libs/jquery-ui/themes/base/jquery.ui.core.css" />
 
-    <script type="text/javascript" src="../../libs/jquery-ui/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../../libs/jquery-ui/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="../../libs/jquery-ui/ui/jquery.ui.core.js"></script>
-	<script type="text/javascript" src="../../libs/jquery-ui/ui/jquery.ui.widget.js"></script>
-	<script type="text/javascript" src="../../libs/jquery-ui/ui/jquery.ui.effect.js"></script>
-
-    <script type="text/javascript" src="../lib/qunit/qunit/qunit.js"></script>
+    <script type="text/javascript" src="../../libs/jquery-ui/ui/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="../../libs/jquery-ui/ui/jquery.ui.effect.js"></script>
 
     <script type="text/javascript" src="../../libs/jquery.mobile.custom.min.js"></script>
-    <script type="text/javascript" src="../../libs/jquery.copycss.js"></script>
+    <script type="text/javascript" src="../lib/qunit/dist/qunit.js"></script>
 
-	<script type="text/javascript" src="../../src/js/coverflow.js"></script>
-    <script type="text/javascript" src="transitions.js"></script>
+	<script type="text/javascript" src="../../src/js/support.core.js"></script>
+    <script type="text/javascript" src="../../src/js/support.transform3d.js"></script>
+	<script type="text/javascript" src="../../src/js/renderer.3d.js"></script>
+    <script type="text/javascript" src="../../src/js/renderer.classic.js"></script>
+    <script type="text/javascript" src="../../src/js/coverflow.js"></script>
+
+    <script type="text/javascript" src="all/methods.js"></script>
+    <script type="text/javascript" src="all/offset.js"></script>
+
     <script type="text/javascript" src="matrix/core.js"></script>
-    <script type="text/javascript" src="methods.js"></script>
     <script type="text/javascript" src="matrix/geometry.js"></script>
-    <script type="text/javascript" src="offset.js"></script>
-	
+
 </head>
 <body>
     <h1 id="qunit-header">CoverflowJS Test Suite</h1>
@@ -37,7 +40,7 @@
     <div id="qunit-fixture">
 		<div class="demo">
 			<div class="wrapper">
-				<div class="coverflow ui-helper-clearfix">
+				<div class="coverflow">
 					<img src="../../demo/img/gorillaz-plasticbeach.jpg" data-artist="Gorillaz" data-album="Plastic Beach"/>
 					<img src="../../demo/img/kingsofleon-comearoundsunshine.jpg" data-artist="Kings Of Leon" data-album="Come Around Sunshine"/>
 					<img src="../../demo/img/kidrock-bornfree.jpg" data-artist="Kid Rock" data-album="Born Free"/>

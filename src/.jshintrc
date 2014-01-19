@@ -25,6 +25,7 @@
 		"jQuery": true,
 		"Modernizr": true,
 		"requestAnimationFrame": true,
-		"cancelAnimationFrame": true
+		"cancelAnimationFrame": true,
+		"Hammer" : true
 	}
 }
