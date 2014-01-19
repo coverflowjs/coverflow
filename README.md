@@ -30,19 +30,19 @@ This coverflow effect binds to the following events on initialization:
 
     Returns a boolean (selection success). Pass an item index (zero based) or any valid jQuery coverflow item. So these expressions are equivalent:
 
-    ` $('#coverflow' ).coverflow( 'select', 2 );`
+    ` $( '#coverflow' ).coverflow( 'select', 2 );`
 
-    ` $('#coverflow' ).coverflow( 'select', $('#coverflow > *:eq(2)' ) );`
+    ` $( '#coverflow' ).coverflow( 'select', $('#coverflow > *:eq(2)' ) );`
 
  - next()
 
-    ` $('#coverflow' ).coverflow( 'prev' );`
+    ` $( '#coverflow' ).coverflow( 'prev' );`
 
     Returns a boolean (selection success). Selects next/previous item.
 
  - prev()
 
-    ` $('#coverflow' ).coverflow( 'prev' );`
+    ` $( '#coverflow' ).coverflow( 'prev' );`
 
     Returns a boolean (selection success). Selects next/previous item.
 
@@ -52,10 +52,10 @@ This coverflow effect binds to the following events on initialization:
  - items (string):
 
     Any valid jQuery Selector. Default any child element of your coverflow container.
+    
+ - stacking (float) DEPRECATED:
 
- - stacking (float):
-
-    Value between 0 and 1. Defines how close items should stack. Default 0.73.
+    This option is now deprecated. Please see the rendererOptions option below.
 
  - active (int >=0):
 
@@ -76,15 +76,40 @@ This coverflow effect binds to the following events on initialization:
         - itemfocus
         - itemclick
         - mousewheel
-        - swipe
+        - swipe : true (default) or "momentum" for momentum-based swipe scrolling
+
+ - swipefriction (float):
+
+    friction effect to apply on momentum-based swipe scrolling, default 0.43
+
+ - renderer (string):
+
+    Select which renderer to use for coverflow effect: "classic" (default) or "3d"
+
+ - rendererOptions (plain object):
+
+    Options to send to the renderer
+    
+    Options for "classic" :
+    
+        - stacking (float) - Value between 0 and 1. Defines how close items should stack. Default 0.73
+
+    Options for "3d" :
+    
+        - angle (float) - Angle in degrees at which to fold the items back from origin. Default 60
+        - scale (float) - Percentage scale to resize to non-active items. Default 0.85
+        - overlap (float) - Value between 0 and 1. Percentage overflap for non-active items. Default 0.3
+        - perspectiveY (int) - Percentage below origin to view the 3D transforms. Default 45
 
 **Swipe Support:**
 
 Swipe support depends on jQuery mobile. If you only want to support swipe (and don't need the full jQm lib), you can use the custom build that ships with this repository (it's just jQm core/events).
 
+It is hightly recommended to turn off the `itemfocus` trigger when using momentum-based swipe scrolling.
+
 **CSS3 Transitions support:**
 
-Depends on [$.fn.transit](https://github.com/rstacruz/jquery.transit) and [requestAnimationFrame(RAF) polyfill](https://gist.github.com/paulirish/1579671). Simply include libs/jquery.transit.js and libs/raf.js.
+Depends on [$.fn.transit](https://github.com/rstacruz/jquery.transit) and [$.fn.getStyles](https://github.com/moagrius/copycss). Simply include libs/jquery.transit.js and libs/jquery.copycss.js.
 
 **jQuery animate fallback:**
 
@@ -103,11 +128,11 @@ You don't need transformie or sylvester. Filter matrices for IE are applied if t
 Check out demo/index.html or tests/visual.html in your browser.
 
 ## License
-Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer
+Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin
 Licensed under the MIT licenses.
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [grunt](https://github.com/cowboy/grunt).
+In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [grunt](http://gruntjs.com).
 
 ### Important notes
 Please don't edit files in the `dist` subdirectory as they are generated via grunt. You'll find source code in the `src` subdirectory!
