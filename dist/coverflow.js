@@ -1,4 +1,4 @@
-/*! CoverflowJS - v3.0.0rc1 - 2014-01-19
+/*! CoverflowJS - v3.0.0rc3 - 2014-01-19
 * Copyright (c) 2008-2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
 (function( $, undefined ) {
 
