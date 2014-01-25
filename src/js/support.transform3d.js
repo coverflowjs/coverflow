@@ -18,8 +18,6 @@
 
         domPrefixes = omPrefixes.toLowerCase().split( " " ),
 
-        slice = ([]).slice,
-
         injectElementWithStyles = function( rule, callback, nodes, testnames ) {
 
             var style, ret, node, docOverflow,
@@ -76,53 +74,6 @@
         };
     }
 
-
-    if( ! Function.prototype.bind) {
-
-		Function.prototype.bind = function bind( that ) {
-
-            var target = this,
-				args, bound;
-
-            if( ! $.isFunction( target ) ) {
-                throw new TypeError();
-            }
-
-            args = slice.call( arguments, 1 );
-			bound = function() {
-
-				if( this instanceof bound ) {
-
-					var F = function() {},
-						self, result;
-
-					F.prototype = target.prototype;
-					self = new F();
-
-					result = target.apply(
-						self,
-						args.concat( slice.call( arguments ) )
-					);
-					if( Object( result ) === result) {
-						return result;
-					}
-					return self;
-
-				} else {
-
-					return target.apply(
-						that,
-						args.concat( slice.call( arguments ) )
-					);
-
-				}
-
-			};
-
-            return bound;
-        };
-    }
-
     function contains( str, substr ) {
         return !!~( "" + str ).indexOf( substr );
     }
@@ -153,7 +104,7 @@
                 }
 
                 if( is( item, "function" ) ) {
-                    return item.bind( elem || obj );
+                    return $.proxy( item, elem || obj );
                 }
 
                 return item;

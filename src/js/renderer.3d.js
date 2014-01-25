@@ -11,25 +11,26 @@ ThreeDRenderer.prototype = {
 	cssClass : "3d",
 
 	initialize : function() {
-		var css = {};
+		var me = this,
+			css = {};
 
-		this.itemSize = this.items
-				.eq( this.widget.currentIndex )
+		me.itemSize = me.items
+				.eq( me.widget.currentIndex )
 				.outerWidth( true );
 
-		this.outerWidth = this.element.parent().outerWidth( false );
+		me.outerWidth = me.element.parent().outerWidth( false );
 
 		// make sure there's enough space
-		css.width = this.itemSize * this.items.length;
+		css.width = me.itemSize * me.items.length;
 
 		// Center the actual parents' left side within its parent
 		$.extend(
 			css,
-			this._getCenterPosition(),
-			this._getPerspectiveOrigin()
+			me._getCenterPosition(),
+			me._getPerspectiveOrigin()
 		);
 
-		this.element
+		me.element
 			.css( css );
 	},
 	getItemRenderedWidth : function () {
@@ -41,13 +42,14 @@ ThreeDRenderer.prototype = {
 	},
 	_getPerspectiveOrigin : function () {
 
-		var o = this.options;
+		var me = this,
+			o = me.options;
 
 		// Center the perspective on the visual center of the container
 		return {
-			perspectiveOrigin : Math.round( this.itemSize / 2 +
-				( this.widget.currentIndex *
-					this.getItemRenderedWidth() *
+			perspectiveOrigin : Math.round( me.itemSize / 2 +
+				( me.widget.currentIndex *
+					me.getItemRenderedWidth() *
 					( 1 - o.overlap )
 				) ) + "px " +
 				o.perspectiveY + "%"
@@ -55,20 +57,21 @@ ThreeDRenderer.prototype = {
 	},
 	_getCenterPosition : function () {
 		var pos,
-			renderedWidth = this.getItemRenderedWidth(),
-			index = this.widget.currentIndex;
+			me = this,
+			renderedWidth = me.getItemRenderedWidth(),
+			index = me.widget.currentIndex;
 
 		// Get default center
-		pos = ( this.outerWidth - this.itemSize ) / 2;
+		pos = ( me.outerWidth - me.itemSize ) / 2;
 
 		// Shift left based on the number of elements before selection
 		pos -= index * renderedWidth;
 
 		// Adjust back right for the overlap of the elements
-		pos += index * renderedWidth * this.options.overlap;
+		pos += index * renderedWidth * me.options.overlap;
 
 		// Adjust for the padding
-		pos -= parseInt( this.element.css( "paddingLeft" ), 10 ) || 0;
+		pos -= parseInt( me.element.css( "paddingLeft" ), 10 ) || 0;
 
 		pos = Math.round( pos );
 
@@ -84,7 +87,8 @@ ThreeDRenderer.prototype = {
 	},
 	getElementTransitionStyles : function ( o ) {
 
-		var transitionFn = $.coverflow.transition[ o.easing ] || $.coverflow.transition.easeOutQuint,
+		var me = this,
+			transitionFn = $.coverflow.transition[ o.easing ] || $.coverflow.transition.easeOutQuint,
 			css = {
 				transitionProperty : "left",
 				transitionDuration : o.duration + "ms",
@@ -94,19 +98,19 @@ ThreeDRenderer.prototype = {
 
 		$.extend(
 				css,
-				this._getCenterPosition(),
-				this._getPerspectiveOrigin()
+				me._getCenterPosition(),
+				me._getPerspectiveOrigin()
 			);
 
-		this.element
+		me.element
 			.css( css );
 	},
 	refresh : function ( state, from, to ) {
-		var self = this,
-			o = self.options,
-			itemLength = self.items.length,
-			itemSize = this.itemSize,
-			renderedWidth = self.getItemRenderedWidth();
+		var me = this,
+			o = me.options,
+			itemLength = me.items.length,
+			itemSize = me.itemSize,
+			renderedWidth = me.getItemRenderedWidth();
 
 		this.items.each( function ( i ) {
 

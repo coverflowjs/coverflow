@@ -1,4 +1,4 @@
-/*! CoverflowJS - v3.0.0rc3 - 2014-01-19
+/*! CoverflowJS - v3.0.0rc3 - 2014-01-25
 * Copyright (c) 2008-2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
 (function( $, document, window ) {
 	"use strict";
@@ -119,8 +119,6 @@
 
         domPrefixes = omPrefixes.toLowerCase().split( " " ),
 
-        slice = ([]).slice,
-
         injectElementWithStyles = function( rule, callback, nodes, testnames ) {
 
             var style, ret, node, docOverflow,
@@ -177,53 +175,6 @@
         };
     }
 
-
-    if( ! Function.prototype.bind) {
-
-		Function.prototype.bind = function bind( that ) {
-
-            var target = this,
-				args, bound;
-
-            if( ! $.isFunction( target ) ) {
-                throw new TypeError();
-            }
-
-            args = slice.call( arguments, 1 );
-			bound = function() {
-
-				if( this instanceof bound ) {
-
-					var F = function() {},
-						self, result;
-
-					F.prototype = target.prototype;
-					self = new F();
-
-					result = target.apply(
-						self,
-						args.concat( slice.call( arguments ) )
-					);
-					if( Object( result ) === result) {
-						return result;
-					}
-					return self;
-
-				} else {
-
-					return target.apply(
-						that,
-						args.concat( slice.call( arguments ) )
-					);
-
-				}
-
-			};
-
-            return bound;
-        };
-    }
-
     function contains( str, substr ) {
         return !!~( "" + str ).indexOf( substr );
     }
@@ -254,7 +205,7 @@
                 }
 
                 if( is( item, "function" ) ) {
-                    return item.bind( elem || obj );
+                    return $.proxy( item, elem || obj );
                 }
 
                 return item;
@@ -298,13 +249,15 @@
 
 function ClassicRenderer( widget, element, items, options ) {
 
-	this.widget = widget;
+	var me = this;
 
-	this.element = element || $();
+	me.widget = widget;
 
-	this.items = items || $();
+	me.element = element;
 
-	this.options = options;
+	me.items = items;
+
+	me.options = options;
 
 }
 
@@ -315,45 +268,48 @@ ClassicRenderer.prototype = {
 	itemMargin : 0,
 
 	initialize : function() {
-		var o = this.options,
+
+		var me = this,
+			o = me.options,
 			css = {},
-			$activeItem = this.items
-				.eq( this.widget.currentIndex );
+			$activeItem = me.items
+				.eq( me.widget.currentIndex );
 
-		this.itemSize = $activeItem.width();
+		me.itemSize = $activeItem.width();
 
-		this.outerWidth = this.element.parent().outerWidth( false );
+		me.outerWidth = me.element.parent().outerWidth( false );
 
-		this.itemMargin = - Math.floor( o.overlap / 2 * $activeItem.innerWidth() );
+		me.itemMargin = - Math.floor( o.overlap / 2 * $activeItem.innerWidth() );
 
-		this.items
+		me.items
 			// apply a negative margin so items overlap
 			.css({
-				marginLeft : this.itemMargin,
-				marginRight : this.itemMargin
+				marginLeft : me.itemMargin,
+				marginRight : me.itemMargin
 			});
 
 		// make sure there's enough space
-		css.width = this.items.width() * this.items.length;
+		css.width = me.items.width() * me.items.length;
 
 		// Center the actual parent's left side within its parent
-		$.extend( css, this._getCenterPosition() );
-		this.element.css( css );
+		$.extend( css, me._getCenterPosition() );
+		me.element.css( css );
 	},
 	getItemRenderedWidth : function() {
 		return this.itemSize;
 	},
 	_getCenterPosition : function () {
-		var pos,
-			itemSize = this.itemSize,
-			index = this.widget.currentIndex;
+		var me = this,
+			pos,
+			itemSize = me.itemSize,
+			index = me.widget.currentIndex;
 
-		pos = ( this.outerWidth - itemSize ) / 2;
-		pos -= index * this.itemSize / 2;
-		pos += parseInt( this.element.css( "paddingLeft" ), 10 ) || 0;
-		pos -= index * this.itemMargin * 2;
+		pos = ( me.outerWidth - itemSize ) / 2;
+		pos -= index * me.itemSize / 2;
+		pos += parseInt( me.element.css( "paddingLeft" ), 10 ) || 0;
+		pos -= index * me.itemMargin * 2;
 
-		pos -= this.itemMargin;
+		pos -= me.itemMargin;
 		pos = Math.round( pos );
 
 		return { left : pos };
@@ -369,11 +325,11 @@ ClassicRenderer.prototype = {
 				});
 	},
 	refresh : function ( state, from, to ) {
-		var self = this,
-			o = this.options,
-			itemLength = this.items.length,
-			itemSize = this.itemSize,
-			itemMargin = this.itemMargin;
+		var me = this,
+			o = me.options,
+			itemLength = me.items.length,
+			itemSize = me.itemSize,
+			itemMargin = me.itemMargin;
 
 		this.items.each( function ( i ) {
 
@@ -410,19 +366,21 @@ ClassicRenderer.prototype = {
 				}
 			}
 
-			self._transform( this, css, matrixT );
+			me._transform( this, css, matrixT );
 
 			$( this ).css( css );
 		});
 	},
 	_transform : function() {
 
+		var me = this;
+
 		if( $.support.transform ) {
-			this._matrixTransform.apply( this, arguments );
+			me._matrixTransform.apply( me, arguments );
 			return;
 		}
-		if( $.coverflow.isOldie && ! $.support.transform ) {
-			this._fallbackTransform.apply( this, arguments );
+		if( $.coverflow.isOldie ) {
+			me._fallbackTransform.apply( me, arguments );
 		}
 	},
 	_matrixTransform : function ( el, css, matrixT ) {
@@ -455,15 +413,8 @@ function toRadian ( angle ) {
 	return parseFloat( ( angle * 0.017453 ) .toFixed( 6 ) );
 }
 
-function ThreeDRenderer( widget, element, items, options ) {
-
-	this.widget = widget;
-
-	this.element = element || $();
-
-	this.items = items || $();
-
-	this.options = options;
+function ThreeDRenderer() {
+	$.coverflow.renderer.Classic.apply( this, arguments );
 }
 
 ThreeDRenderer.prototype = {
@@ -471,25 +422,26 @@ ThreeDRenderer.prototype = {
 	cssClass : "3d",
 
 	initialize : function() {
-		var css = {};
+		var me = this,
+			css = {};
 
-		this.itemSize = this.items
-				.eq( this.widget.currentIndex )
+		me.itemSize = me.items
+				.eq( me.widget.currentIndex )
 				.outerWidth( true );
 
-		this.outerWidth = this.element.parent().outerWidth( false );
+		me.outerWidth = me.element.parent().outerWidth( false );
 
 		// make sure there's enough space
-		css.width = this.itemSize * this.items.length;
+		css.width = me.itemSize * me.items.length;
 
 		// Center the actual parents' left side within its parent
 		$.extend(
 			css,
-			this._getCenterPosition(),
-			this._getPerspectiveOrigin()
+			me._getCenterPosition(),
+			me._getPerspectiveOrigin()
 		);
 
-		this.element
+		me.element
 			.css( css );
 	},
 	getItemRenderedWidth : function () {
@@ -501,13 +453,14 @@ ThreeDRenderer.prototype = {
 	},
 	_getPerspectiveOrigin : function () {
 
-		var o = this.options;
+		var me = this,
+			o = me.options;
 
 		// Center the perspective on the visual center of the container
 		return {
-			perspectiveOrigin : Math.round( this.itemSize / 2 +
-				( this.widget.currentIndex *
-					this.getItemRenderedWidth() *
+			perspectiveOrigin : Math.round( me.itemSize / 2 +
+				( me.widget.currentIndex *
+					me.getItemRenderedWidth() *
 					( 1 - o.overlap )
 				) ) + "px " +
 				o.perspectiveY + "%"
@@ -515,20 +468,21 @@ ThreeDRenderer.prototype = {
 	},
 	_getCenterPosition : function () {
 		var pos,
-			renderedWidth = this.getItemRenderedWidth(),
-			index = this.widget.currentIndex;
+			me = this,
+			renderedWidth = me.getItemRenderedWidth(),
+			index = me.widget.currentIndex;
 
 		// Get default center
-		pos = ( this.outerWidth - this.itemSize ) / 2;
+		pos = ( me.outerWidth - me.itemSize ) / 2;
 
 		// Shift left based on the number of elements before selection
 		pos -= index * renderedWidth;
 
 		// Adjust back right for the overlap of the elements
-		pos += index * renderedWidth * this.options.overlap;
+		pos += index * renderedWidth * me.options.overlap;
 
 		// Adjust for the padding
-		pos -= parseInt( this.element.css( "paddingLeft" ), 10 ) || 0;
+		pos -= parseInt( me.element.css( "paddingLeft" ), 10 ) || 0;
 
 		pos = Math.round( pos );
 
@@ -544,7 +498,8 @@ ThreeDRenderer.prototype = {
 	},
 	getElementTransitionStyles : function ( o ) {
 
-		var transitionFn = $.coverflow.transition[ o.easing ] || $.coverflow.transition.easeOutQuint,
+		var me = this,
+			transitionFn = $.coverflow.transition[ o.easing ] || $.coverflow.transition.easeOutQuint,
 			css = {
 				transitionProperty : "left",
 				transitionDuration : o.duration + "ms",
@@ -554,19 +509,19 @@ ThreeDRenderer.prototype = {
 
 		$.extend(
 				css,
-				this._getCenterPosition(),
-				this._getPerspectiveOrigin()
+				me._getCenterPosition(),
+				me._getPerspectiveOrigin()
 			);
 
-		this.element
+		me.element
 			.css( css );
 	},
 	refresh : function ( state, from, to ) {
-		var self = this,
-			o = self.options,
-			itemLength = self.items.length,
-			itemSize = this.itemSize,
-			renderedWidth = self.getItemRenderedWidth();
+		var me = this,
+			o = me.options,
+			itemLength = me.items.length,
+			itemSize = me.itemSize,
+			renderedWidth = me.getItemRenderedWidth();
 
 		this.items.each( function ( i ) {
 
@@ -622,6 +577,26 @@ $.extend( $.coverflow.renderer, {
 
 	"use strict";
 
+	function debounce( func, threshold ) {
+
+		var timeout;
+
+		return function() {
+			var obj = this,
+				args = arguments;
+
+			if( timeout ) {
+				clearTimeout( timeout );
+			}
+
+			timeout = setTimeout(function() {
+						func.apply( obj, args );
+						timeout = null;
+					}, threshold
+				);
+		};
+	}
+
 	var eventsMap = {
 			"transition":     "transitionend",
 			"MozTransition":  "transitionend",
@@ -629,21 +604,17 @@ $.extend( $.coverflow.renderer, {
 			"WebkitTransition": "webkitTransitionEnd",
 			"msTransition":   "transitionend"
 		},
-	isOldie = (function() {
+		userAgent = navigator.userAgent.toLowerCase(),
+		isOldie = (function() {
 
-		if( $.browser !== undefined ) {
-			// old jQuery versions and jQuery migrate plugin users
-			return $.browser.msie && ( ( ~~$.browser.version ) < 10 );
-		}
+			var match = /(msie) ([\w.]+)/.exec( userAgent );
 
-		var match = /(msie) ([\w.]+)/.exec( navigator.userAgent.toLowerCase() );
-
-		return match !== null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
-	})();
+			return match !== null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
+		})();
 
 	$.coverflow = $.extend( true, {}, $.coverflow, {
 
-		isAndroid : (/android/i).test( navigator.userAgent ),
+		isAndroid : (/android/).test( userAgent ),
 
 		isOldie : isOldie,
 
@@ -721,13 +692,14 @@ $.extend( $.coverflow.renderer, {
 		isTicking : false,
 		_create : function () {
 
-			var o = this.options,
+			var me = this,
+				o = this.options,
 				Renderer,
 				rendererOptions;
 
-			this.elementOrigStyle = this.element.attr( "style" );
+			me.elementOrigStyle = me.element.attr( "style" );
 
-			this.items = this.element.find( o.items )
+			me.items = me.element.find( o.items )
 					.each( function () {
 						var $this = $( this );
 						$this.data({
@@ -741,7 +713,7 @@ $.extend( $.coverflow.renderer, {
 					})
 					.addClass( "ui-coverflow-item" );
 
-			this._setDimensions();
+			me._setDimensions();
 
 			if ( // transform is not supported
 				! $.support.transform
@@ -762,19 +734,19 @@ $.extend( $.coverflow.renderer, {
 				perspectiveY: o.perspectiveY,
 				scale: o.scale,
 				overlap: o.overlap,
-				itemSize : this.itemSize,
-				outerWidth : this.outerWidth
+				itemSize : me.itemSize,
+				outerWidth : me.outerWidth
 			};
 
-			this.renderer = new Renderer(
-					this,
-					this.element,
-					this.items,
+			me.renderer = new Renderer(
+					me,
+					me.element,
+					me.items,
 					rendererOptions
 				);
 
-			this.element
-				.addClass( "ui-coverflow ui-coverflow-" + this.renderer.cssClass + "-render" )
+			me.element
+				.addClass( "ui-coverflow ui-coverflow-" + me.renderer.cssClass + "-render" )
 				.parent()
 				.addClass( "ui-coverflow-wrapper ui-clearfix" );
 
@@ -783,36 +755,38 @@ $.extend( $.coverflow.renderer, {
 			}
 
 			if( o.trigger.itemclick ) {
-				this._on( this.items, { click : this._select });
+				me._on( me.items, { click : me._select });
 			}
 
 			if( o.trigger.mousewheel ) {
-				this._on({
-					mousewheel: this._onMouseWheel,
-					DOMMouseScroll: this._onMouseWheel
+				me._on({
+					mousewheel: me._onMouseWheel,
+					DOMMouseScroll: me._onMouseWheel
 				});
 			}
 
 			if( o.trigger.swipe ) {
-				this._bindSwipe();
+				me._bindSwipe();
 			}
 
-			this.useJqueryAnimate = ! ( $.support.transition && $.isFunction( window.requestAnimationFrame ) );
+			me.useJqueryAnimate = ! ( $.support.transition && $.isFunction( window.requestAnimationFrame ) );
 
-			this.coverflowrafid = 0;
+			me.coverflowrafid = 0;
 		},
 		_bindFocus : function() {
+			var me = this;
 
 			// set tabindex so widget items get focusable
 			// makes items accessible by keyboard
-			this.items
+			me.items
 				.prop( "tabIndex", 0 );
 
-			this._on( this.items, { focus : this._select });
+			me._on( me.items, { focus : me._select });
 		},
 		_bindSwipe : function() {
 
-			var $el = this.element,
+			var me = this,
+				$el = me.element,
 				hasJqm = false,
 				hasHammer = false;
 
@@ -846,8 +820,8 @@ $.extend( $.coverflow.renderer, {
 					}
 				};
 
-				this._on({
-					swipe: this._handleJQmSwipe
+				me._on({
+					swipe : debounce( me._handleJQmSwipe, 150 )
 				});
 			}
 
@@ -870,52 +844,54 @@ $.extend( $.coverflow.renderer, {
 						ev.gesture.preventDefault();
 					});
 
-				this._on({
-					swipe: this._handleHammerSwipe
+				me._on({
+					swipe: me._handleHammerSwipe
 				});
 			}
 
-			if( ! hasJqm && hasHammer ) {
-				this._on({
-					swipeleft : this.next,
-					swiperight : this.prev
+			if( ! hasJqm && ! hasHammer ) {
+				me._on({
+					swipeleft : me.next,
+					swiperight : me.prev
 				});
 			}
 		},
 		_init : function () {
-			var o = this.options;
+			var me = this,
+				o = me.options;
 
 			o.duration = ~~ o.duration;
 			if( o.duration < 1 ) {
 				o.duration = 1;
 			}
 
-			this.currentIndex = this._isValidIndex( o.active, true ) ? o.active : 0;
-			this.activeItem = this.items
+			me.currentIndex = me._isValidIndex( o.active, true ) ? o.active : 0;
+			me.activeItem = me.items
 				.removeClass( "ui-state-active" )
-				.eq( this.currentIndex )
+				.eq( me.currentIndex )
 				.addClass( "ui-state-active" );
 
-			this._setDimensions();
+			me._setDimensions();
 
 			// Call renderer-specific code
-			this.renderer.initialize();
+			me.renderer.initialize();
 
 			// Jump to the first item
-			this._refresh( 1, this._getFrom(), this.currentIndex );
+			me._refresh( 1, me._getFrom(), me.currentIndex );
 
-			this._trigger( "beforeselect", null, this._ui() );
-			this._trigger( "select", null, this._ui() );
+			me._trigger( "beforeselect", null, me._ui() );
+			me._trigger( "select", null, me._ui() );
 		},
 		_setDimensions : function() {
+			var me = this;
 
-			this.itemWidth = this.items.width();
+			me.itemWidth = me.items.width();
 
-			this.itemHeight = this.items.height();
+			me.itemHeight = me.items.height();
 
-			this.itemSize = this.items.outerWidth( true );
+			me.itemSize = me.items.outerWidth( true );
 
-			this.outerWidth = this.element.parent().outerWidth( false );
+			me.outerWidth = me.element.parent().outerWidth( false );
 		},
 		_isValidIndex : function ( index, ignoreCurrent ) {
 			ignoreCurrent = !! ignoreCurrent;
@@ -951,88 +927,87 @@ $.extend( $.coverflow.renderer, {
 		},
 		_handleSwipe : function( direction, speed ) {
 
-			var delta = Math.pow( speed, 2 ),
+			var me = this,
+				delta,
 				destination;
 
-			// Handle the momentum-based swipe action
-			// Based in-part on the formula used by iScroll 4
-			//delta = this.element.hammer ? Math.log( delta ) : delta;
-			delta = ~~ ( delta / ( direction === "left" ? 3 : - 3 ) );
+			delta = me.outerWidth * ( Math.pow( speed, 2 ) ) * 0.25;
+			delta /= me.itemWidth;
+			delta = Math.floor( delta ) * ( direction === "left" ? 1 : -1 );
 
-			destination = this.currentIndex + delta;
+			destination = me.currentIndex + delta;
 
-			if ( destination === this.currentIndex ) {
-				// If the swipe is short/slow enough to not move due to friction, treat it as a non-momentum swipe
-				if ( direction === "left" ) {
-					this.next();
-				} else {
-					this.prev();
-				}
-			} else if ( destination < 0 ) {
-				// Can't scroll past first element, select first
-				this.select( 0 );
-			} else if ( this._isValidIndex( destination ) ) {
-				// Destination is valid, select it
-				this.select( destination );
-			} else {
-				// Otherwise, destination was past last item, select last
-				this.select( this.items.length - 1 );
+			if( ! delta ) {
+				( direction === "left" ) ? me.next() : me.prev();
+				return;
+			}
+			if( destination < 0 ) {
+				me.select( 0 );
+				return;
 			}
 
+			if( me._isValidIndex( destination ) ) {
+				me.select( destination );
+				return;
+			}
+			me.select( me.items.length - 1 );
 		},
 		_getFrom : function () {
-			return Math.abs( this.previous - this.currentIndex ) <= 1 ?
-				this.previousIndex :
-					this.currentIndex + ( this.previousIndex < this.currentIndex ? -1 : 1 );
+			var me = this;
+
+			return Math.abs( me.previous - me.currentIndex ) <= 1
+				? me.previousIndex
+				: me.currentIndex + ( me.previousIndex < me.currentIndex ? -1 : 1 );
 		},
 		select : function( item ) {
 
-			var o = this.options,
+			var me = this,
+				o = me.options,
 				index = ! isNaN( parseInt( item, 10 ) )
 						? parseInt( item, 10 )
-						: this.items.index( item ),
+						: me.items.index( item ),
 				animation;
 
-			if( ! this._isValidIndex( index ) ) {
+			if( ! me._isValidIndex( index ) ) {
 				return false;
 			}
 
-			if( false === this._trigger(
+			if( false === me._trigger(
 					"beforeselect",
 					null,
 					this._ui(
-						this.items.eq( index ), index
+						me.items.eq( index ), index
 					)
 				)
 			) {
 				return false;
 			}
 
-			if( this.isTicking ) {
-				if( this.useJqueryAnimate ) {
-					this.element.stop( true, false );
+			if( me.isTicking ) {
+				if( me.useJqueryAnimate ) {
+					me.element.stop( true, false );
 				} else {
 
-					if( this.coverflowrafid ) {
-						window.cancelAnimationFrame( this.coverflowrafid );
+					if( me.coverflowrafid ) {
+						window.cancelAnimationFrame( me.coverflowrafid );
 					}
 
-					this.element
+					me.element
 						.unbind( eventsMap[ $.support.transition ] );
 				}
 			}
-			this.isTicking = true;
+			me.isTicking = true;
 
-			this.previousIndex = this.currentIndex;
-			o.active = this.currentIndex = index;
+			me.previousIndex = me.currentIndex;
+			o.active = me.currentIndex = index;
 
-			animation = $.extend( {}, this.renderer.select(), {
+			animation = $.extend( {}, me.renderer.select(), {
 					coverflow : 1
 				});
 
-			if( this.useJqueryAnimate ) {
+			if( me.useJqueryAnimate ) {
 
-				this._animation( o, animation );
+				me._animation( o, animation );
 			} else {
 
 				o = $.extend({
@@ -1040,26 +1015,26 @@ $.extend( $.coverflow.renderer, {
 						easing: o.easing
 					}, animation );
 
-				this._transition( o );
+				me._transition( o );
 			}
 
 			return true;
 		},
 		_animation : function( o, animation ) {
 
-			var self = this,
+			var me = this,
 				from = this._getFrom();
 
 			// Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
 			$.fx.step.coverflow = function( fx ) {
-				self._refresh( fx.now, from, self.currentIndex );
+				me._refresh( fx.now, from, me.currentIndex );
 			};
 
 			// 1. Stop the previous animation
 			// 2. Animate the parent's left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
 
-			this.element
+			me.element
 				.animate(
 					animation,
 					{
@@ -1069,59 +1044,61 @@ $.extend( $.coverflow.renderer, {
 				)
 				.promise()
 				.done(function() {
-					self._onAnimationEnd();
+					me._onAnimationEnd();
 				});
 		},
 		_transition : function( o ) {
-			var self = this,
+			var me = this,
 				d = new Date(),
-				from = this._getFrom(),
-				to = this.currentIndex,
+				from = me._getFrom(),
+				to = me.currentIndex,
 				styles = {},
 				loopRefresh = function() {
 					var state = ( (new Date()).getTime() - d.getTime() ) / o.duration;
 
 					if( state > 1 ) {
-						self.isTicking = false;
+						me.isTicking = false;
 					} else {
-						self._refresh( state, from, to );
+						me._refresh( state, from, to );
 					}
 
-					if( self.isTicking ) {
-						self.coverflowrafid = window.requestAnimationFrame( loopRefresh );
+					if( me.isTicking ) {
+						me.coverflowrafid = window.requestAnimationFrame( loopRefresh );
 					}
 				};
 
 
-			if( $.isFunction( this.renderer.getElementTransitionStyles ) ) {
-				styles = $.extend( styles, this.renderer.getElementTransitionStyles( o ) );
+			if( $.isFunction( me.renderer.getElementTransitionStyles ) ) {
+				styles = $.extend( styles, me.renderer.getElementTransitionStyles( o ) );
 			}
 
-			this.element
+			me.element
 				.one( eventsMap[ $.support.transition ],
 					function() {
-						self._refresh( 1, from, to );
-						self._onAnimationEnd();
+						me._refresh( 1, from, to );
+						me._onAnimationEnd();
 					}
 				)
 				.css( styles );
 
-			this.coverflowrafid = window.requestAnimationFrame( loopRefresh );
+			me.coverflowrafid = window.requestAnimationFrame( loopRefresh );
 		},
 		_onAnimationEnd : function() {
 
-			if( this.coverflowrafid ) {
-				cancelAnimationFrame( this.coverflowrafid );
+			var me = this;
+
+			if( me.coverflowrafid ) {
+				cancelAnimationFrame( me.coverflowrafid );
 			}
 
-			this.isTicking = false;
-			this.activeItem = this.items
+			me.isTicking = false;
+			me.activeItem = me.items
 					.removeClass( "ui-state-active" )
-					.eq( this.currentIndex )
+					.eq( me.currentIndex )
 					.addClass( "ui-state-active" );
 
 			// fire select after animation has finished
-			this._trigger( "select", null, this._ui() );
+			me._trigger( "select", null, me._ui() );
 		},
 		_refresh: function( state, from, to ) {
 			this.element
@@ -1134,7 +1111,6 @@ $.extend( $.coverflow.renderer, {
 		_ui : function ( active, index ) {
 			return {
 				active: active || this.activeItem,
-				// This is purposefully "!= null"
 				index: index != null ? index : this.currentIndex
 			};
 		},
@@ -1149,21 +1125,24 @@ $.extend( $.coverflow.renderer, {
 			this.next();
 		},
 		_destroy : function () {
-			if ( this.elementOrigStyle !== undefined ) {
-				this.element.attr( "style", this.elementOrigStyle );
+
+			var me = this;
+
+			if ( me.elementOrigStyle !== undefined ) {
+				me.element.attr( "style", this.elementOrigStyle );
 			} else {
-				this.element.removeAttr( "style" );
+				me.element.removeAttr( "style" );
 			}
 
-			this.element
+			me.element
 				.removeClass(
 					"ui-coverflow ui-helper-clearfix ui-coverflow-"
-					+ ( this.renderer.cssClass || "classic" ) + "-render"
+					+ ( me.renderer.cssClass || "classic" ) + "-render"
 				)
 				.parent()
 				.removeClass( "ui-coverflow-wrapper ui-clearfix" );
 
-			this.items
+			me.items
 				.removeClass( "ui-coverflow-item ui-state-active" )
 				.each(function(){
 					var $this = $( this ),
@@ -1180,7 +1159,7 @@ $.extend( $.coverflow.renderer, {
 					$this.data( "coverflowOrigElemAttr", null );
 				});
 
-			this._super();
+			me._super();
 		}
 	});
 

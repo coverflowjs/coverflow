@@ -1,12 +1,14 @@
 function ClassicRenderer( widget, element, items, options ) {
 
-	this.widget = widget;
+	var me = this;
 
-	this.element = element;
+	me.widget = widget;
 
-	this.items = items;
+	me.element = element;
 
-	this.options = options;
+	me.items = items;
+
+	me.options = options;
 
 }
 
@@ -17,45 +19,48 @@ ClassicRenderer.prototype = {
 	itemMargin : 0,
 
 	initialize : function() {
-		var o = this.options,
+
+		var me = this,
+			o = me.options,
 			css = {},
-			$activeItem = this.items
-				.eq( this.widget.currentIndex );
+			$activeItem = me.items
+				.eq( me.widget.currentIndex );
 
-		this.itemSize = $activeItem.width();
+		me.itemSize = $activeItem.width();
 
-		this.outerWidth = this.element.parent().outerWidth( false );
+		me.outerWidth = me.element.parent().outerWidth( false );
 
-		this.itemMargin = - Math.floor( o.overlap / 2 * $activeItem.innerWidth() );
+		me.itemMargin = - Math.floor( o.overlap / 2 * $activeItem.innerWidth() );
 
-		this.items
+		me.items
 			// apply a negative margin so items overlap
 			.css({
-				marginLeft : this.itemMargin,
-				marginRight : this.itemMargin
+				marginLeft : me.itemMargin,
+				marginRight : me.itemMargin
 			});
 
 		// make sure there's enough space
-		css.width = this.items.width() * this.items.length;
+		css.width = me.items.width() * me.items.length;
 
 		// Center the actual parent's left side within its parent
-		$.extend( css, this._getCenterPosition() );
-		this.element.css( css );
+		$.extend( css, me._getCenterPosition() );
+		me.element.css( css );
 	},
 	getItemRenderedWidth : function() {
 		return this.itemSize;
 	},
 	_getCenterPosition : function () {
-		var pos,
-			itemSize = this.itemSize,
-			index = this.widget.currentIndex;
+		var me = this,
+			pos,
+			itemSize = me.itemSize,
+			index = me.widget.currentIndex;
 
-		pos = ( this.outerWidth - itemSize ) / 2;
-		pos -= index * this.itemSize / 2;
-		pos += parseInt( this.element.css( "paddingLeft" ), 10 ) || 0;
-		pos -= index * this.itemMargin * 2;
+		pos = ( me.outerWidth - itemSize ) / 2;
+		pos -= index * me.itemSize / 2;
+		pos += parseInt( me.element.css( "paddingLeft" ), 10 ) || 0;
+		pos -= index * me.itemMargin * 2;
 
-		pos -= this.itemMargin;
+		pos -= me.itemMargin;
 		pos = Math.round( pos );
 
 		return { left : pos };
@@ -71,11 +76,11 @@ ClassicRenderer.prototype = {
 				});
 	},
 	refresh : function ( state, from, to ) {
-		var self = this,
-			o = this.options,
-			itemLength = this.items.length,
-			itemSize = this.itemSize,
-			itemMargin = this.itemMargin;
+		var me = this,
+			o = me.options,
+			itemLength = me.items.length,
+			itemSize = me.itemSize,
+			itemMargin = me.itemMargin;
 
 		this.items.each( function ( i ) {
 
@@ -112,19 +117,21 @@ ClassicRenderer.prototype = {
 				}
 			}
 
-			self._transform( this, css, matrixT );
+			me._transform( this, css, matrixT );
 
 			$( this ).css( css );
 		});
 	},
 	_transform : function() {
 
+		var me = this;
+
 		if( $.support.transform ) {
-			this._matrixTransform.apply( this, arguments );
+			me._matrixTransform.apply( me, arguments );
 			return;
 		}
 		if( $.coverflow.isOldie ) {
-			this._fallbackTransform.apply( this, arguments );
+			me._fallbackTransform.apply( me, arguments );
 		}
 	},
 	_matrixTransform : function ( el, css, matrixT ) {

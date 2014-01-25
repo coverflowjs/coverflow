@@ -34,17 +34,18 @@
 		var timeout;
 
 		return function() {
-			var obj = this, args = arguments;
-			function delayed() {
-				func.apply( obj, args );
-				timeout = null;
-			}
+			var obj = this,
+				args = arguments;
 
 			if( timeout ) {
 				clearTimeout( timeout );
 			}
 
-			timeout = setTimeout( delayed, threshold );
+			timeout = setTimeout(function() {
+						func.apply( obj, args );
+						timeout = null;
+					}, threshold
+				);
 		};
 	}
 
@@ -55,21 +56,17 @@
 			"WebkitTransition": "webkitTransitionEnd",
 			"msTransition":   "transitionend"
 		},
-	isOldie = (function() {
+		userAgent = navigator.userAgent.toLowerCase(),
+		isOldie = (function() {
 
-		if( $.browser !== undefined ) {
-			// old jQuery versions and jQuery migrate plugin users
-			return $.browser.msie && ( ( ~~$.browser.version ) < 10 );
-		}
+			var match = /(msie) ([\w.]+)/.exec( userAgent );
 
-		var match = /(msie) ([\w.]+)/.exec( navigator.userAgent.toLowerCase() );
-
-		return match !== null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
-	})();
+			return match !== null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
+		})();
 
 	$.coverflow = $.extend( true, {}, $.coverflow, {
 
-		isAndroid : (/android/i).test( navigator.userAgent ),
+		isAndroid : (/android/).test( userAgent ),
 
 		isOldie : isOldie,
 
@@ -147,13 +144,14 @@
 		isTicking : false,
 		_create : function () {
 
-			var o = this.options,
+			var me = this,
+				o = this.options,
 				Renderer,
 				rendererOptions;
 
-			this.elementOrigStyle = this.element.attr( "style" );
+			me.elementOrigStyle = me.element.attr( "style" );
 
-			this.items = this.element.find( o.items )
+			me.items = me.element.find( o.items )
 					.each( function () {
 						var $this = $( this );
 						$this.data({
@@ -167,7 +165,7 @@
 					})
 					.addClass( "ui-coverflow-item" );
 
-			this._setDimensions();
+			me._setDimensions();
 
 			if ( // transform is not supported
 				! $.support.transform
@@ -188,19 +186,19 @@
 				perspectiveY: o.perspectiveY,
 				scale: o.scale,
 				overlap: o.overlap,
-				itemSize : this.itemSize,
-				outerWidth : this.outerWidth
+				itemSize : me.itemSize,
+				outerWidth : me.outerWidth
 			};
 
-			this.renderer = new Renderer(
-					this,
-					this.element,
-					this.items,
+			me.renderer = new Renderer(
+					me,
+					me.element,
+					me.items,
 					rendererOptions
 				);
 
-			this.element
-				.addClass( "ui-coverflow ui-coverflow-" + this.renderer.cssClass + "-render" )
+			me.element
+				.addClass( "ui-coverflow ui-coverflow-" + me.renderer.cssClass + "-render" )
 				.parent()
 				.addClass( "ui-coverflow-wrapper ui-clearfix" );
 
@@ -209,36 +207,38 @@
 			}
 
 			if( o.trigger.itemclick ) {
-				this._on( this.items, { click : this._select });
+				me._on( me.items, { click : me._select });
 			}
 
 			if( o.trigger.mousewheel ) {
-				this._on({
-					mousewheel: this._onMouseWheel,
-					DOMMouseScroll: this._onMouseWheel
+				me._on({
+					mousewheel: me._onMouseWheel,
+					DOMMouseScroll: me._onMouseWheel
 				});
 			}
 
 			if( o.trigger.swipe ) {
-				this._bindSwipe();
+				me._bindSwipe();
 			}
 
-			this.useJqueryAnimate = ! ( $.support.transition && $.isFunction( window.requestAnimationFrame ) );
+			me.useJqueryAnimate = ! ( $.support.transition && $.isFunction( window.requestAnimationFrame ) );
 
-			this.coverflowrafid = 0;
+			me.coverflowrafid = 0;
 		},
 		_bindFocus : function() {
+			var me = this;
 
 			// set tabindex so widget items get focusable
 			// makes items accessible by keyboard
-			this.items
+			me.items
 				.prop( "tabIndex", 0 );
 
-			this._on( this.items, { focus : this._select });
+			me._on( me.items, { focus : me._select });
 		},
 		_bindSwipe : function() {
 
-			var $el = this.element,
+			var me = this,
+				$el = me.element,
 				hasJqm = false,
 				hasHammer = false;
 
@@ -272,8 +272,8 @@
 					}
 				};
 
-				this._on({
-					swipe : debounce( this._handleJQmSwipe, 150 )
+				me._on({
+					swipe : debounce( me._handleJQmSwipe, 150 )
 				});
 			}
 
@@ -296,52 +296,54 @@
 						ev.gesture.preventDefault();
 					});
 
-				this._on({
-					swipe: this._handleHammerSwipe
+				me._on({
+					swipe: me._handleHammerSwipe
 				});
 			}
 
 			if( ! hasJqm && ! hasHammer ) {
-				this._on({
-					swipeleft : this.next,
-					swiperight : this.prev
+				me._on({
+					swipeleft : me.next,
+					swiperight : me.prev
 				});
 			}
 		},
 		_init : function () {
-			var o = this.options;
+			var me = this,
+				o = me.options;
 
 			o.duration = ~~ o.duration;
 			if( o.duration < 1 ) {
 				o.duration = 1;
 			}
 
-			this.currentIndex = this._isValidIndex( o.active, true ) ? o.active : 0;
-			this.activeItem = this.items
+			me.currentIndex = me._isValidIndex( o.active, true ) ? o.active : 0;
+			me.activeItem = me.items
 				.removeClass( "ui-state-active" )
-				.eq( this.currentIndex )
+				.eq( me.currentIndex )
 				.addClass( "ui-state-active" );
 
-			this._setDimensions();
+			me._setDimensions();
 
 			// Call renderer-specific code
-			this.renderer.initialize();
+			me.renderer.initialize();
 
 			// Jump to the first item
-			this._refresh( 1, this._getFrom(), this.currentIndex );
+			me._refresh( 1, me._getFrom(), me.currentIndex );
 
-			this._trigger( "beforeselect", null, this._ui() );
-			this._trigger( "select", null, this._ui() );
+			me._trigger( "beforeselect", null, me._ui() );
+			me._trigger( "select", null, me._ui() );
 		},
 		_setDimensions : function() {
+			var me = this;
 
-			this.itemWidth = this.items.width();
+			me.itemWidth = me.items.width();
 
-			this.itemHeight = this.items.height();
+			me.itemHeight = me.items.height();
 
-			this.itemSize = this.items.outerWidth( true );
+			me.itemSize = me.items.outerWidth( true );
 
-			this.outerWidth = this.element.parent().outerWidth( false );
+			me.outerWidth = me.element.parent().outerWidth( false );
 		},
 		_isValidIndex : function ( index, ignoreCurrent ) {
 			ignoreCurrent = !! ignoreCurrent;
@@ -377,83 +379,87 @@
 		},
 		_handleSwipe : function( direction, speed ) {
 
-			var delta,
+			var me = this,
+				delta,
 				destination;
 
-			delta = this.outerWidth * ( Math.pow( speed, 2 ) ) * 0.25;
-			delta /= this.itemWidth;
+			delta = me.outerWidth * ( Math.pow( speed, 2 ) ) * 0.25;
+			delta /= me.itemWidth;
 			delta = Math.floor( delta ) * ( direction === "left" ? 1 : -1 );
 
-			destination = this.currentIndex + delta;
+			destination = me.currentIndex + delta;
 
 			if( ! delta ) {
-				( direction === "left" ) ? this.next() : this.prev();
+				( direction === "left" ) ? me.next() : me.prev();
 				return;
 			}
 			if( destination < 0 ) {
-				this.select( 0 );
+				me.select( 0 );
 				return;
 			}
 
-			if( this._isValidIndex( destination ) ) {
-				this.select( destination );
+			if( me._isValidIndex( destination ) ) {
+				me.select( destination );
 				return;
 			}
-			this.select( this.items.length - 1 );
+			me.select( me.items.length - 1 );
 		},
 		_getFrom : function () {
-			return Math.abs( this.previous - this.currentIndex ) <= 1 ?
-				this.previousIndex :
-					this.currentIndex + ( this.previousIndex < this.currentIndex ? -1 : 1 );
+			var me = this;
+
+			return Math.abs( me.previous - me.currentIndex ) <= 1
+				? me.previousIndex
+				: me.currentIndex + ( me.previousIndex < me.currentIndex ? -1 : 1 );
 		},
 		select : function( item ) {
 
-			var o = this.options,
+			var me = this,
+				o = me.options,
 				index = ! isNaN( parseInt( item, 10 ) )
 						? parseInt( item, 10 )
-						: this.items.index( item ),
+						: me.items.index( item ),
 				animation;
 
-			if( ! this._isValidIndex( index ) ) {
+			if( ! me._isValidIndex( index ) ) {
 				return false;
 			}
 
-			if( false === this._trigger(
+			if( false === me._trigger(
 					"beforeselect",
 					null,
 					this._ui(
-						this.items.eq( index ), index
+						me.items.eq( index ), index
 					)
 				)
 			) {
 				return false;
 			}
 
-			if( this.isTicking ) {
-				if( this.useJqueryAnimate ) {
-					this.element.stop( true, false );
+			if( me.isTicking ) {
+				if( me.useJqueryAnimate ) {
+					me.element.stop( true, false );
 				} else {
 
-					if( this.coverflowrafid ) {
-						window.cancelAnimationFrame( this.coverflowrafid );
+					if( me.coverflowrafid ) {
+						window.cancelAnimationFrame( me.coverflowrafid );
 					}
 
-					this.element
+					me.element
 						.unbind( eventsMap[ $.support.transition ] );
 				}
 			}
-			this.isTicking = true;
+			me.isTicking = true;
 
-			this.previousIndex = this.currentIndex;
-			o.active = this.currentIndex = index;
+			me.previousIndex = me.currentIndex;
+			o.active = me.currentIndex = index;
 
-			animation = $.extend( {}, this.renderer.select(), {
+			animation = $.extend( {}, me.renderer.select(), {
 					coverflow : 1
 				});
 
-			if( this.useJqueryAnimate ) {
+			if( me.useJqueryAnimate ) {
 
-				this._animation( o, animation );
+				me._animation( o, animation );
 			} else {
 
 				o = $.extend({
@@ -461,26 +467,26 @@
 						easing: o.easing
 					}, animation );
 
-				this._transition( o );
+				me._transition( o );
 			}
 
 			return true;
 		},
 		_animation : function( o, animation ) {
 
-			var self = this,
+			var me = this,
 				from = this._getFrom();
 
 			// Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
 			$.fx.step.coverflow = function( fx ) {
-				self._refresh( fx.now, from, self.currentIndex );
+				me._refresh( fx.now, from, me.currentIndex );
 			};
 
 			// 1. Stop the previous animation
 			// 2. Animate the parent's left/top property so the current item is in the center
 			// 3. Use our custom coverflow animation which animates the item
 
-			this.element
+			me.element
 				.animate(
 					animation,
 					{
@@ -490,59 +496,61 @@
 				)
 				.promise()
 				.done(function() {
-					self._onAnimationEnd();
+					me._onAnimationEnd();
 				});
 		},
 		_transition : function( o ) {
-			var self = this,
+			var me = this,
 				d = new Date(),
-				from = this._getFrom(),
-				to = this.currentIndex,
+				from = me._getFrom(),
+				to = me.currentIndex,
 				styles = {},
 				loopRefresh = function() {
 					var state = ( (new Date()).getTime() - d.getTime() ) / o.duration;
 
 					if( state > 1 ) {
-						self.isTicking = false;
+						me.isTicking = false;
 					} else {
-						self._refresh( state, from, to );
+						me._refresh( state, from, to );
 					}
 
-					if( self.isTicking ) {
-						self.coverflowrafid = window.requestAnimationFrame( loopRefresh );
+					if( me.isTicking ) {
+						me.coverflowrafid = window.requestAnimationFrame( loopRefresh );
 					}
 				};
 
 
-			if( $.isFunction( this.renderer.getElementTransitionStyles ) ) {
-				styles = $.extend( styles, this.renderer.getElementTransitionStyles( o ) );
+			if( $.isFunction( me.renderer.getElementTransitionStyles ) ) {
+				styles = $.extend( styles, me.renderer.getElementTransitionStyles( o ) );
 			}
 
-			this.element
+			me.element
 				.one( eventsMap[ $.support.transition ],
 					function() {
-						self._refresh( 1, from, to );
-						self._onAnimationEnd();
+						me._refresh( 1, from, to );
+						me._onAnimationEnd();
 					}
 				)
 				.css( styles );
 
-			this.coverflowrafid = window.requestAnimationFrame( loopRefresh );
+			me.coverflowrafid = window.requestAnimationFrame( loopRefresh );
 		},
 		_onAnimationEnd : function() {
 
-			if( this.coverflowrafid ) {
-				cancelAnimationFrame( this.coverflowrafid );
+			var me = this;
+
+			if( me.coverflowrafid ) {
+				cancelAnimationFrame( me.coverflowrafid );
 			}
 
-			this.isTicking = false;
-			this.activeItem = this.items
+			me.isTicking = false;
+			me.activeItem = me.items
 					.removeClass( "ui-state-active" )
-					.eq( this.currentIndex )
+					.eq( me.currentIndex )
 					.addClass( "ui-state-active" );
 
 			// fire select after animation has finished
-			this._trigger( "select", null, this._ui() );
+			me._trigger( "select", null, me._ui() );
 		},
 		_refresh: function( state, from, to ) {
 			this.element
@@ -569,21 +577,24 @@
 			this.next();
 		},
 		_destroy : function () {
-			if ( this.elementOrigStyle !== undefined ) {
-				this.element.attr( "style", this.elementOrigStyle );
+
+			var me = this;
+
+			if ( me.elementOrigStyle !== undefined ) {
+				me.element.attr( "style", this.elementOrigStyle );
 			} else {
-				this.element.removeAttr( "style" );
+				me.element.removeAttr( "style" );
 			}
 
-			this.element
+			me.element
 				.removeClass(
 					"ui-coverflow ui-helper-clearfix ui-coverflow-"
-					+ ( this.renderer.cssClass || "classic" ) + "-render"
+					+ ( me.renderer.cssClass || "classic" ) + "-render"
 				)
 				.parent()
 				.removeClass( "ui-coverflow-wrapper ui-clearfix" );
 
-			this.items
+			me.items
 				.removeClass( "ui-coverflow-item ui-state-active" )
 				.each(function(){
 					var $this = $( this ),
@@ -600,7 +611,7 @@
 					$this.data( "coverflowOrigElemAttr", null );
 				});
 
-			this._super();
+			me._super();
 		}
 	});
 
