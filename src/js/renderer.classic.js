@@ -46,9 +46,6 @@ ClassicRenderer.prototype = {
 		$.extend( css, me._getCenterPosition() );
 		me.element.css( css );
 	},
-	getItemRenderedWidth : function() {
-		return this.itemSize;
-	},
 	_getCenterPosition : function () {
 		var me = this,
 			pos,

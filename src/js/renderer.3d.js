@@ -56,8 +56,8 @@ ThreeDRenderer.prototype = {
 		};
 	},
 	_getCenterPosition : function () {
-		var pos,
-			me = this,
+		var me = this,
+			pos,
 			renderedWidth = me.getItemRenderedWidth(),
 			index = me.widget.currentIndex;
 
@@ -96,14 +96,11 @@ ThreeDRenderer.prototype = {
 				transitionDelay : "initial"
 			};
 
-		$.extend(
+		return $.extend(
 				css,
 				me._getCenterPosition(),
 				me._getPerspectiveOrigin()
 			);
-
-		me.element
-			.css( css );
 	},
 	refresh : function ( state, from, to ) {
 		var me = this,
@@ -159,5 +156,5 @@ if( $.coverflow == null ) {
 }
 
 $.extend( $.coverflow.renderer, {
-	"ThreeD" : ThreeDRenderer
+	ThreeD : ThreeDRenderer
 });
