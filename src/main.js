@@ -1,63 +1,40 @@
 require.config({
 
-    baseUrl: '../src/',
+    baseUrl: "src/js",
 
 	paths : {
-		ui: '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min',
-		mobile : './../libs/jquery.mobile.custom.min',
-		coverflowjs : './js/coverflow',
-		renderer3d : './js/renderer.3d',
-		rendererClassic : './js/renderer.classic',
-		supportCore : './js/support.core',
-		supportTransform : './js/support.transform3d'
+		jquery : "./../../libs/jquery-ui/jquery-1.10.2",
+		uiCore: "./../../libs/jquery-ui/ui/jquery.ui.core",
+		uiWidget: "./../../libs/jquery-ui/ui/jquery.ui.widget",
+		uiEffects: "./../../libs/jquery-ui/ui/jquery.ui.effect",
+		coverflowjs : "./coverflow",
+		renderer3d : "./renderer.3d",
+		rendererClassic : "./renderer.classic",
+		supportCore : "./support.core",
+		supportTransform : "./support.transform3d"
 	},
 	shim : {
-
-		ui : {
-			deps: [
-				'jquery'
-			],
-			exports : '$'
+		jquery : {
+			exports : "$"
 		},
-		mobile : {
-			deps: [
-				'jquery'
-			],
-			exports : '$'
-		},
-		renderer3d : {
-			deps: [
-				'jquery'
-			],
-			exports : '$'
-		},
-		rendererClassic : {
-			deps: [
-				'jquery'
-			],
-			exports : '$'
-		},
-		supportCore : {
-			deps: [
-				'jquery'
-			],
-			exports : '$'
-		},
-		supportTransform : {
-			deps: [
-				'jquery'
-			],
-			exports : '$'
-		},
+		uiCore : [ "jquery" ],
+		uiWidget : [ "jquery" ],
+		uiEffects : [ "jquery" ],
+		renderer3d : [ "jquery", "rendererClassic" ],
+		rendererClassic : [ "jquery" ],
+		supportCore : [ "jquery" ],
+		supportTransform : [ "jquery" ],
 		coverflowjs : {
 			deps : [
-				'ui',
-				'renderer3d',
-				'rendererClassic',
-				'supportCore',
-				'supportTransform'
-			],
-			exports : '$'
+				"jquery",
+				"uiCore",
+				"uiWidget",
+				"uiEffects",
+				"renderer3d",
+				"rendererClassic",
+				"supportCore",
+				"supportTransform"
+			]
 		}
 	}
 

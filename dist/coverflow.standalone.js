@@ -1,251 +1,6 @@
-/*! CoverflowJS - v3.0.0rc3 - 2014-01-25
-* Copyright (c) 2008-2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
-(function( $, document, window ) {
-	"use strict";
-
-	/**
-	 * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-	 * http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-	 *
-	 * requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
-	 * MIT license
-	 *
-	 * @see https://gist.github.com/paulirish/1579671
-	 */
-
-	var el = document.createElement( "div" ),
-		style = el.style,
-		lastTime = 0,
-		vendors = [ "ms", "moz", "webkit", "o" ],
-		vendorsLength = vendors.length,
-		vendorPrefix = "",
-		x = 0,
-		capitalize = function( string ) {
-			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
-		};
-
-	for( ; x < vendorsLength && ! window.requestAnimationFrame; x++ ) {
-		window.requestAnimationFrame = window[ vendors[ x ] + "RequestAnimationFrame" ];
-		window.cancelAnimationFrame = window[ vendors[ x ] + "CancelAnimationFrame" ] ||
-			window[ vendors[ x ] + "CancelRequestAnimationFrame" ];
-	}
-
-	if ( ! window.requestAnimationFrame ) {
-		window.requestAnimationFrame = function( callback ) {
-			var currTime = new Date().getTime(),
-				timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) ),
-				id = window.setTimeout( function() {
-					callback( currTime + timeToCall );
-				}, timeToCall );
-
-			lastTime = currTime + timeToCall;
-
-			return id;
-		};
-	}
-
-	if ( ! window.cancelAnimationFrame ) {
-		window.cancelAnimationFrame = function( id ) {
-			clearTimeout( id );
-		};
-	}
-
-	// Check for vendor prefixed support of transition events first
-	// Some Webkit browsers on Android are providing false positives
-	// on non-prefixed transition event handlers
-	// e.g. Webkit on Galaxy Tab II
-	$.each( vendors, function( i, p ) {
-
-		if( p !== "ms" ) {
-			p = capitalize( p );
-		}
-		if( ! $.support.transform  && p + "Transform" in style ) {
-			$.support.transform = p + "Transform";
-		}
-		if( ! $.support.transition && p + "Transition" in style ) {
-			$.support.transition = p + "Transition";
-		}
-
-		if( $.support.transform && $.support.transition ) {
-			vendorPrefix = p;
-			return false;
-		}
-		return true;
-	});
-
-	if( ! $.support.transform || ! $.support.transition ) {
-
-		$.support.transform = "transform" in style ? "transform" : false;
-		$.support.transition = "transition" in style ? "transition" : false;
-	}
-
-	if( $.cssProps == null ) {
-		throw new Error( "Your jQuery version is too old. Please upgrade." );
-	}
-
-	if( !! vendorPrefix ) {
-
-		$.each([
-				"transitionProperty",
-				"transitionDuration",
-				"transitionTimingFunction",
-				"transitionDelay",
-				"perspectiveOrigin"
-			], function( i, cssProperty ) {
-
-				if( $.cssProps[ cssProperty ] != null ) {
-					return;
-				}
-
-				$.cssProps[ cssProperty ] = vendorPrefix + capitalize( cssProperty );
-			});
-	}
-
-	el = null;
-
-})( jQuery, document, window );
-
-(function( window, document, undefined ) {
-
-    var docElement = document.documentElement,
-
-        mod = "coverflowjsfeaturedetection",
-        modElem = document.createElement( mod ),
-        mStyle = modElem.style,
-
-        omPrefixes = "Webkit Moz O ms",
-
-        cssomPrefixes = omPrefixes.split( " " ),
-
-        domPrefixes = omPrefixes.toLowerCase().split( " " ),
-
-        injectElementWithStyles = function( rule, callback, nodes, testnames ) {
-
-            var style, ret, node, docOverflow,
-                div = document.createElement( "div" ),
-                body = document.body,
-                fakeBody = body || document.createElement( "body" );
-
-            if( parseInt( nodes, 10 ) ) {
-                while( nodes-- ) {
-                    node = document.createElement( "div" );
-                    node.id = testnames ? testnames[ nodes ] : mod + ( nodes + 1 );
-                    div.appendChild(node);
-                }
-            }
-
-            style = [ "&#173;", "<style id='s", mod, "'>", rule, "</style>" ].join( "" );
-            div.id = mod;
-            ( body ? div : fakeBody ).innerHTML += style;
-            fakeBody.appendChild(div);
-            if( ! body ) {
-                fakeBody.style.background = "";
-                fakeBody.style.overflow = "hidden";
-                docOverflow = docElement.style.overflow;
-                docElement.style.overflow = "hidden";
-                docElement.appendChild( fakeBody );
-            }
-
-            ret = callback( div, rule );
-            if( ! body ) {
-                fakeBody.parentNode.removeChild( fakeBody );
-                docElement.style.overflow = docOverflow;
-            } else {
-                div.parentNode.removeChild(div);
-            }
-
-            return !!ret;
-
-        },
-
-        _hasOwnProperty = ({}).hasOwnProperty,
-        hasOwnProp;
-
-	function is( obj, type ) {
-        return typeof obj === type;
-    }
-
-    if( ! is( _hasOwnProperty, "undefined" ) && ! is( _hasOwnProperty.call, "undefined" ) ) {
-        hasOwnProp = function( object, property ) {
-            return _hasOwnProperty.call(object, property);
-        };
-    } else {
-        hasOwnProp = function( object, property ) {
-            return ( ( property in object ) && is( object.constructor.prototype[ property ], "undefined"));
-        };
-    }
-
-    function contains( str, substr ) {
-        return !!~( "" + str ).indexOf( substr );
-    }
-
-    function testProps( props, prefixed ) {
-
-		var i, prop;
-
-		for( i in props ) {
-            prop = props[ i ];
-            if( ! contains( prop, "-" ) && mStyle[ prop ] !== undefined) {
-                return prefixed === "pfx" ? prop : true;
-            }
-        }
-        return false;
-    }
-
-    function testDOMProps( props, obj, elem ) {
-
-		var i, item;
-
-		for( i in props ) {
-            item = obj[ props[ i ] ];
-            if( item !== undefined) {
-
-                if( elem === false) {
-					return props[ i ];
-                }
-
-                if( is( item, "function" ) ) {
-                    return $.proxy( item, elem || obj );
-                }
-
-                return item;
-            }
-        }
-        return false;
-    }
-
-    function testPropsAll(prop, prefixed, elem) {
-
-        var ucProp = prop.charAt( 0 ).toUpperCase() + prop.slice( 1 ),
-            props = ( prop + " " + cssomPrefixes.join( ucProp + " " ) + ucProp).split( " " );
-
-        if( is( prefixed, "string" ) || is( prefixed, "undefined" ) ) {
-            return testProps( props, prefixed );
-
-        } else {
-            props = ( prop + " " + ( domPrefixes ).join( ucProp + " " ) + ucProp ).split( " " );
-            return testDOMProps( props, prefixed, elem );
-        }
-    }
-
-    $.support.transform3d = (function() {
-
-        var ret = !! testPropsAll( "perspective" );
-
-        if( ret && "webkitPerspective" in docElement.style ) {
-
-            injectElementWithStyles(
-				"@media (transform-3d),(-webkit-transform-3d){#coverflowjsfeaturedetection{left:9px;position:absolute;height:3px;}}",
-				function( node )
-			{
-                ret = node.offsetLeft === 9 && node.offsetHeight === 3;
-            });
-        }
-        return ret;
-    })();
-
-
-})(this, this.document);
+/*! CoverflowJS - v3.0.0 - 2014-01-25
+* Copyright (c) 2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
+(function( $, window, document, undefined ) {
 
 function ClassicRenderer( widget, element, items, options ) {
 
@@ -294,9 +49,6 @@ ClassicRenderer.prototype = {
 		// Center the actual parent's left side within its parent
 		$.extend( css, me._getCenterPosition() );
 		me.element.css( css );
-	},
-	getItemRenderedWidth : function() {
-		return this.itemSize;
 	},
 	_getCenterPosition : function () {
 		var me = this,
@@ -467,8 +219,8 @@ ThreeDRenderer.prototype = {
 		};
 	},
 	_getCenterPosition : function () {
-		var pos,
-			me = this,
+		var me = this,
+			pos,
 			renderedWidth = me.getItemRenderedWidth(),
 			index = me.widget.currentIndex;
 
@@ -507,14 +259,11 @@ ThreeDRenderer.prototype = {
 				transitionDelay : "initial"
 			};
 
-		$.extend(
+		return $.extend(
 				css,
 				me._getCenterPosition(),
 				me._getPerspectiveOrigin()
 			);
-
-		me.element
-			.css( css );
 	},
 	refresh : function ( state, from, to ) {
 		var me = this,
@@ -570,12 +319,302 @@ if( $.coverflow == null ) {
 }
 
 $.extend( $.coverflow.renderer, {
-	"ThreeD" : ThreeDRenderer
+	ThreeD : ThreeDRenderer
 });
 
-(function( $, document, window ) {
+/**
+ * extends jQuery.support by the following properties:
+ *
+ * - transform
+ * - transition
+ *
+ * polyfills requestAnimationFrame/cancelAnimationFrame
+ *
+ * extends jQuery.cssProps:
+ * - transitionProperty
+ * - transitionDuration
+ * - transitionTimingFunction
+ * - transitionDelay
+ * - perspectiveOrigin
+ *
+ */
 
-	"use strict";
+	
+
+	/**
+	 * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+	 * http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+	 *
+	 * requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+	 * MIT license
+	 *
+	 * @see https://gist.github.com/paulirish/1579671
+	 */
+
+	var el = document.createElement( "div" ),
+		style = el.style,
+		lastTime = 0,
+		vendors = [ "ms", "moz", "webkit", "o" ],
+		vendorsLength = vendors.length,
+		vendorPrefix = "",
+		x = 0,
+		capitalize = function( string ) {
+			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
+		};
+
+	for( ; x < vendorsLength && ! window.requestAnimationFrame; x++ ) {
+		window.requestAnimationFrame = window[ vendors[ x ] + "RequestAnimationFrame" ];
+		window.cancelAnimationFrame = window[ vendors[ x ] + "CancelAnimationFrame" ] ||
+			window[ vendors[ x ] + "CancelRequestAnimationFrame" ];
+	}
+
+	if ( ! window.requestAnimationFrame ) {
+		window.requestAnimationFrame = function( callback ) {
+			var currTime = new Date().getTime(),
+				timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) ),
+				id = window.setTimeout( function() {
+					callback( currTime + timeToCall );
+				}, timeToCall );
+
+			lastTime = currTime + timeToCall;
+
+			return id;
+		};
+	}
+
+	if ( ! window.cancelAnimationFrame ) {
+		window.cancelAnimationFrame = function( id ) {
+			clearTimeout( id );
+		};
+	}
+
+	// Check for vendor prefixed support of transition events first
+	// Some Webkit browsers on Android are providing false positives
+	// on non-prefixed transition event handlers
+	// e.g. Webkit on Galaxy Tab II
+	$.each( vendors, function( i, p ) {
+
+		if( p !== "ms" ) {
+			p = capitalize( p );
+		}
+		if( ! $.support.transform  && p + "Transform" in style ) {
+			$.support.transform = p + "Transform";
+		}
+		if( ! $.support.transition && p + "Transition" in style ) {
+			$.support.transition = p + "Transition";
+		}
+
+		if( $.support.transform && $.support.transition ) {
+			vendorPrefix = p;
+			return false;
+		}
+		return true;
+	});
+
+	if( ! $.support.transform || ! $.support.transition ) {
+
+		$.support.transform = "transform" in style ? "transform" : false;
+		$.support.transition = "transition" in style ? "transition" : false;
+	}
+
+	if( $.cssProps == null ) {
+		throw new Error( "Your jQuery version is too old. Please upgrade." );
+	}
+
+	if( !! vendorPrefix ) {
+
+		$.each([
+				"transitionProperty",
+				"transitionDuration",
+				"transitionTimingFunction",
+				"transitionDelay",
+				"perspectiveOrigin"
+			], function( i, cssProperty ) {
+
+				if( $.cssProps[ cssProperty ] != null ) {
+					return;
+				}
+
+				$.cssProps[ cssProperty ] = vendorPrefix + capitalize( cssProperty );
+			});
+	}
+
+	el = null;
+
+
+/*
+ * Detect support for 3d css transformations
+ * Based on Modernizr 2.7.1 (Custom Build) | MIT & BSD
+ * Build: http://modernizr.com/download/#-csstransforms3d-addtest-prefixed-teststyles-testprop-testallprops-hasevent-prefixes-domprefixes
+ */
+
+    var docElement = document.documentElement,
+
+        mod = "coverflowjsfeaturedetection",
+        modElem = document.createElement( mod ),
+        mStyle = modElem.style,
+
+        omPrefixes = "Webkit Moz O ms",
+
+        cssomPrefixes = omPrefixes.split( " " ),
+
+        domPrefixes = omPrefixes.toLowerCase().split( " " ),
+
+        injectElementWithStyles = function( rule, callback, nodes, testnames ) {
+
+            var style, ret, node, docOverflow,
+                div = document.createElement( "div" ),
+                body = document.body,
+                fakeBody = body || document.createElement( "body" );
+
+            if( parseInt( nodes, 10 ) ) {
+                while( nodes-- ) {
+                    node = document.createElement( "div" );
+                    node.id = testnames ? testnames[ nodes ] : mod + ( nodes + 1 );
+                    div.appendChild(node);
+                }
+            }
+
+            style = [ "&#173;", "<style id='s", mod, "'>", rule, "</style>" ].join( "" );
+            div.id = mod;
+            ( body ? div : fakeBody ).innerHTML += style;
+            fakeBody.appendChild(div);
+            if( ! body ) {
+                fakeBody.style.background = "";
+                fakeBody.style.overflow = "hidden";
+                docOverflow = docElement.style.overflow;
+                docElement.style.overflow = "hidden";
+                docElement.appendChild( fakeBody );
+            }
+
+            ret = callback( div, rule );
+            if( ! body ) {
+                fakeBody.parentNode.removeChild( fakeBody );
+                docElement.style.overflow = docOverflow;
+            } else {
+                div.parentNode.removeChild(div);
+            }
+
+            return !!ret;
+
+        },
+
+        _hasOwnProperty = ({}).hasOwnProperty,
+        hasOwnProp;
+
+	function is( obj, type ) {
+        return typeof obj === type;
+    }
+
+    if( ! is( _hasOwnProperty, "undefined" ) && ! is( _hasOwnProperty.call, "undefined" ) ) {
+        hasOwnProp = function( object, property ) {
+            return _hasOwnProperty.call(object, property);
+        };
+    } else {
+        hasOwnProp = function( object, property ) {
+            return ( ( property in object ) && is( object.constructor.prototype[ property ], "undefined"));
+        };
+    }
+
+    function contains( str, substr ) {
+        return !!~( "" + str ).indexOf( substr );
+    }
+
+    function testProps( props, prefixed ) {
+
+		var i, prop;
+
+		for( i in props ) {
+            prop = props[ i ];
+            if( ! contains( prop, "-" ) && mStyle[ prop ] !== undefined) {
+                return prefixed === "pfx" ? prop : true;
+            }
+        }
+        return false;
+    }
+
+    function testDOMProps( props, obj, elem ) {
+
+		var i, item;
+
+		for( i in props ) {
+            item = obj[ props[ i ] ];
+            if( item !== undefined) {
+
+                if( elem === false) {
+					return props[ i ];
+                }
+
+                if( is( item, "function" ) ) {
+                    return $.proxy( item, elem || obj );
+                }
+
+                return item;
+            }
+        }
+        return false;
+    }
+
+    function testPropsAll(prop, prefixed, elem) {
+
+        var ucProp = prop.charAt( 0 ).toUpperCase() + prop.slice( 1 ),
+            props = ( prop + " " + cssomPrefixes.join( ucProp + " " ) + ucProp).split( " " );
+
+        if( is( prefixed, "string" ) || is( prefixed, "undefined" ) ) {
+            return testProps( props, prefixed );
+
+        } else {
+            props = ( prop + " " + ( domPrefixes ).join( ucProp + " " ) + ucProp ).split( " " );
+            return testDOMProps( props, prefixed, elem );
+        }
+    }
+
+    $.support.transform3d = (function() {
+
+        var ret = !! testPropsAll( "perspective" );
+
+        if( ret && "webkitPerspective" in docElement.style ) {
+
+            injectElementWithStyles(
+				"@media (transform-3d),(-webkit-transform-3d){#coverflowjsfeaturedetection{left:9px;position:absolute;height:3px;}}",
+				function( node )
+			{
+                ret = node.offsetLeft === 9 && node.offsetHeight === 3;
+            });
+        }
+        return ret;
+    })();
+
+
+/**
+ * @license Released under the MIT license.
+ *
+ * CoverflowJS
+ *
+ * 3D transformations: Brandon Belvin
+ * Refactored for jQuery 1.8 / jQueryUI 1.9 Sebastian Sauer
+ * Re-written for jQueryUI 1.8.6/jQuery core 1.4.4+ by Addy Osmani with adjustments
+ * Maintenance updates for 1.8.9/jQuery core 1.5, 1.6.2 made.
+ * Original Component: Paul Bakaus for jQueryUI 1.7
+ *
+ *
+ * Depends:
+ *  jquery.ui.core.js
+ *  jquery.ui.widget.js
+ *
+ * In case you want swipe support and you don't use jQuery mobile yet:
+ * jquery-mobile.custom.js
+ *
+ * $.animate support for older browsers depends on:
+ *  jquery.ui.effect.js
+ *
+ * Events:
+ *  beforeselect
+ *  select
+ */
+
+
+	
 
 	function debounce( func, threshold ) {
 
@@ -1163,4 +1202,4 @@ $.extend( $.coverflow.renderer, {
 		}
 	});
 
-})( jQuery, document, window );
+})( jQuery, this, this.document );

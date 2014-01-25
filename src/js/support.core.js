@@ -14,7 +14,10 @@
  * - perspectiveOrigin
  *
  */
-(function( $, document, window ) {
+//>>excludeStart("buildExclude", pragmas.buildExclude);
+(function( $, window, document, undefined ) {
+//>>excludeEnd("buildExclude");
+
 	"use strict";
 
 	/**
@@ -117,4 +120,6 @@
 
 	el = null;
 
-})( jQuery, document, window );
+//>>excludeStart("buildExclude", pragmas.buildExclude);
+})( jQuery, this, this.document );
+//>>excludeEnd("buildExclude");

@@ -3,8 +3,9 @@
  * Based on Modernizr 2.7.1 (Custom Build) | MIT & BSD
  * Build: http://modernizr.com/download/#-csstransforms3d-addtest-prefixed-teststyles-testprop-testallprops-hasevent-prefixes-domprefixes
  */
-
-(function( window, document, undefined ) {
+//>>excludeStart("buildExclude", pragmas.buildExclude);
+(function( $, window, document, undefined ) {
+//>>excludeEnd("buildExclude");
 
     var docElement = document.documentElement,
 
@@ -143,5 +144,6 @@
         return ret;
     })();
 
-
-})(this, this.document);
+//>>excludeStart("buildExclude", pragmas.buildExclude);
+})( jQuery, this, this.document );
+//>>excludeEnd("buildExclude");

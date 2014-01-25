@@ -25,7 +25,9 @@
  *  select
  */
 
-(function( $, document, window ) {
+//>>excludeStart("buildExclude", pragmas.buildExclude);
+(function( $, window, document, undefined ) {
+//>>excludeEnd("buildExclude");
 
 	"use strict";
 
@@ -615,4 +617,6 @@
 		}
 	});
 
-})( jQuery, document, window );
+//>>excludeStart("buildExclude", pragmas.buildExclude);
+})( jQuery, this, this.document );
+//>>excludeEnd("buildExclude");
