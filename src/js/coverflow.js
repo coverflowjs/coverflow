@@ -29,6 +29,25 @@
 
 	"use strict";
 
+	function debounce( func, threshold ) {
+
+		var timeout;
+
+		return function() {
+			var obj = this, args = arguments;
+			function delayed() {
+				func.apply( obj, args );
+				timeout = null;
+			}
+
+			if( timeout ) {
+				clearTimeout( timeout );
+			}
+
+			timeout = setTimeout( delayed, threshold );
+		};
+	}
+
 	var eventsMap = {
 			"transition":     "transitionend",
 			"MozTransition":  "transitionend",
@@ -254,7 +273,7 @@
 				};
 
 				this._on({
-					swipe: this._handleJQmSwipe
+					swipe : debounce( this._handleJQmSwipe, 150 )
 				});
 			}
 
@@ -282,7 +301,7 @@
 				});
 			}
 
-			if( ! hasJqm && hasHammer ) {
+			if( ! hasJqm && ! hasHammer ) {
 				this._on({
 					swipeleft : this.next,
 					swiperight : this.prev
@@ -358,34 +377,29 @@
 		},
 		_handleSwipe : function( direction, speed ) {
 
-			var delta = Math.pow( speed, 2 ),
+			var delta,
 				destination;
 
-			// Handle the momentum-based swipe action
-			// Based in-part on the formula used by iScroll 4
-			//delta = this.element.hammer ? Math.log( delta ) : delta;
-			delta = ~~ ( delta / ( direction === "left" ? 3 : - 3 ) );
+			delta = this.outerWidth * ( Math.pow( speed, 2 ) ) * 0.25;
+			delta /= this.itemWidth;
+			delta = Math.floor( delta ) * ( direction === "left" ? 1 : -1 );
 
 			destination = this.currentIndex + delta;
 
-			if ( destination === this.currentIndex ) {
-				// If the swipe is short/slow enough to not move due to friction, treat it as a non-momentum swipe
-				if ( direction === "left" ) {
-					this.next();
-				} else {
-					this.prev();
-				}
-			} else if ( destination < 0 ) {
-				// Can't scroll past first element, select first
+			if( ! delta ) {
+				( direction === "left" ) ? this.next() : this.prev();
+				return;
+			}
+			if( destination < 0 ) {
 				this.select( 0 );
-			} else if ( this._isValidIndex( destination ) ) {
-				// Destination is valid, select it
-				this.select( destination );
-			} else {
-				// Otherwise, destination was past last item, select last
-				this.select( this.items.length - 1 );
+				return;
 			}
 
+			if( this._isValidIndex( destination ) ) {
+				this.select( destination );
+				return;
+			}
+			this.select( this.items.length - 1 );
 		},
 		_getFrom : function () {
 			return Math.abs( this.previous - this.currentIndex ) <= 1 ?
@@ -541,7 +555,6 @@
 		_ui : function ( active, index ) {
 			return {
 				active: active || this.activeItem,
-				// This is purposefully "!= null"
 				index: index != null ? index : this.currentIndex
 			};
 		},

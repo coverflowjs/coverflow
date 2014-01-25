@@ -2,9 +2,9 @@ function ClassicRenderer( widget, element, items, options ) {
 
 	this.widget = widget;
 
-	this.element = element || $();
+	this.element = element;
 
-	this.items = items || $();
+	this.items = items;
 
 	this.options = options;
 

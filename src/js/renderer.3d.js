@@ -2,15 +2,8 @@ function toRadian ( angle ) {
 	return parseFloat( ( angle * 0.017453 ) .toFixed( 6 ) );
 }
 
-function ThreeDRenderer( widget, element, items, options ) {
-
-	this.widget = widget;
-
-	this.element = element || $();
-
-	this.items = items || $();
-
-	this.options = options;
+function ThreeDRenderer() {
+	$.coverflow.renderer.Classic.apply( this, arguments );
 }
 
 ThreeDRenderer.prototype = {
