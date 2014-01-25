@@ -2,7 +2,7 @@
   "name": "CoverflowJS",
   "title": "CoverflowJS",
   "description": "A jQuery UI powered coverflow component that takes advantage of CSS3 features",
-  "version": "3.0.0rc3",
+  "version": "3.0.0",
   "author": {
     "name": "Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett",
     "url": "https://github.com/coverflowjs/coverflow"
@@ -18,7 +18,7 @@
       "email": "info@dynpages.de",
       "url": "http://jscouch.com"
     },
-	{
+    {
       "name": "Brandon Belvin",
       "email": "brandon.belvin@gmail.com",
       "url": "http://brandonbelvin.com"
@@ -50,6 +50,7 @@
     "grunt-git-authors": "~1.2.0",
     "grunt-autoprefixer": "~0.6.4",
     "grunt-contrib-less": "~0.9.0",
-    "grunt-contrib-watch": "~0.5.3"
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-requirejs": "~0.4.1"
   }
 }
