@@ -30,28 +30,19 @@ Your html may look like this:
     <script src="coverflow.min.js"></script>
     <script>
         $(function() {
+			// and kick off
             $('#coverflow').coverflow();
         });
     </script>
 
 This minimal implementation should already work.
 
-What we got there?
-
-<ul class="checklist">
-	<li>CSS transformed items (auto-detects 3D-support)</li>
-    <li>with a polyfill for older Internet Explorer versions</li>
-	<li>CSS based animation</li>
-    <li>fallback based on jQuery animate</li>
-    <li>mousewheel support</li>
-</ul>
-
-### Standalone Version
+### When to use the standalone version
 
 If you are already using jQueryUI, just drop in the standalone version and save a few bytes.
 
 ### Swipe support
 
-This is based on external libraries. Officially supported libraries are **[jQuery mobile](http://jquerymobile.com)** and **[Hammer.js](http://eightmedia.github.io/hammer.js)**. Drop in any on these libraries and swipe left/right shall work.
+Momentum swipe support is based on external libraries. Officially supported libraries are **[jQuery mobile](http://jquerymobile.com)** and **[Hammer.js](http://eightmedia.github.io/hammer.js)**. Drop in any on these libraries and momentum swipe should work.
 
-Any other library works - as long as these are triggering *swipeleft* / *swiperight* events.
+Simple swipe support with any other library may work - as long as this library is triggering *swipeleft* / *swiperight* events.
