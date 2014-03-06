@@ -10,7 +10,7 @@
     "slider",
     "slide"
   ],
-  "version": "3.0.0",
+  "version": "3.0.1",
   "author": {
     "name": "Sebastian Sauer",
     "url": "http://jscouch.de"
@@ -41,7 +41,7 @@
   "bugs": "https://github.com/coverflowjs/coverflow/issues",
   "homepage": "http://coverflowjs.github.io/coverflow/",
   "docs": "http://coverflowjs.github.io/coverflow/tutorial/get-started/",
-  "download": "https://github.com/coverflowjs/coverflow/archive/3.0.0.zip",
+  "download": "https://github.com/coverflowjs/coverflow/archive/3.0.1.zip",
   "dependencies": {
     "jquery": ">=1.8.0",
     "jqueryui": ">=1.9.0"
