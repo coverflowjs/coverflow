@@ -2,7 +2,7 @@
 
 ![](https://raw.github.com/coverflowjs/coverflow/master/demo/img/screenshot.png)
 
-The jQueryUI Coverflow project seeks to create a fully functional 'CoverFlow' effect using a combination of jQuery, jQuery UI components and CSS3 transforms.
+The Coverflow project seeks to create a fully functional 'CoverFlow' effect using a combination of jQuery, jQuery UI components and CSS3 transforms.
 
 ## Getting Started
 
@@ -16,7 +16,7 @@ The jQueryUI Coverflow project seeks to create a fully functional 'CoverFlow' ef
  - [API methods](http://coverflowjs.github.io/coverflow/api/methods/)
 
 ## License
-Copyright (c) 2008-2013 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin
+Copyright (c) 2008-2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin
 Licensed under the MIT licenses.
 
 ## Contributing

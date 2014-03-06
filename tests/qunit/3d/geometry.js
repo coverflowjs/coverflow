@@ -60,8 +60,7 @@
 		var items = this.items;
 
 		this.el.coverflow({
-			active : 2,
-			renderer : "ThreeD"
+			active : 2
 		});
 
 		$.each( this.items, function ( k, item ) {
@@ -82,8 +81,7 @@
 				strictEqual( ui.index, itemIndex, 'item index is correct' );
 				strictEqual( ui.active.get( 0 ), items.eq( itemIndex ).get( 0 ), 'active item is preselected item.' );
 				testItemProperties( ui.active );
-			},
-			renderer : "ThreeD"
+			}
 		});
 
 	});
@@ -100,8 +98,7 @@
 			})
 			.coverflow({
 				active : 1,
-				duration: 1,
-				renderer : "ThreeD"
+				duration: 1
 			});
 
 		el

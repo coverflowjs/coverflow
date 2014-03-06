@@ -7,7 +7,6 @@
 
 			this.el
 				.coverflow({
-					renderer : "ThreeD",
 					duration: 1,
 					trigger : {
 						"itemfocus" : true

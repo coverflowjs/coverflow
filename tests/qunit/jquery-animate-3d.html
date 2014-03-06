@@ -5,7 +5,7 @@
 	<meta charset="UTF-8" />
     <title>CoverflowJS - testing animations with jQuery animate</title>
 
-	<link rel="stylesheet" href="../lib/qunit/dist/qunit.css" />
+	<link rel="stylesheet" href="../lib/qunit/qunit/qunit.css" />
     <link rel="stylesheet" href="../css/visual.css" />
     <link rel="stylesheet" href="../../src/css/coverflow.css" />
 	<link rel="stylesheet" href="../../libs/jquery-ui/themes/base/jquery.ui.core.css" />
@@ -18,7 +18,7 @@
 
 
     <script type="text/javascript" src="../../libs/jquery.mobile.custom.min.js"></script>
-    <script type="text/javascript" src="../lib/qunit/dist/qunit.js"></script>
+    <script type="text/javascript" src="../lib/qunit/qunit/qunit.js"></script>
 
 	<script type="text/javascript" src="../../src/js/support.core.js"></script>
     <script type="text/javascript" src="../../src/js/support.transform3d.js"></script>
@@ -26,11 +26,13 @@
     <script type="text/javascript" src="../../src/js/renderer.classic.js"></script>
     <script type="text/javascript" src="../../src/js/coverflow.js"></script>
 
-	<script>
-		// convince $.coverflow that 3d support is available
-		$.support.transform = true;
-		$.support.transform3d = true;
-	</script>
+    <script>
+        // convince $.coverflow that 3d support is available
+        $.extend( $.coverflow.support, {
+            transform : true,
+            transform3d : true
+        });
+    </script>
 
     <script type="text/javascript" src="all/methods.js"></script>
     <script type="text/javascript" src="all/offset.js"></script>

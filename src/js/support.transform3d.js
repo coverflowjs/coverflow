@@ -4,6 +4,14 @@
  * Build: http://modernizr.com/download/#-csstransforms3d-addtest-prefixed-teststyles-testprop-testallprops-hasevent-prefixes-domprefixes
  */
 //>>excludeStart("buildExclude", pragmas.buildExclude);
+
+if( $.coverflow == null ) {
+	$.coverflow = {
+		renderer : {},
+		support : {}
+	};
+}
+
 (function( $, window, document, undefined ) {
 //>>excludeEnd("buildExclude");
 
@@ -128,7 +136,7 @@
         }
     }
 
-    $.support.transform3d = (function() {
+    $.coverflow.support.transform3d = (function() {
 
         var ret = !! testPropsAll( "perspective" );
 
@@ -143,6 +151,11 @@
         }
         return ret;
     })();
+
+	// expose feature support if not already set
+    if( $.support.transform3d == null ) {
+	    $.support.transform3d = $.coverflow.support.transform3d;
+    }
 
 //>>excludeStart("buildExclude", pragmas.buildExclude);
 })( jQuery, this, this.document );

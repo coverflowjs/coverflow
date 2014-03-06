@@ -24,7 +24,7 @@
 		item = item.jquery ? item.get( 0 ) : item;
 
 		var $item = $( item ),
-			cssTransformation = $.support.transform
+			cssTransformation = $.coverflow.support.transform
 				? $.trim( $item.css( 'transform' ) )
 				: item.filters[ 'DXImageTransform.Microsoft.Matrix' ];
 
@@ -33,7 +33,7 @@
 		}
 		ok( $item.hasClass( 'ui-coverflow-item' ), 'item has widget items class.' );
 
-		if( $.support.transform ) {
+		if( $.coverflow.support.transform ) {
 			switch( state ) {
 				case 'left':
 					strictEqual(
@@ -61,7 +61,7 @@
 			}
 		}
 
-		if( ! $.support.transform && isOldie ) {
+		if( ! $.coverflow.support.transform && isOldie ) {
 			switch( state ) {
 				case 'left':
 					equal( $item.hasClass( 'ui-state-active' ), false, 'item without ui-state-active css class' );

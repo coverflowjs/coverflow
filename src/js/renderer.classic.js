@@ -1,3 +1,12 @@
+//>>excludeStart("buildExclude", pragmas.buildExclude);
+if( $.coverflow == null ) {
+	$.coverflow = {
+		renderer : {},
+		support : {}
+	};
+}
+//>>excludeEnd("buildExclude");
+
 function ClassicRenderer( widget, element, items, options ) {
 
 	var me = this;
@@ -123,7 +132,7 @@ ClassicRenderer.prototype = {
 
 		var me = this;
 
-		if( $.support.transform ) {
+		if( $.coverflow.support.transform ) {
 			me._matrixTransform.apply( me, arguments );
 			return;
 		}
@@ -146,12 +155,6 @@ ClassicRenderer.prototype = {
 		filters.M22 = matrixT[ 3 ];
 	}
 };
-
-if( $.coverflow == null ) {
-	$.coverflow = {
-		renderer : {}
-	};
-}
 
 $.extend( $.coverflow.renderer, {
 	Classic : ClassicRenderer

@@ -149,7 +149,8 @@
 			var me = this,
 				o = this.options,
 				Renderer,
-				rendererOptions;
+				rendererOptions,
+				support = $.coverflow.support || {};
 
 			me.elementOrigStyle = me.element.attr( "style" );
 
@@ -169,14 +170,16 @@
 
 			me._setDimensions();
 
+			me.support = support;
+
 			if ( // transform is not supported
-				! $.support.transform
+				! support.transform
 				// or is old IE
 				|| isOldie
 				// or it's opera: fails to create a perspective on coverflow items
 				|| window.opera != null
 				// or no css3 transformation is available
-				|| ! $.support.transform3d
+				|| ! support.transform3d
 			) {
 				Renderer = $.coverflow.renderer.Classic;
 			} else {
@@ -223,7 +226,7 @@
 				me._bindSwipe();
 			}
 
-			me.useJqueryAnimate = ! ( $.support.transition && $.isFunction( window.requestAnimationFrame ) );
+			me.useJqueryAnimate = ! ( support.transition && $.isFunction( window.requestAnimationFrame ) );
 
 			me.coverflowrafid = 0;
 		},
@@ -447,7 +450,7 @@
 					}
 
 					me.element
-						.unbind( eventsMap[ $.support.transition ] );
+						.unbind( eventsMap[ me.support.transition ] );
 				}
 			}
 			me.isTicking = true;
@@ -527,7 +530,7 @@
 			}
 
 			me.element
-				.one( eventsMap[ $.support.transition ],
+				.one( eventsMap[ me.support.transition ],
 					function() {
 						me._refresh( 1, from, to );
 						me._onAnimationEnd();

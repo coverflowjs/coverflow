@@ -1,3 +1,12 @@
+//>>excludeStart("buildExclude", pragmas.buildExclude);
+if( $.coverflow == null ) {
+	$.coverflow = {
+		renderer : {},
+		support : {}
+	};
+}
+//>>excludeEnd("buildExclude");
+
 function toRadian ( angle ) {
 	return parseFloat( ( angle * 0.017453 ) .toFixed( 6 ) );
 }
@@ -148,12 +157,6 @@ ThreeDRenderer.prototype = {
 		});
 	}
 };
-
-if( $.coverflow == null ) {
-	$.coverflow = {
-		renderer : {}
-	};
-}
 
 $.extend( $.coverflow.renderer, {
 	ThreeD : ThreeDRenderer

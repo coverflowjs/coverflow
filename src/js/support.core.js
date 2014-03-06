@@ -16,6 +16,13 @@
  */
 //>>excludeStart("buildExclude", pragmas.buildExclude);
 (function( $, window, document, undefined ) {
+
+if( $.coverflow == null ) {
+	$.coverflow = {
+		renderer : {},
+		support : {}
+	};
+}
 //>>excludeEnd("buildExclude");
 
 	"use strict";
@@ -37,6 +44,7 @@
 		vendorsLength = vendors.length,
 		vendorPrefix = "",
 		x = 0,
+		support = $.coverflow.support,
 		capitalize = function( string ) {
 			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
 		};
@@ -76,24 +84,32 @@
 		if( p !== "ms" ) {
 			p = capitalize( p );
 		}
-		if( ! $.support.transform  && p + "Transform" in style ) {
-			$.support.transform = p + "Transform";
+		if( ! support.transform  && p + "Transform" in style ) {
+			support.transform = p + "Transform";
 		}
-		if( ! $.support.transition && p + "Transition" in style ) {
-			$.support.transition = p + "Transition";
+		if( ! support.transition && p + "Transition" in style ) {
+			support.transition = p + "Transition";
 		}
 
-		if( $.support.transform && $.support.transition ) {
+		if( support.transform && support.transition ) {
 			vendorPrefix = p;
 			return false;
 		}
 		return true;
 	});
 
-	if( ! $.support.transform || ! $.support.transition ) {
+	if( ! support.transform || ! support.transition ) {
 
-		$.support.transform = "transform" in style ? "transform" : false;
-		$.support.transition = "transition" in style ? "transition" : false;
+		support.transform = "transform" in style ? "transform" : false;
+		support.transition = "transition" in style ? "transition" : false;
+	}
+
+	// expose feature support if not already set
+	if( $.support.transform == null ) {
+		$.support.transform = support.transform;
+	}
+	if( $.support.transition == null ) {
+		$.support.transition = support.transition;
 	}
 
 	if( $.cssProps == null ) {
