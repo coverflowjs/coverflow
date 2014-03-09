@@ -8,7 +8,7 @@ require.config({
 		],
 		// custom minimal jQueryUI
 		smartresize : 'js/jquery.smartresize',
-		bootstrap : 'bootstrap/js/bootstrap-collapse',
+		bootstrap : 'bootstrap/dist/js/bootstrap.min',
 		jqm : 'js/jquery.mobile.custom.min',
 		coverflowjs : 'js/coverflowjs/coverflow.min'
     },

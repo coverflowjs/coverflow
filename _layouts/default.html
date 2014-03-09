@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<html class="no-js" lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<meta charset="utf-8" />
@@ -11,7 +8,7 @@
 
 	<meta name="HandheldFriendly" content="True">
 	<meta name="MobileOptimized" content="320">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<meta http-equiv="cleartype" content="on">
 	<meta name="msapplication-TileColor" content="#222222">
 
@@ -20,7 +17,9 @@
 	<!-- transparent favicon -->
 	<link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=" />
 
-	<link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/assets/js/coverflowjs/coverflow.css" />
+	<link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/assets/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/assets/bootstrap/dist/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/assets/js/coverflowjs/coverflow.css" />
 	<link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/assets/css/styles.css" />
 	<link href='//fonts.googleapis.com/css?family=Ubuntu:400,700,400italic' rel='stylesheet' type='text/css'>
 
@@ -33,38 +32,38 @@
 <body>
 
 	<div id="wrapper">
-		<nav role="navigation">
-			<div class="navbar navbar-inverse navbar-fixed-top">
-				<div class="navbar-inner">
-					<div class="container">
-						<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</button>
-						<a class="brand" href="{{ site.baseurl }}">Coverflowjs</a>
-						<div class="nav-collapse collapse">
-							<ul class="nav">
-								<li>
-									<a href="{{ site.baseurl }}/tutorial/get-started">Get started</a>
-								</li>
-								<li>
-									<a href="{{ site.baseurl }}/api/options/">Options</a>
-								</li>
-								<li>
-									<a href="{{ site.baseurl }}/api/events/">Events</a>
-								</li>
-								<li>
-									<a href="{{ site.baseurl }}/api/methods/">Methods</a>
-								</li>
-							</ul>
-							<div class="pull-right">
-								<a href="https://github.com/coverflowjs/coverflow" class="btn btn-primary ">view on Github »</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+        <nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ site.baseurl }}/">Coverflowjs</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="{{ site.baseurl }}/tutorial/get-started">Get started</a>
+                        </li>
+                        <li>
+                            <a href="{{ site.baseurl }}/api/options/">Options</a>
+                        </li>
+                        <li>
+                            <a href="{{ site.baseurl }}/api/events/">Events</a>
+                        </li>
+                        <li>
+                            <a href="{{ site.baseurl }}/api/methods/">Methods</a>
+                        </li>
+                    </ul>
+                    <div class="navbar-right">
+                        <a href="https://github.com/coverflowjs/coverflow" class="btn btn-primary navbar-btn">view on Github »</a>
+                    </div>
+                </div>
+            </div>
 		</nav>
 
 		<div class="container">
@@ -74,7 +73,7 @@
 					<p class="lead">This Coverflow project seeks to create a fully functional 'CoverFlow' effect using a combination of jQuery, jQuery UI components and CSS3 transforms.</p>
 				</div>
 			</header>
-			<div class="row-fluid">
+			<div class="row">
 			{{ content }}
 			</div>
 		</div>

@@ -9,6 +9,7 @@ html, body {
 }
 body {
 	min-width: 320px;
+    padding-top: 70px;
 
 	#wrapper {
 
@@ -24,18 +25,6 @@ body {
 			min-height: 41px;
 		}
 
-		.navbar-fixed-top {
-			margin-bottom: 33px;
-		}
-
-		@media (min-width: @navbarCollapseDesktopWidth ) {
-
-
-			.navbar .pull-right {
-				float: right;
-			}
-
-		}
 		&.lt-ie9 {
 
 			.navbar .pull-right {
@@ -82,10 +71,10 @@ body {
 			@media only screen and (min-width:321px) and (max-width: 480px ) {
 				height: 240px;
 			}
-			@media only screen and (min-width:481px) and (max-width: @navbarCollapseWidth ) {
+			@media only screen and (min-width:481px) and (max-width: @grid-float-breakpoint-max ) {
 				height: 280px;
 			}
-			@media only screen and (min-width: @navbarCollapseDesktopWidth) and (max-width: 1024px ) {
+			@media only screen and (min-width: @grid-float-breakpoint) and (max-width: 1024px ) {
 				height: 360px;
 			}
 
@@ -105,11 +94,11 @@ body {
 						width: 200px;
 						height: 200px;
 					}
-					@media only screen and (min-width:481px) and (max-width: @navbarCollapseWidth ) {
+					@media only screen and (min-width:481px) and (max-width: @grid-float-breakpoint-max ) {
 						width: 240px;
 						height: 240px;
 					}
-					@media only screen and (min-width: @navbarCollapseDesktopWidth ) and (max-width: 1024px ) {
+					@media only screen and (min-width: @grid-float-breakpoint ) and (max-width: 1024px ) {
 						width: 320px;
 						height: 320px;
 					}
@@ -134,10 +123,12 @@ body {
 		#license {
 			position: absolute;
 			bottom: 0;
+            left: 0;
 			text-align: center;
 			width: 100%;
 			background: rgba(0,0,0,.8);
 			padding-top: .4em;
+
 			* {
 				color: #fff;
 			}

@@ -1,4 +1,4 @@
-/*! CoverflowJS - v3.0.0 - 2014-01-25
+/*! CoverflowJS - v3.0.1 - 2014-03-06
 * Copyright (c) 2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
 /*! jQuery UI - v1.10.4 - 2014-01-17
 * http://jqueryui.com
@@ -2109,6 +2109,11 @@ $.each( baseEasings, function( name, easeIn ) {
 
 (function( $, window, document, undefined ) {
 
+$.coverflow = {
+	renderer : {},
+	support : {}
+};
+
 function ClassicRenderer( widget, element, items, options ) {
 
 	var me = this;
@@ -2234,7 +2239,7 @@ ClassicRenderer.prototype = {
 
 		var me = this;
 
-		if( $.support.transform ) {
+		if( $.coverflow.support.transform ) {
 			me._matrixTransform.apply( me, arguments );
 			return;
 		}
@@ -2258,15 +2263,10 @@ ClassicRenderer.prototype = {
 	}
 };
 
-if( $.coverflow == null ) {
-	$.coverflow = {
-		renderer : {}
-	};
-}
-
 $.extend( $.coverflow.renderer, {
 	Classic : ClassicRenderer
 });
+
 
 function toRadian ( angle ) {
 	return parseFloat( ( angle * 0.017453 ) .toFixed( 6 ) );
@@ -2419,12 +2419,6 @@ ThreeDRenderer.prototype = {
 	}
 };
 
-if( $.coverflow == null ) {
-	$.coverflow = {
-		renderer : {}
-	};
-}
-
 $.extend( $.coverflow.renderer, {
 	ThreeD : ThreeDRenderer
 });
@@ -2465,6 +2459,7 @@ $.extend( $.coverflow.renderer, {
 		vendorsLength = vendors.length,
 		vendorPrefix = "",
 		x = 0,
+		support = $.coverflow.support,
 		capitalize = function( string ) {
 			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
 		};
@@ -2504,24 +2499,32 @@ $.extend( $.coverflow.renderer, {
 		if( p !== "ms" ) {
 			p = capitalize( p );
 		}
-		if( ! $.support.transform  && p + "Transform" in style ) {
-			$.support.transform = p + "Transform";
+		if( ! support.transform  && p + "Transform" in style ) {
+			support.transform = p + "Transform";
 		}
-		if( ! $.support.transition && p + "Transition" in style ) {
-			$.support.transition = p + "Transition";
+		if( ! support.transition && p + "Transition" in style ) {
+			support.transition = p + "Transition";
 		}
 
-		if( $.support.transform && $.support.transition ) {
+		if( support.transform && support.transition ) {
 			vendorPrefix = p;
 			return false;
 		}
 		return true;
 	});
 
-	if( ! $.support.transform || ! $.support.transition ) {
+	if( ! support.transform || ! support.transition ) {
 
-		$.support.transform = "transform" in style ? "transform" : false;
-		$.support.transition = "transition" in style ? "transition" : false;
+		support.transform = "transform" in style ? "transform" : false;
+		support.transition = "transition" in style ? "transition" : false;
+	}
+
+	// expose feature support if not already set
+	if( $.support.transform == null ) {
+		$.support.transform = support.transform;
+	}
+	if( $.support.transition == null ) {
+		$.support.transition = support.transition;
 	}
 
 	if( $.cssProps == null ) {
@@ -2676,7 +2679,7 @@ $.extend( $.coverflow.renderer, {
         }
     }
 
-    $.support.transform3d = (function() {
+    $.coverflow.support.transform3d = (function() {
 
         var ret = !! testPropsAll( "perspective" );
 
@@ -2691,6 +2694,11 @@ $.extend( $.coverflow.renderer, {
         }
         return ret;
     })();
+
+	// expose feature support if not already set
+    if( $.support.transform3d == null ) {
+	    $.support.transform3d = $.coverflow.support.transform3d;
+    }
 
 
 /**
@@ -2841,7 +2849,8 @@ $.extend( $.coverflow.renderer, {
 			var me = this,
 				o = this.options,
 				Renderer,
-				rendererOptions;
+				rendererOptions,
+				support = $.coverflow.support || {};
 
 			me.elementOrigStyle = me.element.attr( "style" );
 
@@ -2861,14 +2870,16 @@ $.extend( $.coverflow.renderer, {
 
 			me._setDimensions();
 
+			me.support = support;
+
 			if ( // transform is not supported
-				! $.support.transform
+				! support.transform
 				// or is old IE
 				|| isOldie
 				// or it's opera: fails to create a perspective on coverflow items
 				|| window.opera != null
 				// or no css3 transformation is available
-				|| ! $.support.transform3d
+				|| ! support.transform3d
 			) {
 				Renderer = $.coverflow.renderer.Classic;
 			} else {
@@ -2915,7 +2926,7 @@ $.extend( $.coverflow.renderer, {
 				me._bindSwipe();
 			}
 
-			me.useJqueryAnimate = ! ( $.support.transition && $.isFunction( window.requestAnimationFrame ) );
+			me.useJqueryAnimate = ! ( support.transition && $.isFunction( window.requestAnimationFrame ) );
 
 			me.coverflowrafid = 0;
 		},
@@ -3139,7 +3150,7 @@ $.extend( $.coverflow.renderer, {
 					}
 
 					me.element
-						.unbind( eventsMap[ $.support.transition ] );
+						.unbind( eventsMap[ me.support.transition ] );
 				}
 			}
 			me.isTicking = true;
@@ -3219,7 +3230,7 @@ $.extend( $.coverflow.renderer, {
 			}
 
 			me.element
-				.one( eventsMap[ $.support.transition ],
+				.one( eventsMap[ me.support.transition ],
 					function() {
 						me._refresh( 1, from, to );
 						me._onAnimationEnd();
@@ -3308,5 +3319,6 @@ $.extend( $.coverflow.renderer, {
 			me._super();
 		}
 	});
+
 
 })( jQuery, this, this.document );
