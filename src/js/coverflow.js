@@ -125,6 +125,7 @@
 
 		options: {
 			items : "> *",
+			itemsShow: null,
 			active : 0,
 			duration : 400,
 			easing : "easeOutQuint",
@@ -192,6 +193,7 @@
 				scale: o.scale,
 				overlap: o.overlap,
 				itemSize : me.itemSize,
+				itemsShow: o.itemsShow !== null ? (o.itemsShow - 1) / 2 : null,
 				outerWidth : me.outerWidth
 			};
 

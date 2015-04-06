@@ -97,7 +97,8 @@ ClassicRenderer.prototype = {
 					? ( 1 - state )
 					: ( i === from ? state : 1 ),
 				css = {
-					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10
+					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10,
+					visibility: "visible"
 				},
 				scale = ( 1 - mod * ( 1 - o.scale )  ),
 				matrixT = [
@@ -113,6 +114,12 @@ ClassicRenderer.prototype = {
 					: itemSize / 2 - ( itemSize / 2 * o.overlap )
 				) * mod
 			);
+
+			if ( o.itemsShow !== null
+				&& ( i < to - Math.floor(o.itemsShow)
+					|| i > to + Math.ceil(o.itemsShow) ) ) {
+				css.visibility = "hidden";
+			}
 
 			if( $.coverflow.isOldie ) {
 				if( i === to ) {

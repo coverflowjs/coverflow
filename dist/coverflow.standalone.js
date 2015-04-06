@@ -1,5 +1,5 @@
-/*! CoverflowJS - v3.0.1 - 2014-03-06
-* Copyright (c) 2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
+/*! CoverflowJS - v3.0.1 - 2015-04-06
+* Copyright (c) 2015 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
 (function( $, window, document, undefined ) {
 
 $.coverflow = {
@@ -97,7 +97,8 @@ ClassicRenderer.prototype = {
 					? ( 1 - state )
 					: ( i === from ? state : 1 ),
 				css = {
-					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10
+					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10,
+					visibility: "visible"
 				},
 				scale = ( 1 - mod * ( 1 - o.scale )  ),
 				matrixT = [
@@ -113,6 +114,12 @@ ClassicRenderer.prototype = {
 					: itemSize / 2 - ( itemSize / 2 * o.overlap )
 				) * mod
 			);
+
+			if ( o.itemsShow !== null
+				&& ( i < to - Math.floor(o.itemsShow)
+					|| i > to + Math.ceil(o.itemsShow) ) ) {
+				css.visibility = "hidden";
+			}
 
 			if( $.coverflow.isOldie ) {
 				if( i === to ) {
@@ -281,7 +288,8 @@ ThreeDRenderer.prototype = {
 					? ( 1 - state )
 					: ( i === from ? state : 1 ),
 				css = {
-					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10
+					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10,
+					visibility: "visible"
 				},
 				scale = 1 - ( mod * ( 1 - o.scale ) ),
 				angle = side === "right" ? o.angle : - o.angle,
@@ -295,6 +303,12 @@ ThreeDRenderer.prototype = {
 				( mod * i * renderedWidth * ( 1 - o.overlap ) ) +
 				( ( 1 - mod ) * i * renderedWidth * ( 1 - o.overlap ) )
 			);
+
+			if ( o.itemsShow !== null
+				&& ( i < to - Math.floor(o.itemsShow)
+					|| i > to + Math.ceil(o.itemsShow) ) ) {
+				css.visibility = "hidden";
+			}
 
 			// transponed matrix
 			matrixT = [
@@ -333,7 +347,7 @@ $.extend( $.coverflow.renderer, {
  *
  */
 
-	
+	"use strict";
 
 	/**
 	 * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -622,7 +636,7 @@ $.extend( $.coverflow.renderer, {
  */
 
 
-	
+	"use strict";
 
 	function debounce( func, threshold ) {
 
@@ -718,6 +732,7 @@ $.extend( $.coverflow.renderer, {
 
 		options: {
 			items : "> *",
+			itemsShow: null,
 			active : 0,
 			duration : 400,
 			easing : "easeOutQuint",
@@ -785,6 +800,7 @@ $.extend( $.coverflow.renderer, {
 				scale: o.scale,
 				overlap: o.overlap,
 				itemSize : me.itemSize,
+				itemsShow: o.itemsShow !== null ? (o.itemsShow - 1) / 2 : null,
 				outerWidth : me.outerWidth
 			};
 
