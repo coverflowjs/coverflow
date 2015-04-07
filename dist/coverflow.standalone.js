@@ -1,4 +1,4 @@
-/*! CoverflowJS - v3.0.1 - 2015-04-06
+/*! CoverflowJS - v3.0.1 - 2015-04-07
 * Copyright (c) 2015 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
 (function( $, window, document, undefined ) {
 
@@ -736,6 +736,8 @@ $.extend( $.coverflow.renderer, {
 			active : 0,
 			duration : 400,
 			easing : "easeOutQuint",
+			startItem: 0,
+			endItem: 0,
 			// renderer options
 			// angle and perspective are only available when the browser supports 3d transformations
 			angle: 45,
@@ -960,9 +962,15 @@ $.extend( $.coverflow.renderer, {
 			me.outerWidth = me.element.parent().outerWidth( false );
 		},
 		_isValidIndex : function ( index, ignoreCurrent ) {
+			var o = this.options;
+
 			ignoreCurrent = !! ignoreCurrent;
 			index = ~~index;
-			return ( this.currentIndex !== index || ignoreCurrent ) && index > -1 && !! this.items.get( index );
+			return ( this.currentIndex !== index || ignoreCurrent )
+				&& index > -1
+				&& (o.startItem ? index >= o.startItem : true)
+				&& (o.endItem ? index <= (this.items.length - o.endItem - 1) : true)
+				&& !! this.items.get( index );
 		},
 		_select: function ( ev ) {
 			this.select( ev.currentTarget );
