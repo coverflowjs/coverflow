@@ -127,7 +127,8 @@ ThreeDRenderer.prototype = {
 					? ( 1 - state )
 					: ( i === from ? state : 1 ),
 				css = {
-					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10
+					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10,
+					visibility: "visible"
 				},
 				scale = 1 - ( mod * ( 1 - o.scale ) ),
 				angle = side === "right" ? o.angle : - o.angle,
@@ -141,6 +142,12 @@ ThreeDRenderer.prototype = {
 				( mod * i * renderedWidth * ( 1 - o.overlap ) ) +
 				( ( 1 - mod ) * i * renderedWidth * ( 1 - o.overlap ) )
 			);
+
+			if ( o.itemsShow !== null
+				&& ( i < to - Math.floor(o.itemsShow)
+					|| i > to + Math.ceil(o.itemsShow) ) ) {
+				css.visibility = "hidden";
+			}
 
 			// transponed matrix
 			matrixT = [

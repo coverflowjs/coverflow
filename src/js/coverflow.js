@@ -125,9 +125,12 @@
 
 		options: {
 			items : "> *",
+			itemsShow: null,
 			active : 0,
 			duration : 400,
 			easing : "easeOutQuint",
+			startItem: 0,
+			endItem: 0,
 			// renderer options
 			// angle and perspective are only available when the browser supports 3d transformations
 			angle: 45,
@@ -192,6 +195,7 @@
 				scale: o.scale,
 				overlap: o.overlap,
 				itemSize : me.itemSize,
+				itemsShow: o.itemsShow !== null ? (o.itemsShow - 1) / 2 : null,
 				outerWidth : me.outerWidth
 			};
 
@@ -351,9 +355,15 @@
 			me.outerWidth = me.element.parent().outerWidth( false );
 		},
 		_isValidIndex : function ( index, ignoreCurrent ) {
+			var o = this.options;
+
 			ignoreCurrent = !! ignoreCurrent;
 			index = ~~index;
-			return ( this.currentIndex !== index || ignoreCurrent ) && index > -1 && !! this.items.get( index );
+			return ( this.currentIndex !== index || ignoreCurrent )
+				&& index > -1
+				&& (o.startItem ? index >= o.startItem : true)
+				&& (o.endItem ? index <= (this.items.length - o.endItem - 1) : true)
+				&& !! this.items.get( index );
 		},
 		_select: function ( ev ) {
 			this.select( ev.currentTarget );
