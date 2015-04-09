@@ -29,8 +29,6 @@
 (function( $, window, document, undefined ) {
 //>>excludeEnd("buildExclude");
 
-	"use strict";
-
 	function debounce( func, threshold ) {
 
 		var timeout;
@@ -125,9 +123,9 @@
 
 		options: {
 			items : "> *",
-			itemsShow: null,
 			active : 0,
 			duration : 400,
+			visibleAside: null,
 			easing : "easeOutQuint",
 			// renderer options
 			// angle and perspective are only available when the browser supports 3d transformations
@@ -193,7 +191,9 @@
 				scale: o.scale,
 				overlap: o.overlap,
 				itemSize : me.itemSize,
-				itemsShow: o.itemsShow !== null ? (o.itemsShow - 1) / 2 : null,
+				visibleAside: o.visibleAside !== null && ! isNaN( parseInt( o.visibleAside, 10 ) )
+					? parseInt( o.visibleAside, 10 )
+					: 0,
 				outerWidth : me.outerWidth
 			};
 

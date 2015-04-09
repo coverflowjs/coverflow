@@ -4,7 +4,7 @@
   "description": "A jQuery UI powered coverflow component that takes advantage of CSS3 features",
   "version": "3.0.1",
   "author": {
-    "name": "Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett",
+    "name": "Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett, Kirill Kostko",
     "url": "https://github.com/coverflowjs/coverflow"
   },
   "maintainers": [
@@ -17,11 +17,6 @@
       "name": "Sebastian Sauer",
       "email": "info@dynpages.de",
       "url": "http://jscouch.com"
-    },
-    {
-      "name": "Brandon Belvin",
-      "email": "brandon.belvin@gmail.com",
-      "url": "http://brandonbelvin.com"
     }
   ],
   "repository": {

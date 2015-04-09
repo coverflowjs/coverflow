@@ -49,9 +49,10 @@
 <script src="../src/js/renderer.classic.js"></script>
 <script src="../src/js/coverflow.js"></script>
 <script>
-$.support.transform3d = false;
+$.coverflow.support.transform3d = false;
 var $el = $( '.coverflow' ).coverflow({
-		active : 3
+		active : 3,
+		visibleAside: 3
 	});
 
 $( window ).resize( debounce( function() {

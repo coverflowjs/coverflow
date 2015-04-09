@@ -1,4 +1,4 @@
-/*! CoverflowJS - v3.0.1 - 2015-04-06
+/*! CoverflowJS - v3.0.1 - 2015-04-09
 * Copyright (c) 2015 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
 (function( $, window, document, undefined ) {
 
@@ -115,9 +115,10 @@ ClassicRenderer.prototype = {
 				) * mod
 			);
 
-			if ( o.itemsShow !== null
-				&& ( i < to - Math.floor(o.itemsShow)
-					|| i > to + Math.ceil(o.itemsShow) ) ) {
+			if( o.visibleAside > 0
+				&& ( i < to - o.visibleAside
+				|| i > to + o.visibleAside )
+			) {
 				css.visibility = "hidden";
 			}
 
@@ -304,9 +305,10 @@ ThreeDRenderer.prototype = {
 				( ( 1 - mod ) * i * renderedWidth * ( 1 - o.overlap ) )
 			);
 
-			if ( o.itemsShow !== null
-				&& ( i < to - Math.floor(o.itemsShow)
-					|| i > to + Math.ceil(o.itemsShow) ) ) {
+			if( o.visibleAside > 0
+				&& ( i < to - o.visibleAside
+				|| i > to + o.visibleAside )
+			) {
 				css.visibility = "hidden";
 			}
 
@@ -346,8 +348,6 @@ $.extend( $.coverflow.renderer, {
  * - perspectiveOrigin
  *
  */
-
-	"use strict";
 
 	/**
 	 * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -636,8 +636,6 @@ $.extend( $.coverflow.renderer, {
  */
 
 
-	"use strict";
-
 	function debounce( func, threshold ) {
 
 		var timeout;
@@ -732,9 +730,9 @@ $.extend( $.coverflow.renderer, {
 
 		options: {
 			items : "> *",
-			itemsShow: null,
 			active : 0,
 			duration : 400,
+			visibleAside: null,
 			easing : "easeOutQuint",
 			// renderer options
 			// angle and perspective are only available when the browser supports 3d transformations
@@ -800,7 +798,9 @@ $.extend( $.coverflow.renderer, {
 				scale: o.scale,
 				overlap: o.overlap,
 				itemSize : me.itemSize,
-				itemsShow: o.itemsShow !== null ? (o.itemsShow - 1) / 2 : null,
+				visibleAside: o.visibleAside !== null && ! isNaN( parseInt( o.visibleAside, 10 ) )
+					? parseInt( o.visibleAside, 10 )
+					: 0,
 				outerWidth : me.outerWidth
 			};
 

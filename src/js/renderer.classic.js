@@ -115,9 +115,10 @@ ClassicRenderer.prototype = {
 				) * mod
 			);
 
-			if ( o.itemsShow !== null
-				&& ( i < to - Math.floor(o.itemsShow)
-					|| i > to + Math.ceil(o.itemsShow) ) ) {
+			if( o.visibleAside > 0
+				&& ( i < to - o.visibleAside
+				|| i > to + o.visibleAside )
+			) {
 				css.visibility = "hidden";
 			}
 
