@@ -829,6 +829,11 @@ $.extend( $.coverflow.renderer, {
 					mousewheel: debounce(me._onMouseWheel, 200),
 					DOMMouseScroll: debounce(me._onMouseWheel, 200)
 				});
+
+				me._on({
+					mousewheel: me._preventPageScroll,
+					DOMMouseScroll: me._preventPageScroll
+				});
 			}
 
 			if( o.trigger.swipe ) {
@@ -1180,10 +1185,12 @@ $.extend( $.coverflow.renderer, {
 				index: index != null ? index : this.currentIndex
 			};
 		},
+		_preventPageScroll : function(ev) {
+			ev.preventDefault();
+		},
 		_onMouseWheel : function ( ev ) {
 			var origEv = ev.originalEvent;
 
-			ev.preventDefault();
 			if( origEv.wheelDelta > 0 || origEv.detail < 0 ) {
 				this.prev();
 				return;
