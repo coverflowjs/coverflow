@@ -1,5 +1,5 @@
-/*! CoverflowJS - v3.0.1 - 2015-04-09
-* Copyright (c) 2015 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
+/*! CoverflowJS - v3.0.1 - 2015-09-16
+* Copyright (c) 2015 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett, Kirill Kostko; Licensed MIT */
 (function( $, window, document, undefined ) {
 
 $.coverflow = {
@@ -826,8 +826,8 @@ $.extend( $.coverflow.renderer, {
 
 			if( o.trigger.mousewheel ) {
 				me._on({
-					mousewheel: me._onMouseWheel,
-					DOMMouseScroll: me._onMouseWheel
+					mousewheel: debounce(me._onMouseWheel, 200),
+					DOMMouseScroll: debounce(me._onMouseWheel, 200)
 				});
 			}
 

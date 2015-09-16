@@ -219,8 +219,8 @@
 
 			if( o.trigger.mousewheel ) {
 				me._on({
-					mousewheel: me._onMouseWheel,
-					DOMMouseScroll: me._onMouseWheel
+					mousewheel: debounce(me._onMouseWheel, 200),
+					DOMMouseScroll: debounce(me._onMouseWheel, 200)
 				});
 			}
 
