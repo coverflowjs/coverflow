@@ -41,7 +41,7 @@
   "bugs": "https://github.com/coverflowjs/coverflow/issues",
   "homepage": "http://coverflowjs.github.io/coverflow/",
   "docs": "http://coverflowjs.github.io/coverflow/tutorial/get-started/",
-  "download": "https://github.com/coverflowjs/coverflow/archive/3.0.1.zip",
+  "download": "https://github.com/coverflowjs/coverflow/archive/3.0.2.zip",
   "dependencies": {
     "jquery": ">=1.8.0",
     "jqueryui": ">=1.9.0"

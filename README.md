@@ -10,13 +10,14 @@ The Coverflow project seeks to create a fully functional 'CoverFlow' effect usin
 
 ## Documentation
 
+ - [JS Fiddle](http://jsfiddle.net/rudygotya/7q8eapr2/2/)
  - [Get started](http://coverflowjs.github.io/coverflow/tutorial/get-started/)
  - [API options](http://coverflowjs.github.io/coverflow/api/options/)
  - [API events](http://coverflowjs.github.io/coverflow/api/events/)
  - [API methods](http://coverflowjs.github.io/coverflow/api/methods/)
 
 ## License
-Copyright (c) 2008-2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin
+Copyright (c) 2008-2015 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin
 Licensed under the MIT licenses.
 
 ## Contributing

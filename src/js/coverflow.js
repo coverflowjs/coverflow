@@ -219,12 +219,12 @@
 
 			if( o.trigger.mousewheel ) {
 				me._on({
-					mousewheel: debounce(me._onMouseWheel, 200),
-					DOMMouseScroll: debounce(me._onMouseWheel, 200)
+					wheel: debounce(me._onMouseWheel, 20),
+					DOMMouseScroll: debounce(me._onMouseWheel, 20)
 				});
 
 				me._on({
-					mousewheel: me._preventPageScroll,
+					wheel: me._preventPageScroll,
 					DOMMouseScroll: me._preventPageScroll
 				});
 			}
@@ -582,9 +582,15 @@
 			ev.preventDefault();
 		},
 		_onMouseWheel : function ( ev ) {
-			var origEv = ev.originalEvent;
+			var origEv = ev.originalEvent,
+				delta = Math.abs(origEv.wheelDelta) > 0 ? origEv.wheelDelta : -origEv.detail;
 
-			if( origEv.wheelDelta > 0 || origEv.detail < 0 ) {
+			// mac os specific - fighting trackpad clumsy scrolling behaviour
+			if( delta > -10 && delta < 3 ) {
+				return;
+			}
+
+			if( delta > 0 ) {
 				this.prev();
 				return;
 			}
