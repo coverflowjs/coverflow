@@ -1,5 +1,5 @@
-/*! CoverflowJS - v3.0.1 - 2014-03-06
-* Copyright (c) 2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
+/*! CoverflowJS - v3.0.2 - 2015-12-31
+* Copyright (c) 2015 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett, Kirill Kostko; Licensed MIT */
 /*! jQuery UI - v1.10.4 - 2014-01-17
 * http://jqueryui.com
 * Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.effect.js
@@ -2204,7 +2204,8 @@ ClassicRenderer.prototype = {
 					? ( 1 - state )
 					: ( i === from ? state : 1 ),
 				css = {
-					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10
+					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10,
+					visibility: "visible"
 				},
 				scale = ( 1 - mod * ( 1 - o.scale )  ),
 				matrixT = [
@@ -2220,6 +2221,13 @@ ClassicRenderer.prototype = {
 					: itemSize / 2 - ( itemSize / 2 * o.overlap )
 				) * mod
 			);
+
+			if( o.visibleAside > 0
+				&& ( i < to - o.visibleAside
+				|| i > to + o.visibleAside )
+			) {
+				css.visibility = "hidden";
+			}
 
 			if( $.coverflow.isOldie ) {
 				if( i === to ) {
@@ -2388,7 +2396,8 @@ ThreeDRenderer.prototype = {
 					? ( 1 - state )
 					: ( i === from ? state : 1 ),
 				css = {
-					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10
+					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10,
+					visibility: "visible"
 				},
 				scale = 1 - ( mod * ( 1 - o.scale ) ),
 				angle = side === "right" ? o.angle : - o.angle,
@@ -2402,6 +2411,13 @@ ThreeDRenderer.prototype = {
 				( mod * i * renderedWidth * ( 1 - o.overlap ) ) +
 				( ( 1 - mod ) * i * renderedWidth * ( 1 - o.overlap ) )
 			);
+
+			if( o.visibleAside > 0
+				&& ( i < to - o.visibleAside
+				|| i > to + o.visibleAside )
+			) {
+				css.visibility = "hidden";
+			}
 
 			// transponed matrix
 			matrixT = [
@@ -2439,8 +2455,6 @@ $.extend( $.coverflow.renderer, {
  * - perspectiveOrigin
  *
  */
-
-	
 
 	/**
 	 * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -2729,8 +2743,6 @@ $.extend( $.coverflow.renderer, {
  */
 
 
-	
-
 	function debounce( func, threshold ) {
 
 		var timeout;
@@ -2827,6 +2839,7 @@ $.extend( $.coverflow.renderer, {
 			items : "> *",
 			active : 0,
 			duration : 400,
+			visibleAside: null,
 			easing : "easeOutQuint",
 			// renderer options
 			// angle and perspective are only available when the browser supports 3d transformations
@@ -2892,6 +2905,9 @@ $.extend( $.coverflow.renderer, {
 				scale: o.scale,
 				overlap: o.overlap,
 				itemSize : me.itemSize,
+				visibleAside: o.visibleAside !== null && ! isNaN( parseInt( o.visibleAside, 10 ) )
+					? parseInt( o.visibleAside, 10 )
+					: 0,
 				outerWidth : me.outerWidth
 			};
 
@@ -2917,8 +2933,13 @@ $.extend( $.coverflow.renderer, {
 
 			if( o.trigger.mousewheel ) {
 				me._on({
-					mousewheel: me._onMouseWheel,
-					DOMMouseScroll: me._onMouseWheel
+					wheel: debounce(me._onMouseWheel, 20),
+					DOMMouseScroll: debounce(me._onMouseWheel, 20)
+				});
+
+				me._on({
+					wheel: me._preventPageScroll,
+					DOMMouseScroll: me._preventPageScroll
 				});
 			}
 
@@ -3271,11 +3292,19 @@ $.extend( $.coverflow.renderer, {
 				index: index != null ? index : this.currentIndex
 			};
 		},
-		_onMouseWheel : function ( ev ) {
-			var origEv = ev.originalEvent;
-
+		_preventPageScroll : function(ev) {
 			ev.preventDefault();
-			if( origEv.wheelDelta > 0 || origEv.detail < 0 ) {
+		},
+		_onMouseWheel : function ( ev ) {
+			var origEv = ev.originalEvent,
+				delta = Math.abs(origEv.wheelDelta) > 0 ? origEv.wheelDelta : -origEv.detail;
+
+			// mac os specific - fighting trackpad clumsy scrolling behaviour
+			if( delta > -10 && delta < 3 ) {
+				return;
+			}
+
+			if( delta > 0 ) {
 				this.prev();
 				return;
 			}

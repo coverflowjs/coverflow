@@ -35,7 +35,11 @@ Your html may look like this:
         });
     </script>
 
-This minimal implementation should already work.
+This minimal implementation should already work. 
+
+## Minimal implementation demo
+
+[**jsfiddle**](http://jsfiddle.net/rudygotya/7q8eapr2/2/)
 
 ### When to use the standalone version
 
