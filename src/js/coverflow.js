@@ -582,13 +582,22 @@
 			ev.preventDefault();
 		},
 		_onMouseWheel : function ( ev ) {
-			var origEv = ev.originalEvent,
+			var origEv = ev.originalEvent, delta;
+			if (typeof origEv.deltaMode !== 'undefined') {
+				delta = Math.abs(origEv.deltaX) > Math.abs(origEv.deltaY) ? -origEv.deltaX : -origEv.deltaY;
+				// mac os specific - fighting trackpad clumsy scrolling behaviour
+				if (origEv.deltaMode === window.WheelEvent.DOM_DELTA_PIXEL && delta > -10 && delta < 3) {
+					return;
+				}
+			} else {
 				delta = Math.abs(origEv.wheelDelta) > 0 ? origEv.wheelDelta : -origEv.detail;
 
-			// mac os specific - fighting trackpad clumsy scrolling behaviour
-			if( delta > -10 && delta < 3 ) {
-				return;
+				// mac os specific - fighting trackpad clumsy scrolling behaviour
+				if( delta > -10 && delta < 3 ) {
+					return;
+				}
 			}
+
 
 			if( delta > 0 ) {
 				this.prev();
